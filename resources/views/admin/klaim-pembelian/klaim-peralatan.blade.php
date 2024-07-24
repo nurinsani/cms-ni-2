@@ -184,7 +184,12 @@
                                         placeholder="Masukan Struk Pembelian" required>
                                 </div>
 
-                                {{-- <div class="form-group">
+                                <div class="form-group">
+                                    <label for="" class="form-label">Upload MOA</label>
+                                    <input type="file" name="moa" id="moa" class="form-control" placeholder="Masukan MOA">
+                                </div>
+
+                                <div class="form-group">
                                     <label for="" class="form-label">Rekening</label>
                                     <select name="rekening_id" id="" class="form-control">
                                         <option value="">-- Pilih Rekening Tujuan --</option>
@@ -193,7 +198,7 @@
                                         @endforeach
                                     </select>
                                     <small class="text-red">*isi jika ingin menggunakan rekening lain, jika tidak diisi maka akan menggunakan rekening pembuat</small>
-                                </div> --}}
+                                </div>
 
                             </div>
                         </div>
