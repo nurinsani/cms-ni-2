@@ -39,15 +39,20 @@ class TempPengajuanDetailController extends Controller
         $temp_pengajuan_detail->keterangan = $request->keterangan;
         $temp_pengajuan_detail->status_lpj = 'belum';
 
-        $file = $request->moa;
-        $namafile = time().'.'.$file->getClientOriginalExtension();
-        $file->move('files/moa', $namafile);
-        $temp_pengajuan_detail->moa = $namafile;
+        if ($request->has('moa')) {
+            $file = $request->moa;
+            $namafile = time().'.'.$file->getClientOriginalExtension();
+            $file->move('files/moa', $namafile);
+            $temp_pengajuan_detail->moa = $namafile;
+        }
 
-        $file = $request->struk_pembelian;
-        $namafile = time().'.'.$file->getClientOriginalExtension();
-        $file->move('files/struk_pembelian', $namafile);
-        $temp_pengajuan_detail->struk_pembelian = $namafile;
+        if ($request->has('struk_pembelian')) {
+            $file = $request->struk_pembelian;
+            $namafile = time().'.'.$file->getClientOriginalExtension();
+            $file->move('files/struk_pembelian', $namafile);
+            $temp_pengajuan_detail->struk_pembelian = $namafile;
+        }
+
 
         $temp_pengajuan_detail->save();
         return redirect()->back()->with('success', 'Data berhasil dibuat');
