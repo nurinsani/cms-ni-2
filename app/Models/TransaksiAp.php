@@ -1,0 +1,16 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class TransaksiAp extends Model
+{
+    use HasFactory;
+
+    protected $guarded = ['id'];
+
+    protected $table = 'transaksi_ap';
+    protected $dates = ['tanggal_transaksi'];
+}

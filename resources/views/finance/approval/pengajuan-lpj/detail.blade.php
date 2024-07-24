@@ -1,0 +1,265 @@
+@extends('layouts.main')
+
+@section('head-content')
+    <div class="row mb-2">
+        <div class="col-sm-6">
+            <h1 class="m-0">{{ $title }}</h1>
+        </div><!-- /.col -->
+        <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+                <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
+                <li class="breadcrumb-item active">{{ $title }}</li>
+            </ol>
+        </div><!-- /.col -->
+    </div><!-- /.row -->
+@endsection
+
+@section('content')
+@push('css')
+        <style>
+            @media print {
+                .d-print-none {
+                    display: none;
+                }
+
+                .main-footer {
+                    display: none !important;
+                }
+
+                @page {
+                    margin-left: 0.5in;
+                    margin-right: 0.5in;
+                    margin-top: 0;
+                    margin-bottom: 0;
+                }
+            }
+        </style>
+    @endpush
+
+    <div class="row row-cols-1">
+        <div class="col">
+            <div class="card">
+                <div class="card-header mt-5 d-print-flex justify-content-between d-none">
+                    <img src="https://images.glints.com/unsafe/glints-dashboard.s3.amazonaws.com/company-photos/4ee7c569b5fdc3017f63a6c2779474d6.jpg" width="150px" alt="">
+                    <div class="text-center">
+                        <h4>LPJ PEMBELIAN</h4>
+                        {{-- <h4>WILAYAH JATUT</h4>
+                        <h4>PERIODE AGUSTUS 2023</h4>
+                        <h4>TANGGAL 25-8-2023</h4> --}}
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="text-right">
+                        @if ($lpj->status_approve == 'selesai')
+                        <button type="button" onclick="window.print()" class="btn btn-primary d-print-none">Print</button>
+                        @endif
+
+                        @if ($lpj->status_approve == 'klaim-selesai')
+                        <button type="button" onclick="window.print()" class="btn btn-primary d-print-none">Print</button>
+                        @endif
+                    </div>
+                    <a href="{{ url('finance/approval-lpj/approve') }}" class="btn btn-sm btn-primary mb-3 d-print-none">
+                        <i class="fas fa-arrow-left"></i> Kembali
+                    </a>
+
+                    <ul class="p-0" style="list-style: none">
+                        <li>Nomor : {{ $lpj->nomor }}</li>
+                        <li>Kepada : Ketua dan Pengurus KSPPS Nur Insani</li>
+                        <li>Dari : {{ $lpj->user->name }}</li>
+                        <li>Tanggal : {{ $lpj->tanggal_pengajuan }}</li>
+                    </ul>
+
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th scope="col">No</th>
+                                    <th scope="col">AP</th>
+                                    <th scope="col">COA</th>
+                                    <th scope="col">Nama jenis Peralatan</th>
+                                    <th scope="col">Merk/Type</th>
+                                    <th>Qty</th>
+                                    <th scope="col">Pengajuan</th>
+                                    <th scope="col">Harga Pembelian</th>
+                                    <th class="d-print-none">Struk Pembelian</th>
+                                    <th class="d-print-none">Bukti Pengembalian</th>
+                                    {{-- <th scope="col">Aksi</th> --}}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($lpj->pengajuan_details as $item)
+                                    <tr>
+                                        <td>{{ $loop->iteration }}</td>
+                                        <td>{{ $item->ap->unit ?? $item->area->area }}</td>
+                                        <td>{{ $item->jenis_peralatan->param_peralatan->coa }}</td>
+                                        <td>{{ $item->jenis_peralatan->nama_jenis }}</td>
+                                        <td>{{ $item->merk }}</td>
+                                        <td>{{ $item->kuantitas }}</td>
+                                        <td>Rp. {{ number_format($item->harga * $item->kuantitas) }}</td>
+                                        <td>Rp. {{ number_format($item->harga_pembelian) }}</td>
+                                        <td class="d-print-none">
+                                            @if ($lpj->status_approve == 'klaim-selesai')
+                                                <a href="" onclick="window.open('{{ url('files/struk_pembelian/'.$item->struk_pembelian) }}')">{{ $item->struk_pembelian }}</a>
+                                            @else
+                                            <a href="" onclick="window.open('{{ url('images/lpj/struk_pembelian/'.$item->struk_pembelian) }}')">{{ $item->struk_pembelian }}</a>
+                                            @endif
+                                        </td>
+                                        <td class="d-print-none"><a href="" onclick="window.open('{{ url('images/lpj/bukti_pengembalian/'.$lpj->bukti_pengembalian) }}')">{{ $lpj->bukti_pengembalian }}</a></td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="6"><strong>Total Uang Muka</strong></td>
+                                    <td colspan="3"><strong>Rp. {{ number_format($lpj->subtotal()) }}</strong></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="7"><strong>Total Pembelian</strong></td>
+                                    <td colspan="2"><strong>Rp. {{ number_format($lpj->total_pembelian()) }}</strong></td> 
+                                </tr>
+                                @if ($lpj->total_pembelian() > $lpj->subtotal())
+                                    <tr>
+                                        <td colspan="7"><strong>Kekurangan</strong></td>
+                                        <td colspan="2"><strong>Rp. {{ number_format($lpj->total_pembelian() - $lpj->subtotal())}}</strong></td> 
+                                    </tr>
+                                @else
+                                    <tr>
+                                        <td colspan="7"><strong>Sisa/Pengembalian</strong></td>
+                                        <td colspan="2"><strong>Rp. {{ number_format($lpj->subtotal() - $lpj->total_pembelian())}}</strong></td> 
+                                    </tr>
+                                @endif
+                            </tfoot>
+                        </table>    
+                    </div>
+
+                    @if ($lpj->status_approve == 'selesai')
+                    <div class="d-flex justify-content-between mt-4">
+                        <div class="col text-center">
+                            <p>Diajukan Oleh,</p>
+                            <div class="py-4">
+                                {!! DNS2D::getBarcodeSVG("$diajukan", 'QRCODE', 2, 2) !!}
+                            </div>
+                            <span class="border-bottom pb-1">{{ $lpj->user->name ?? '' }}</span>
+                            <br>
+                            <b class="mt-1 d-block">Admin</b>
+                        </div>
+                        <div class="col text-center">
+                            <p>Diketahui Oleh,</p>
+                            {!! DNS2D::getBarcodeSVG($kode_approve1, 'QRCODE', 2, 2) !!}
+                            <div class="py-4"></div>
+                            <span class="border-bottom pb-1">{{ $lpj->approval1->name ?? '' }}</span>
+                            <br>
+                            <b class="mt-1 d-block">Admin Head</b>
+                        </div>
+                        <div class="col text-center">
+                            <p>Disetujui Oleh,</p>
+                            {!! DNS2D::getBarcodeSVG($kode_approve3, 'QRCODE', 2, 2) !!}
+                            <div class="py-4"></div>
+                            <span class="border-bottom pb-1">{{ $lpj->approval3->name ?? '' }}</span>
+                            <br>
+                            <b class="mt-1 d-block">Pengurus</b>
+                        </div>
+                    </div>
+                    <div class="col-6 mt-4">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th scope="col" class="text-center">Di Setujui Oleh,</th>
+                                    <th scope="col" class="text-center">Di Setujui Oleh,</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="w-50 p-5 text-center">
+                                        {!! DNS2D::getBarcodeSVG("$kode_approve2", 'QRCODE', 2, 2) !!}
+                                        <div class="py-4"></div>
+                                        {{ $lpj->approval2->name ?? '' }}
+                                        <hr>
+                                        <strong>Akunting</strong>
+                                    </td>
+                                    <td class="w-50 p-5 text-center">
+                                        {!! DNS2D::getBarcodeSVG("$kode_approve4", 'QRCODE', 2, 2) !!}
+                                        <div class="py-4"></div>
+                                        {{ $lpj->approval4->name ?? '' }}
+                                        <hr>
+                                        <strong>Finance</strong>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    @endif
+
+                    @if ($lpj->status_approve == 'klaim-selesai')
+                    <div class="d-flex justify-content-between mt-4">
+                        <div class="col text-center">
+                            <p>Diajukan Oleh,</p>
+                            <div class="py-4">
+                                {!! DNS2D::getBarcodeSVG("$diajukan", 'QRCODE', 2, 2) !!}
+                            </div>
+                            <span class="border-bottom pb-1">{{ $lpj->user->name ?? '' }}</span>
+                            <br>
+                            <b class="mt-1 d-block">Admin</b>
+                        </div>
+                        <div class="col text-center">
+                            <p>Diketahui Oleh,</p>
+                            <div class="py-4">{!! DNS2D::getBarcodeSVG($kode_approve1, 'QRCODE', 2, 2) !!}</div>
+                            <span class="border-bottom pb-1">{{ $lpj->approval1->name ?? '' }}</span>
+                            <br>
+                            <b class="mt-1 d-block">Admin Head</b>
+                        </div>
+                        <div class="col text-center">
+                            <p>Disetujui Oleh,</p>
+                            <div class="py-4">{!! DNS2D::getBarcodeSVG($kode_approve3, 'QRCODE', 2, 2) !!}</div>
+    
+                            <span class="border-bottom pb-1">{{ $lpj->approval3->name ?? '' }}</span>
+                            <br>
+                            <b class="mt-1 d-block">Pengurus</b>
+                        </div>
+                    </div>
+                    <div class="col-6 mt-4">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th scope="col" class="text-center">Di Setujui Oleh,</th>
+                                    <th scope="col" class="text-center">Di Setujui Oleh,</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="w-50 p-5 text-center">
+                            <div>{!! DNS2D::getBarcodeSVG("$kode_approve2", 'QRCODE', 2, 2) !!}</div>
+    
+                                        {{ $lpj->approval2->name ?? '' }}
+                                        <hr>
+                                        <strong>Akunting</strong>
+                                    </td>
+                                    <td class="w-50 p-5 text-center">
+                            <div>{!! DNS2D::getBarcodeSVG("$kode_approve4", 'QRCODE', 2, 2) !!}</div>
+    
+                                        {{ $lpj->approval4->name ?? '' }}
+                                        <hr>
+                                        <strong>Finance</strong>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    @endif
+
+                </div>
+                <!-- /.card-body -->
+            </div>
+        </div>
+
+    </div>
+@endsection
+
+@push('js')
+    <script>
+        function buat_lpj(pengajuan_detail_id) {
+            let modal = $('#modal_lpj').modal('show')
+            modal.find('#pengajuan_detail_id').val(pengajuan_detail_id)
+        }
+    </script>
+@endpush

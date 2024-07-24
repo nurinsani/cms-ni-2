@@ -1,0 +1,149 @@
+<?php
+
+namespace App\Http\Controllers\Finance;
+
+use Illuminate\Support\Str;
+use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+use App\Models\Admin\Pengajuan;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Controller;
+use App\Models\HistoryApprove;
+use App\Models\TransaksiKp;
+
+class ApprovalPeralatanController extends Controller
+{
+    public function index()
+    {
+        $data['title'] = 'Approval Peralatan';
+        $data['pengajuan'] = Pengajuan::where('status_approve', 'finance')->orWhere('status_approve', 'kp-finance')->get();
+        return view('finance.approval.pengajuan-peralatan.index', $data);
+    }
+
+    public function detail($id)
+    {
+        $title = 'Detail Pengajuan';
+        $pengajuan = Pengajuan::findOrFail($id);
+        return view('finance.approval.pengajuan-peralatan.detail', compact('pengajuan', 'title'));
+    }
+
+    public function detail_cetak($id)
+    {
+        $data['title'] = 'Cetak Detail Pengajuan';
+        $data['pengajuan'] = $pengajuan = Pengajuan::findOrFail($id);
+
+        if ($pengajuan->approval1) {
+            $history_approve = HistoryApprove::latest()->first();
+            if ($history_approve == null) {
+                $nomor_urut = '0001';
+            } else {
+                $nomor_urut = substr($history_approve->barcode, 24, 4) + 1;
+                $nomor_urut = str_pad($nomor_urut, 4, "0", STR_PAD_LEFT);
+            }
+            
+            $data['diajukan'] = $pengajuan->id.'/'.$pengajuan->updated_at->format('Y-m-d-Hid').'/'.$pengajuan->user->id.'/'.$nomor_urut;
+            $data['kode_approve1'] = $pengajuan->id.'/'.$pengajuan->updated_at->format('Y-m-d-Hid').'/'.$pengajuan->approval1->id.'/'.$nomor_urut;
+            $data['kode_approve2'] = $pengajuan->id.'/'.$pengajuan->updated_at->format('Y-m-d-Hid').'/'.$pengajuan->approval2->id.'/'.$nomor_urut;
+            $data['kode_approve3'] = $pengajuan->id.'/'.$pengajuan->updated_at->format('Y-m-d-Hid').'/'.$pengajuan->approval3->id.'/'.$nomor_urut;
+            $data['kode_approve4'] = $kode_approve4 = $pengajuan->id.'/'.$pengajuan->updated_at->format('Y-m-d-Hid').'/'.$pengajuan->approval4->id.'/'.$nomor_urut;
+        } else {
+            $history_approve = HistoryApprove::latest()->first();
+            if ($history_approve == null) {
+                $nomor_urut = '0001';
+            } else {
+                $nomor_urut = substr($history_approve->barcode, 24, 4) + 1;
+                $nomor_urut = str_pad($nomor_urut, 4, "0", STR_PAD_LEFT);
+            }
+
+            $data['diajukan'] = $pengajuan->id.'/'.$pengajuan->updated_at->format('Y-m-d-Hid').'/'.$pengajuan->user->id.'/'.$nomor_urut;
+            $data['kode_approve2'] = $pengajuan->id.'/'.$pengajuan->updated_at->format('Y-m-d-Hid').'/'.$pengajuan->approval2->id.'/'.$nomor_urut;
+            $data['kode_approve3'] = $pengajuan->id.'/'.$pengajuan->updated_at->format('Y-m-d-Hid').'/'.$pengajuan->approval3->id.'/'.$nomor_urut;
+            $data['kode_approve4'] = $kode_approve4 = $pengajuan->id.'/'.$pengajuan->updated_at->format('Y-m-d-Hid').'/'.$pengajuan->approval4->id.'/'.$nomor_urut;
+            $data['kode_approve6'] = $pengajuan->id.'/'.$pengajuan->updated_at->format('Y-m-d-Hid').'/'.$pengajuan->approval6->id.'/'.$nomor_urut;
+
+        }
+
+        HistoryApprove::updateOrCreate([
+            'pengajuan_id' => $pengajuan->id,
+            'user_id' => $pengajuan->user_id,
+            'barcode' => $kode_approve4,
+        ]);
+
+        $pengajuan->update([
+            'status_cetak' => 'sudah-cetak-fpd',
+        ]);
+
+        return view('finance.approval.pengajuan-peralatan.detail-cetak', $data);
+    }
+
+    public function approve(Request $request, $id)
+    {
+        try {
+            DB::beginTransaction();
+            $pengajuan = Pengajuan::findOrfail($id);
+            $pengajuan->status_approve = 'lpj-admin';
+            $pengajuan->approval_4 = auth()->user()->id;
+            $pengajuan->save();
+
+            foreach ($pengajuan->pengajuan_details as $item) {
+                
+            }
+            
+            $kode_transaksi = date('m').random_int(100000, 999999);
+            TransaksiKp::create([
+                'kode_branch' => 1010,
+                'kode_transaksi' => 'BU'.'/'.'1010'.'/'.$kode_transaksi,
+                'kode_rekening' => '1010-1929000',
+                'tanggal_transaksi' => Carbon::now(),
+                'jenis_transaksi' => 'Bukti SYSTEM',
+                'keterangan' => $item->keterangan ?? 'Pembelian',
+                'debet' => $pengajuan->subtotal(),
+                'kredit' => 0
+            ]);
+
+            TransaksiKp::create([
+                'kode_branch' => 1010,
+                'kode_transaksi' => 'BU'.'/'.'1010'.'/'.$kode_transaksi,
+                'kode_rekening' => '1010-1312000',
+                'tanggal_transaksi' => Carbon::now(),
+                'jenis_transaksi' => 'Bukti SYSTEM',
+                'keterangan' => $item->keterangan ?? 'Pembelian',
+                'debet' => 0,
+                'kredit' => $pengajuan->subtotal(),
+            ]);
+
+            DB::commit();
+            return redirect()->back()->with('success', 'Data berhasil Approve');
+        } catch (\Throwable $th) {
+            DB::rollback();
+            Log::error($th->getMessage());
+            return redirect()->back()->with('error', 'Data gagal diapprove');
+        }
+    }
+
+    public function tolak(Request $request, $id)
+    {
+        try {
+            DB::beginTransaction();
+            $pengajuan = Pengajuan::findOrfail($id);
+            $pengajuan->status_approve = 'pengurus';
+            $pengajuan->approval_4 = auth()->user()->id;
+            $pengajuan->save();
+            DB::commit();
+            return redirect()->back()->with('success', 'Data berhasil ditolak');
+        } catch (\Throwable $th) {
+            DB::rollback();
+            Log::error($th->getMessage());
+            return redirect()->back()->with('error', 'Data gagal ditolak');
+        }
+    }
+
+    public function approve_peralatan()
+    {   
+        // TODO belum hilang saat approve
+        $data['title'] = 'Cetak FPD';
+        $data['pengajuan'] = Pengajuan::where('status_approve', 'lpj-admin')->orWhere('status_approve', 'lpj-atasan-akunting')->get();
+        return view('finance.approval.pengajuan-peralatan.index', $data);
+    }
+}
