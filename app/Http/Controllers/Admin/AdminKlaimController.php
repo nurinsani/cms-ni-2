@@ -37,6 +37,19 @@ class AdminKlaimController extends Controller
         return view('admin.klaim-pembelian.klaim-peralatan', $data);
     }
 
+    public function klaim_inventaris()
+    {
+        $data['title'] = 'Pengajuan Peralatan';
+        $data['temp_pengajuan'] = TempPengajuanDetail::all();
+        $data['jenis_peralatan'] = JenisPeralatan::all();
+        $data['rekening'] = Rekening::all();
+        $data['param_peralatan'] = ParamPeralatan::whereHas('jenis_bdd', function($query) {
+            $query->where('group_inventaris', 'ya');
+        })->get();
+        $data['branch'] = Branch::where('code_area', auth()->user()->code_area)->get();
+        return view('admin.klaim-pembelian.klaim-inventaris', $data);
+    }
+
     public function klaim_store(Request $request)
     {
         
@@ -88,6 +101,7 @@ class AdminKlaimController extends Controller
             $pengajuan_detail->harga_pembelian = $item->harga;
             $pengajuan_detail->tanggal_perolehan = $item->tanggal_pembelian;
             $pengajuan_detail->struk_pembelian = $item->struk_pembelian;
+            $pengajuan_detail->moa = $item->moa;
             $pengajuan_detail->save();
         }
         

@@ -54,7 +54,7 @@
         </div>
         <!-- /.card-header -->
         <div class="card-body">
-            <a href="{{ url('it/klaim') }}" class="btn btn-sm btn-primary mb-3 d-print-none">
+            <a href="{{ url('admin/klaim-pembelian') }}" class="btn btn-sm btn-primary mb-3 d-print-none">
                 <i class="fas fa-arrow-left"></i> Kembali
             </a>
             <ul class="p-0" style="list-style: none">
@@ -76,6 +76,8 @@
                             <th scope="col">Jumlah</th>
                             <th scope="col">Total</th>
                             <th scope="col">Bukti Pembelian</th>
+                            <th>MOA</th>
+                            <th>Keterangan</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -125,6 +127,18 @@
                             </td>
                             <td>
                                 <a href="" onclick="window.open('{{ url('files/struk_pembelian/'.$item->struk_pembelian) }}')">{{ $item->struk_pembelian }}</a>
+                            </td>
+                            <td>
+                                <a href="" onclick="window.open('{{ url('files/moa/'.$item->moa) }}')">{{ $item->moa }}</a>
+                            </td>
+                            <td>
+                                @if ($item->rekening_id == NULL)
+                                Transfer ke <br>{{ $item->pengajuan->user->nama_bank }} {{ $item->pengajuan->user->no_rek }}
+                                A/N {{ $item->pengajuan->user->atas_nama }}
+                                @else
+                                Transfer ke <br><strong>{{ $item->rekening->no_rek }} {{ $item->rekening->nama_bank }}
+                                A/N {{ $item->rekening->atas_nama }}</strong>
+                                @endif
                             </td>
                         </tr>
                     </tbody>

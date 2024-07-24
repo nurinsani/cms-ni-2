@@ -18,73 +18,36 @@ class TempPengajuanDetailController extends Controller
     
     public function store(Request $request)
     {
+        
         // dd($request->all());
         $temp_pengajuan_detail = New TempPengajuanDetail;
-        if ($request->has('moa')) {
-            $temp_pengajuan_detail->jenis_peralatan_id = $request->jenis_peralatan_id;
-            $temp_pengajuan_detail->rekening_id = $request->rekening_id;
-            $temp_pengajuan_detail->kode_branch = $request->kode_branch;
-            $temp_pengajuan_detail->kode_area = $request->kode_area;
-            $temp_pengajuan_detail->kode_user = $request->kode_user;
-            $temp_pengajuan_detail->merk = $request->merk;
-            $temp_pengajuan_detail->type = $request->type;
-            $temp_pengajuan_detail->kuantitas = $request->kuantitas;
-            $temp_pengajuan_detail->harga = $request->harga;
-            $temp_pengajuan_detail->nama_toko = $request->nama_toko;
-            $temp_pengajuan_detail->no_telp = $request->no_telp;
-            $temp_pengajuan_detail->pengguna = $request->pengguna;
-            $temp_pengajuan_detail->moa = $request->moa;
-            $temp_pengajuan_detail->tanggal_pembelian = $request->tanggal_pembelian;
-            $temp_pengajuan_detail->struk_pembelian = $request->struk_pembelian;
-            $temp_pengajuan_detail->keterangan = $request->keterangan;
-            $temp_pengajuan_detail->status_lpj = 'belum';
-    
-            $file = $request->moa;
-            $namafile = time().'.'.$file->getClientOriginalExtension();
-            $file->move('files/moa', $namafile);
-            $temp_pengajuan_detail->moa = $namafile;
-        } elseif($request->has('struk_pembelian')) {
-            $temp_pengajuan_detail->jenis_peralatan_id = $request->jenis_peralatan_id;
-            $temp_pengajuan_detail->rekening_id = $request->rekening_id;
-            $temp_pengajuan_detail->kode_branch = $request->kode_branch;
-            $temp_pengajuan_detail->kode_area = $request->kode_area;
-            $temp_pengajuan_detail->kode_user = $request->kode_user;
-            $temp_pengajuan_detail->merk = $request->merk;
-            $temp_pengajuan_detail->type = $request->type;
-            $temp_pengajuan_detail->kuantitas = $request->kuantitas;
-            $temp_pengajuan_detail->harga = $request->harga;
-            $temp_pengajuan_detail->nama_toko = $request->nama_toko;
-            $temp_pengajuan_detail->no_telp = $request->no_telp;
-            $temp_pengajuan_detail->pengguna = $request->pengguna;
-            $temp_pengajuan_detail->moa = $request->moa;
-            $temp_pengajuan_detail->tanggal_pembelian = $request->tanggal_pembelian;
-            $temp_pengajuan_detail->struk_pembelian = $request->struk_pembelian;
-            $temp_pengajuan_detail->keterangan = $request->keterangan;
-            $temp_pengajuan_detail->status_lpj = 'belum';
+        $temp_pengajuan_detail->jenis_peralatan_id = $request->jenis_peralatan_id;
+        $temp_pengajuan_detail->rekening_id = $request->rekening_id;
+        $temp_pengajuan_detail->kode_branch = $request->kode_branch;
+        $temp_pengajuan_detail->kode_area = $request->kode_area;
+        $temp_pengajuan_detail->kode_user = $request->kode_user;
+        $temp_pengajuan_detail->merk = $request->merk;
+        $temp_pengajuan_detail->type = $request->type;
+        $temp_pengajuan_detail->kuantitas = $request->kuantitas;
+        $temp_pengajuan_detail->harga = $request->harga;
+        $temp_pengajuan_detail->nama_toko = $request->nama_toko;
+        $temp_pengajuan_detail->no_telp = $request->no_telp;
+        $temp_pengajuan_detail->pengguna = $request->pengguna;
+        $temp_pengajuan_detail->moa = $request->moa;
+        $temp_pengajuan_detail->tanggal_pembelian = $request->tanggal_pembelian;
+        $temp_pengajuan_detail->struk_pembelian = $request->struk_pembelian;
+        $temp_pengajuan_detail->keterangan = $request->keterangan;
+        $temp_pengajuan_detail->status_lpj = 'belum';
 
-            $file = $request->struk_pembelian;
-            $namafile = time().'.'.$file->getClientOriginalExtension();
-            $file->move('files/struk_pembelian', $namafile);
-            $temp_pengajuan_detail->struk_pembelian = $namafile;
-        } else {
-            $temp_pengajuan_detail->jenis_peralatan_id = $request->jenis_peralatan_id;
-            $temp_pengajuan_detail->rekening_id = $request->rekening_id;
-            $temp_pengajuan_detail->kode_branch = $request->kode_branch;
-            $temp_pengajuan_detail->kode_area = $request->kode_area;
-            $temp_pengajuan_detail->kode_user = $request->kode_user;
-            $temp_pengajuan_detail->merk = $request->merk;
-            $temp_pengajuan_detail->type = $request->type;
-            $temp_pengajuan_detail->kuantitas = $request->kuantitas;
-            $temp_pengajuan_detail->harga = $request->harga;
-            $temp_pengajuan_detail->nama_toko = $request->nama_toko;
-            $temp_pengajuan_detail->no_telp = $request->no_telp;
-            $temp_pengajuan_detail->pengguna = $request->pengguna;
-            $temp_pengajuan_detail->moa = $request->moa;
-            $temp_pengajuan_detail->tanggal_pembelian = $request->tanggal_pembelian;
-            $temp_pengajuan_detail->struk_pembelian = $request->struk_pembelian;
-            $temp_pengajuan_detail->keterangan = $request->keterangan;
-            $temp_pengajuan_detail->status_lpj = 'belum';
-        }
+        $file = $request->moa;
+        $namafile = time().'.'.$file->getClientOriginalExtension();
+        $file->move('files/moa', $namafile);
+        $temp_pengajuan_detail->moa = $namafile;
+
+        $file = $request->struk_pembelian;
+        $namafile = time().'.'.$file->getClientOriginalExtension();
+        $file->move('files/struk_pembelian', $namafile);
+        $temp_pengajuan_detail->struk_pembelian = $namafile;
 
         $temp_pengajuan_detail->save();
         return redirect()->back()->with('success', 'Data berhasil dibuat');
