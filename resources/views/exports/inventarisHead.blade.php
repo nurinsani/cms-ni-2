@@ -49,14 +49,14 @@
                 </td>
                 <td>{{ $item->tanggal_perolehan }}</td>
                 <td>{{ $item->jumlah }}</td>
-                <td>Rp. {{ number_format($item->harga_perolehan) }}</td>
+                <td>{{ $item->harga_perolehan }}</td>
                 <td>48</td>
-                <td>Rp. {{ number_format($item->harga_perolehan / 48) }}</td>
-                <td>Rp. {{ number_format($item->akumulasi_penyusutan_awal()) }}</td>
-                <td>Rp. {{ number_format($item->akumulasi_penyusutan()) }}</td>
-                <td>Rp. {{ number_format(($item->harga_perolehan / 48) * $item->susut->count()) }}</td>
-                <td>Rp. {{ number_format($sumBuku) }} </td>
-                <td>{{ count($item->susut) }}</td>
+                <td>{{ $item->harga_perolehan / 48 }}</td>
+                <td>{{ $item->akumulasi_penyusutan_awal() }}</td>
+                <td>{{ $item->akumulasi_penyusutan() }}</td>
+                <td>{{ ($item->harga_perolehan / 48) * $item->susut->count() }}</td>
+                <td>{{ $sumBuku }} </td>
+                <td>{{ count($item->susut) + ($item->penyusutan_ke ?? 0) }}</td>
                 <td>
                     @if ($item->pengguna == null)
                         -
@@ -68,14 +68,17 @@
         @endforeach
         <tr>
             <td colspan="8" class="text-center"><strong>TOTAL</strong></td>
-            <td>Rp. {{ number_format($harga_perolehan) }}</td>
+            <td>{{ $harga_perolehan }}</td>
             <td></td>
-            <td>Rp. {{ number_format($peny) }}</td>
-            <td>Rp. {{ number_format($peny_awal) }}</td>
-            <td>Rp. {{ number_format($peny_jalan) }}</td>
-            <td>Rp. {{ number_format($penyusutan) }}</td>
-            <td>Rp. {{ number_format($total_nilai_buku) }}</td>
+            <td>{{ $peny }}</td>
+            <td>{{ $peny_awal }}</td>
+            <td>{{ $peny_jalan }}</td>
+            <td>{{ $penyusutan }}</td>
+            <td>{{ $total_nilai_buku }}</td>
             <td colspan="2"></td>
-        </tr>
+        </tr> // TODO hapus number format
     </tbody>
+    
 </table>
+
+

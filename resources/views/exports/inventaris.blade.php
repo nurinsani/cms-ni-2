@@ -37,54 +37,33 @@
                 </td>
                 <td>{{ $item->tanggal_perolehan }}</td>
                 <td>{{ $item->jumlah }}</td>
-                <td>Rp. {{ number_format($item->harga_perolehan) }}</td>
+                <td>{{ $item->harga_perolehan }}</td>
                 <td>48</td>
-                <td>Rp. {{ number_format($item->harga_perolehan / 48) }}</td>
-                <td>Rp.
-                    {{ number_format($item->akumulasi_penyusutan_awal() + $item->total_penyusutan_awal) }}
+                <td>{{ $item->harga_perolehan / 48 }}</td>
+                <td>{{ $item->akumulasi_penyusutan_awal() + $item->total_penyusutan_awal }}</td>
+                <td>{{ $item->total_penyusutan_berjalan + $item->akumulasi_penyusutan() }}</td>
+                <td>{{ ($item->harga_perolehan / 48) * $item->susut->count() + $item->akumulasi_penyusutan }}</td> 
+                <td>
+                    {{ ($item->nilai_buku_terakhir ?? 0) - $item->akumulasi_penyusutan() }}
                 </td>
-                <td>Rp.
-                    {{ number_format($item->total_penyusutan_berjalan + $item->akumulasi_penyusutan()) }}
-                </td>
-
-                {{-- akumulasi penyusutan --}}
-                <td>Rp.
-                    {{ number_format(($item->harga_perolehan / 48) * $item->susut->count() + $item->akumulasi_penyusutan) }}
-                </td>
-                {{-- end akumulasi penyusutan --}}
-
-                {{-- nilai buku terakhir --}}
-                <td>Rp.
-                    @if ($item->nilai_buku_terakhir == 0)
-                        {{ number_format($item->harga_perolehan - $item->akumulasi_penyusutan()) }}
-                    @else
-                        {{ number_format($item->nilai_buku_terakhir - $item->akumulasi_penyusutan()) }}
-                    @endif
-                </td>
-                {{-- end nilai buku terakhir --}}
-
                 <td>
                     {{ count($item->susut) + ($item->penyusutan_ke ?? 0) }}
                 </td>
                 <td>
-                    @if ($item->pengguna == null)
-                        -
-                    @else
-                        {{ $item->pengguna }}
-                    @endif
+                    {{ $item->pengguna ?? 0 }}
                 </td>
             </tr>
         @endforeach
         <tr>
             <td colspan="8" class="text-center"><strong>TOTAL</strong></td>
-            <td>Rp. {{ number_format($harga_perolehan) }}</td>
+            <td>{{ $harga_perolehan }}</td>
             <td></td>
-            <td>Rp. {{ number_format($peny) }}</td>
-            <td>Rp. {{ number_format($peny_awal) }}</td>
-            <td>Rp. {{ number_format($peny_jalan) }}</td>
-            <td>Rp. {{ number_format($penyusutan) }}</td>
-            <td>Rp. {{ number_format($total_nilai_buku) }}</td>
-            <td colspan="2"></td>
+            <td>{{ $peny }}</td>
+            <td>{{ $peny_awal }}</td>
+            <td>{{ $peny_jalan }}</td>
+            <td>{{ $penyusutan }}</td>
+            <td>{{ $total_nilai_buku }}</td>
+            <td colspan="1"></td>
         </tr>
     </tbody>
 </table>

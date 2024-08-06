@@ -85,72 +85,40 @@
                                 <td>{{ $item->merk }}</td>
                                 <td>{{ $item->type }}</td>
                                 <td>
-                                    @if ($item->keterangan == null)
-                                        -
-                                    @else
-                                        {{ $item->keterangan }}
-                                    @endif
+                                    {{ $item->keterangan ?? 0 }}
                                 </td>
                                 <td>{{ $item->tanggal_perolehan }}</td>
                                 <td>{{ $item->jumlah }}</td>
                                 <td>Rp. {{ number_format($item->harga_perolehan) }}</td>
                                 <td>48</td>
                                 <td>Rp. {{ number_format($item->harga_perolehan / 48) }}</td>
-                                <td>Rp.
-                                    {{ number_format($item->akumulasi_penyusutan_awal() + $item->total_penyusutan_awal) }}
-                                </td>
-                                <td>Rp.
-                                    {{ number_format($item->total_penyusutan_berjalan + $item->akumulasi_penyusutan()) }}
-                                </td>
-
-                                {{-- akumulasi penyusutan --}}
-                                <td>Rp.
-                                    {{ number_format(($item->harga_perolehan / 48) * $item->susut->count() + $item->akumulasi_penyusutan) }}
-                                </td>
-                                {{-- end akumulasi penyusutan --}}
-
-                                {{-- nilai buku terakhir --}}
-                                <td>Rp.
-                                    @if ($item->nilai_buku_terakhir == 0)
-                                        {{ number_format($item->harga_perolehan - $item->akumulasi_penyusutan()) }}
+                                <td>Rp. {{ number_format($item->akumulasi_penyusutan_awal() + $item->total_penyusutan_awal) }}</td>
+                                <td>Rp. {{ number_format($item->total_penyusutan_berjalan + $item->akumulasi_penyusutan()) }}</td>
+                                <td>
+                                    @if ($item->penyusutan_ke == 48)
+                                    Rp. {{ number_format($item->akumulasi_penyusutan() + ($item->akumulasi_penyusutan + $item->harga_perolehan))}}</td>
                                     @else
-                                        {{ number_format($item->nilai_buku_terakhir - $item->akumulasi_penyusutan()) }}
+                                    Rp. {{ number_format($item->akumulasi_penyusutan() + $item->akumulasi_penyusutan)}}</td>
+                                    @endif
+                                <td>Rp. {{ number_format($item->nilai_buku_terakhir - $item->akumulasi_penyusutan()) }}</td>
+                                <td>{{ count($item->susut) + $item->penyusutan_ke }}</td>
+                                <td>{{ $item->pengguna ?? 0 }}</td>
+                                <td class="hidden-column">{{ $item->kode_branch }}</td>
+                                <td class="hidden-column">{{ intval($item->harga_perolehan) }}</td>
+                                <td class="hidden-column">{{ intval($item->harga_perolehan / 48) }}</td>
+                                <td class="hidden-column">
+                                    {{ intval($item->akumulasi_penyusutan_awal() + $item->total_penyusutan_awal) }}</td>
+                                <td class="hidden-column">
+                                    {{ intval($item->total_penyusutan_berjalan + $item->akumulasi_penyusutan()) }}</td>
+                                <td class="hidden-column">
+                                    @if ($item->penyusutan_ke == 48)
+                                    {{ intval($item->akumulasi_penyusutan() + ($item->akumulasi_penyusutan + $item->harga_perolehan))}}</td>
+                                    @else
+                                    {{ intval($item->akumulasi_penyusutan() + $item->akumulasi_penyusutan)}}</td>
                                     @endif
                                 </td>
-                                {{-- end nilai buku terakhir --}}
-
-                                <td>
-                                    @if ($item->penyusutan_ke == null)
-                                        {{ count($item->susut) + $item->penyusutan_ke }}
-                                </td>
-                            @else
-                                {{ count($item->susut) + $item->penyusutan_ke }}
-                        @endif
-                        <td>
-                            @if ($item->pengguna == null)
-                                -
-                            @else
-                                {{ $item->pengguna }}
-                            @endif
-                        </td>
-                        <td class="hidden-column">{{ $item->kode_branch }}</td>
-                        <td class="hidden-column">{{ intval($item->harga_perolehan) }}</td>
-                        <td class="hidden-column">{{ intval($item->harga_perolehan / 48) }}</td>
-                        <td class="hidden-column">
-                            {{ intval($item->akumulasi_penyusutan_awal() + $item->total_penyusutan_awal) }}</td>
-                        <td class="hidden-column">
-                            {{ intval($item->total_penyusutan_berjalan + $item->akumulasi_penyusutan()) }}</td>
-                        <td class="hidden-column">
-                            {{ intval(($item->harga_perolehan / 48) * $item->susut->count() + $item->akumulasi_penyusutan) }}
-                        </td>
-                        <td class="hidden-column">
-                            @if ($item->nilai_buku_terakhir == 0)
-                                {{ intval($item->harga_perolehan - $item->akumulasi_penyusutan()) }}
-                            @else
-                                {{ intval($item->nilai_buku_terakhir - $item->akumulasi_penyusutan()) }}
-                            @endif
-                        </td>
-                        </tr>
+                                <td class="hidden-column">{{ intval($item->nilai_buku_terakhir - $item->akumulasi_penyusutan()) }}</td>
+                                </tr>
                         @endforeach
                     </tbody>
                     <tfoot>
@@ -169,49 +137,6 @@
         </div>
         <!-- /.card-body -->
     </div>
-
-    {{-- <div class="card">
-        <!-- /.card-header -->
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-bordered table-hover text-nowrap myTable">
-                    <thead>
-                        <tr>
-                            @php
-                                $th = [
-                                    'Januari',
-                                    'Februari',
-                                    'Maret',
-                                    'April',
-                                    'Mei',
-                                    'Juni',
-                                    'Juli',
-                                    'Agustus',
-                                    'September',
-                                    'Oktober',
-                                    'November',
-                                    'Desember',
-                                ];
-                            @endphp
-                            @foreach ($th as $item)
-                                <th>{{ $item . ' ' . date('Y') }}</th>
-                            @endforeach
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            @foreach ($penyusutan as $bulan => $items)
-                                @foreach ($items as $item)
-                                    <td>{{ $item->penyusutan_per_bulan }}</td>
-                                @endforeach
-                            @endforeach
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        <!-- /.card-body -->
-    </div> --}}
 @endsection
 @push('js')
     <script>

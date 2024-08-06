@@ -113,8 +113,8 @@
                                     @endif
                                 </td>
                                 <td>{{ $item->area }}</td>
-                                <td class="hidden-column">{{ intval($item->harga_perolehan) }}</td>
-                                <td class="hidden-column">{{ intval($item->harga_perolehan / 48) }}</td>
+                                <td class="hidden-column">{{ ($item->harga_perolehan) }}</td>
+                                <td class="hidden-column">{{ ($item->harga_perolehan / 48) }}</td>
                                 <td class="hidden-column">
                                     {{ $item->akumulasi_penyusutan_awal() }}</td>
                                 <td class="hidden-column">

@@ -18,8 +18,8 @@
                 <td>{{ $item->kode_transaksi }}</td>
                 <td>{{ $item->kode_rekening }}</td>
                 <td>{{ $item->jenis_transaksi }}</td>
-                <td>Rp. {{ number_format($item->debet) }}</td>
-                <td>Rp. {{ number_format($item->kredit) }}</td>
+                <td>{{ $item->debet }}</td>
+                <td>{{ $item->kredit }}</td>
             </tr>
         @endforeach
     </tbody>

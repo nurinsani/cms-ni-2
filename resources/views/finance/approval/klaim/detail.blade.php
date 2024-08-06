@@ -44,7 +44,7 @@
             <li>Nomor : {{ $pengajuan->nomor }}</li>
             <li>Kepada : Ketua dan Pengurus KSPPS Nur Insani</li>
             <li>Dari : {{ $pengajuan->user->name }}</li>
-            <li>Tanggal : {{ $pengajuan->tanggal_pengajuan->format('d-M-Y') }}</li>
+            <li>Tanggal : {{ $pengajuan->tanggal_pengajuan }}</li>
         </ul>
 
         <div class="table-responsive">
@@ -62,7 +62,7 @@
                         <th scope="col">MOA</th>
                         @endif
                         @endforeach
-                        <th scope="col">Keterangan</th>
+                        <th scope="col">Bukti Pembelian</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -122,13 +122,7 @@
                         </td>
                         @endif
                         <td>
-                            @if ($item->rekening_id == NULL)
-                            Transfer ke <br>{{ $item->pengajuan->user->nama_bank }} {{ $item->pengajuan->user->no_rek }}
-                            A/N {{ $item->pengajuan->user->atas_nama }}
-                            @else
-                            Transfer ke <br><strong>{{ $item->rekening->no_rek }} {{ $item->rekening->nama_bank }}
-                            A/N {{ $item->rekening->atas_nama }}</strong>
-                            @endif
+                            <a href="" onclick="window.open('{{ url('files/struk_pembelian/'.$item->struk_pembelian) }}')">{{ $item->struk_pembelian }}</a>
                         </td>
                     </tr>
                 </tbody>
