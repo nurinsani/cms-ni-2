@@ -36,6 +36,7 @@ use App\Http\Controllers\Akunting\klaimController as AkuntingKlaimController;
 use App\Http\Controllers\AtasanIt\AtasanItController;
 use App\Http\Controllers\AtasanIt\AtasanItKlaimController;
 use App\Http\Controllers\IndexController;
+use App\Http\Controllers\InventarisController;
 use App\Http\Controllers\It\ItKlaimController;
 use App\Http\Controllers\It\ItLpjController;
 use App\Http\Controllers\It\PengajuanItController;
@@ -350,6 +351,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/get/area-by-branch/{id}', [MiscController::class, 'areaByBranch']);
     Route::post('/get-branches', [DataUserController::class, 'getBranches']);
 });
+
+Route::get('inventaris', [InventarisController::class, 'index']);
+Route::get('/fetch-data', [InventarisController::class, 'fetchData'])->name('inventaris.fetchData');
+Route::get('/inventaris/data', [InventarisController::class, 'getData'])->name('inventaris.data');
 
 Route::get('jenis-peralatan-dropdown/{id}', [JenisPeralatanController::class, 'dropdown'])->name('jenis-peralatan-dropdown');
 

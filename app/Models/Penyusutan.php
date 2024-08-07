@@ -16,4 +16,9 @@ class Penyusutan extends Model
     {
         return $this->belongsTo(Branch::class, 'kode_branch', 'kode_branch');
     }
+
+    public function inventaris()
+    {
+        return $this->belongsTo(Inventaris::class, 'inventaris_id');
+    }
 }

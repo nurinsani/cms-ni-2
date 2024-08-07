@@ -23,6 +23,11 @@ class Inventaris extends Model
         return $this->belongsTo(Pengajuan::class, 'pengajuan_id');
     }
 
+    public function penyusutans()
+    {
+        return $this->hasMany(Penyusutan::class, 'inventaris_id');
+    }
+
     public function susut()
     {
         return $this->hasMany(Penyusutan::class);
