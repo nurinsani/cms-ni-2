@@ -6,14 +6,6 @@
         </p>
     </a>
 </li>
-<li class="nav-item">
-    <a href="{{ url('/update-password') }}" class="nav-link {{ request()->is('/update-password') ? 'active' : '' }}">
-        <i class="fas fa-fingerprint"></i>
-        <p>
-            Ganti Password
-        </p>
-    </a>
-</li>
 
 {{-- menu pengajuan --}}
 <li class="nav-item">
@@ -258,6 +250,15 @@
         <i class="nav-icon fas fa-tachometer-alt"></i>
         <p>
             Data Exsisting
+        </p>
+    </a>
+</li>
+
+<li class="nav-item">
+    <a href="{{ url('/update-password') }}" class="nav-link {{ request()->is('/update-password') ? 'active' : '' }}">
+        <i class="nav-icon fas fa-fingerprint"></i>
+        <p>
+            Ganti Password
         </p>
     </a>
 </li>

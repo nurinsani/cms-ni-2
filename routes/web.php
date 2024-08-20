@@ -52,6 +52,11 @@ Route::get('/', function () {
     return view('auth.login');
 });
 
+Route::get('/releases', function () {
+    $title = 'releases';
+ return view('releases', compact('title'));
+});
+
 Route::get('/dashboard', [IndexController::class, 'redirect_role'])->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware(['auth', 'verified'])->group(function () {
@@ -350,11 +355,11 @@ Route::middleware('auth')->group(function () {
     Route::post('/export-excel/jurnal-kp', [MiscController::class, 'jurnalKPExcel']);
     Route::get('/get/area-by-branch/{id}', [MiscController::class, 'areaByBranch']);
     Route::post('/get-branches', [DataUserController::class, 'getBranches']);
+    Route::get('/inventaris', [InventarisController::class, 'index'])->name('inventaris.index');
+    Route::get('/fetch-data', [InventarisController::class, 'fetchData'])->name('inventaris.fetchData');
+    Route::get('/inventaris/data', [InventarisController::class, 'getData'])->name('inventaris.data');
 });
 
-Route::get('inventaris', [InventarisController::class, 'index']);
-Route::get('/fetch-data', [InventarisController::class, 'fetchData'])->name('inventaris.fetchData');
-Route::get('/inventaris/data', [InventarisController::class, 'getData'])->name('inventaris.data');
 
 Route::get('jenis-peralatan-dropdown/{id}', [JenisPeralatanController::class, 'dropdown'])->name('jenis-peralatan-dropdown');
 

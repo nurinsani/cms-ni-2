@@ -12,6 +12,7 @@ use App\Models\Admin\PengajuanDetail;
 use App\Models\Akunting\Transaksi;
 use App\Models\Branch;
 use App\Models\Inventaris;
+use App\Models\RencanaPenyusutan;
 use Carbon\Carbon;
 
 class ApprovalLpjController extends Controller
@@ -38,37 +39,71 @@ class ApprovalLpjController extends Controller
             $pengajuan->status_approve = 'lpj-pengurus';
 
             foreach ($pengajuan->pengajuan_details as $item) {
-                if ($item->jenis_peralatan->group_inventaris == 'ya') {
-                    if ($item->kode_branch == NULL) {
-                        Inventaris::create([
-                            'user_id' => auth()->user()->id,
-                            'kode_branch' => $item->kode_area,
-                            'status_branch' => 'AP',
-                            'kode_peralatan' => 'INV-NI-'.$pengajuan->nomor,
-                            'jenis' => $item->jenis_peralatan->nama_jenis,
-                            'merk' => $item->merk,
-                            'type' => $item->type,
-                            'tanggal_perolehan' => $item->tanggal_perolehan,
-                            'jumlah' => $item->kuantitas,
-                            'harga_perolehan' => $item->harga_pembelian,
-                            'umur' => 48,
-                            'keterangan' => $pengajuan->keterangan
-                        ]);
+                if ($item->harga_pembelian > 500000) {
+                    if ($item->tanggal_perolehan >= 16) {
+                        if ($item->kode_branch == NULL) {
+                            RencanaPenyusutan::create([
+                                'user_id' => auth()->user()->id,
+                                'kode_branch' => $item->kode_area,
+                                'status_branch' => 'AP',
+                                'kode_peralatan' => 'INV-NI-'.$pengajuan->nomor,
+                                'jenis' => $item->jenis_peralatan->nama_jenis,
+                                'merk' => $item->merk,
+                                'type' => $item->type,
+                                'tanggal_perolehan' => $item->tanggal_perolehan,
+                                'jumlah' => $item->kuantitas,
+                                'harga_perolehan' => $item->harga_pembelian,
+                                'umur' => 48,
+                                'keterangan' => $pengajuan->keterangan
+                            ]);
+                        } else {
+                            RencanaPenyusutan::create([
+                                'user_id' => auth()->user()->id,
+                                'kode_branch' => $item->kode_branch,
+                                'status_branch' => 'AP',
+                                'kode_peralatan' => 'INV-NI-'.$pengajuan->nomor,
+                                'jenis' => $item->jenis_peralatan->nama_jenis,
+                                'merk' => $item->merk,
+                                'type' => $item->type,
+                                'tanggal_perolehan' => $item->tanggal_perolehan,
+                                'jumlah' => $item->kuantitas,
+                                'harga_perolehan' => $item->harga_pembelian,
+                                'umur' => 48,
+                                'keterangan' => $pengajuan->keterangan
+                            ]);
+                        }
                     } else {
-                        Inventaris::create([
-                            'user_id' => auth()->user()->id,
-                            'kode_branch' => $item->kode_branch,
-                            'status_branch' => 'AP',
-                            'kode_peralatan' => 'INV-NI-'.$pengajuan->nomor,
-                            'jenis' => $item->jenis_peralatan->nama_jenis,
-                            'merk' => $item->merk,
-                            'type' => $item->type,
-                            'tanggal_perolehan' => $item->tanggal_perolehan,
-                            'jumlah' => $item->kuantitas,
-                            'harga_perolehan' => $item->harga_pembelian,
-                            'umur' => 48,
-                            'keterangan' => $pengajuan->keterangan
-                        ]);
+                        if ($item->kode_branch == NULL) {
+                            Inventaris::create([
+                                'user_id' => auth()->user()->id,
+                                'kode_branch' => $item->kode_area,
+                                'status_branch' => 'AP',
+                                'kode_peralatan' => 'INV-NI-'.$pengajuan->nomor,
+                                'jenis' => $item->jenis_peralatan->nama_jenis,
+                                'merk' => $item->merk,
+                                'type' => $item->type,
+                                'tanggal_perolehan' => $item->tanggal_perolehan,
+                                'jumlah' => $item->kuantitas,
+                                'harga_perolehan' => $item->harga_pembelian,
+                                'umur' => 48,
+                                'keterangan' => $pengajuan->keterangan
+                            ]);
+                        } else {
+                            Inventaris::create([
+                                'user_id' => auth()->user()->id,
+                                'kode_branch' => $item->kode_branch,
+                                'status_branch' => 'AP',
+                                'kode_peralatan' => 'INV-NI-'.$pengajuan->nomor,
+                                'jenis' => $item->jenis_peralatan->nama_jenis,
+                                'merk' => $item->merk,
+                                'type' => $item->type,
+                                'tanggal_perolehan' => $item->tanggal_perolehan,
+                                'jumlah' => $item->kuantitas,
+                                'harga_perolehan' => $item->harga_pembelian,
+                                'umur' => 48,
+                                'keterangan' => $pengajuan->keterangan
+                            ]);
+                        }
                     }
                 } else {
                     if ($item->kode_branch == NULL) {

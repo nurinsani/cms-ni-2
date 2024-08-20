@@ -1,0 +1,310 @@
+<script>
+    $(document).ready(function() {
+        // function formatRupiah(number) {
+        //     return parseFloat(number).toLocaleString('id-ID', {
+        //         style: 'currency',
+        //         currency: 'IDR',
+        //         minimumFractionDigits: 0,
+        //         maximumFractionDigits: 0
+        //     });
+        // }
+
+        function formatRupiah(number) {
+            return parseFloat(number).toLocaleString('id-ID', {
+                useGrouping: true,
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            });
+        }
+
+
+        function fetchData() {
+            $.ajax({
+                url: '{{ route('inventaris.fetchData') }}',
+                method: 'GET',
+                data: {
+                    region: $('#region').val(),
+                    area: $('#area').val(),
+                    kode_branch: $('#kode_branch').val(),
+                },
+                success: function(response) {
+                    var table = $('#inventaris-table').DataTable();
+
+                    if (response.areas.length > 0) {
+                        $('#area').append(`
+                            <option value="">-- Semua Area --</option>
+                        `);
+
+                        $.each(response.areas, function(i, area) {
+                            $('#area').append(`
+                                <option value="${area}">${area}</option>
+                            `);
+                        });
+                    } else if (response.branches.length > 0) {
+                        $('#kode_branch').append(`
+                            <option value="">-- Semua Cabang --</option>
+                        `);
+
+                        $.each(response.branches, function(i, branches) {
+                            $('#kode_branch').append(`
+                                <option value="${branches}">${branches}</option>
+                            `);
+                        });
+                    }
+
+                    table.clear().draw(); // Clear existing data
+
+                    var totalJumlah = 0;
+                    var totalHarga = 0;
+                    var totalUmur = 0;
+                    var totalPenyusutanPerbulan = 0;
+                    var totalPenyusutanAwal = 0;
+                    var totalJanuari = 0;
+                    var totalFebruari = 0;
+                    var totalMaret = 0;
+                    var totalApril = 0;
+                    var totalMei = 0;
+                    var totalJuni = 0;
+                    var totalJuli = 0;
+                    var totalAgustus = 0;
+                    var totalSeptember = 0;
+                    var totalOktober = 0;
+                    var totalNovember = 0;
+                    var totalDesember = 0;
+                    var totalPenyusutanBerjalan = 0;
+                    var totalAkumulasiPenyusutan = 0;
+                    var totalNilaiBukuTerakhir = 0;
+                    var totalPenyusutanKe = 0;
+                    var totalPengguna = 0;
+
+                    // Populate table rows
+                    response.pivotData.forEach(function(row) {
+                        var rowHarga = parseFloat(row.harga_perolehan || 0);
+                        var rowPenyusutanPerbulan = parseFloat(row.penyusutan_perbulan ||
+                            0);
+                        var rowPenyusutanAwal = parseFloat(row.total_penyusutan_awal || 0);
+                        var rowJanuari = parseFloat(row['2024-01'] || 0);
+                        var rowFebruari = parseFloat(row['2024-02'] || 0);
+                        var rowMaret = parseFloat(row['2024-03'] || 0);
+                        var rowApril = parseFloat(row['2024-04'] || 0);
+                        var rowMei = parseFloat(row['2024-05'] || 0);
+                        var rowJuni = parseFloat(row['2024-06'] || 0);
+                        var rowJuli = parseFloat(row['2024-07'] || 0);
+                        var rowAgustus = parseFloat(row['2024-08'] || 0);
+                        var rowSeptember = parseFloat(row['2024-09'] || 0);
+                        var rowOktober = parseFloat(row['2024-10'] || 0);
+                        var rowNovember = parseFloat(row['2024-11'] || 0);
+                        var rowDesember = parseFloat(row['2024-12'] || 0);
+                        var rowPenyusutanBerjalan = parseFloat(row
+                            .total_penyusutan_berjalan || 0);
+                        var rowAkumulasiPenyusutan = parseFloat(row.akumulasi_penyusutan ||
+                            0);
+                        var rowNilaiBukuTerakhir = parseFloat(row.nilai_buku_terakhir || 0);
+                        var rowPenyusutanKe = parseFloat(row.penyusutan_ke || 0);
+                        var rowPengguna = parseFloat(row.pengguna || 0);
+
+                        if (isNaN(rowPengguna)) rowPengguna = 0;
+
+                        totalHarga += rowHarga;
+                        totalPenyusutanPerbulan += rowPenyusutanPerbulan;
+                        totalPenyusutanAwal += rowPenyusutanAwal;
+                        totalJanuari += rowJanuari;
+                        totalFebruari += rowFebruari;
+                        totalMaret += rowMaret;
+                        totalApril += rowApril;
+                        totalMei += rowMei;
+                        totalJuni += rowJuni;
+                        totalJuli += rowJuli;
+                        totalAgustus += rowAgustus;
+                        totalSeptember += rowSeptember;
+                        totalOktober += rowOktober;
+                        totalNovember += rowNovember;
+                        totalDesember += rowDesember;
+                        totalPenyusutanBerjalan += rowPenyusutanBerjalan;
+                        totalAkumulasiPenyusutan += rowAkumulasiPenyusutan;
+                        totalNilaiBukuTerakhir += rowNilaiBukuTerakhir;
+                        totalPengguna += rowPengguna;
+
+                        console.log(totalPengguna);
+
+
+                        var tr = '<tr>';
+                        tr += '<td>' + row.kode_branch + '</td>';
+                        tr += '<td>' + row.kode_peralatan + '</td>';
+                        tr += '<td>' + row.jenis + '</td>';
+                        tr += '<td>' + row.type + '</td>';
+                        tr += '<td>' + row.keterangan + '</td>';
+                        tr += '<td>' + row.tanggal_perolehan + '</td>';
+                        tr += '<td>' + row.jumlah + '</td>';
+                        tr += '<td>' + formatRupiah(rowHarga) +
+                            '</td>'; // Rupiah format for harga_perolehan
+                        tr += '<td>' + row.umur + '</td>'; // Format for umur
+                        tr += '<td>' + formatRupiah(rowPenyusutanPerbulan) +
+                            '</td>'; // Rupiah format for penyusutan_perbulan
+                        tr += '<td>' + formatRupiah(rowPenyusutanAwal) +
+                            '</td>'; // Rupiah format for total_penyusutan_awal
+                        tr += '<td>' + formatRupiah(rowJanuari) + '</td>';
+                        tr += '<td>' + formatRupiah(rowFebruari) + '</td>';
+                        tr += '<td>' + formatRupiah(rowMaret) + '</td>';
+                        tr += '<td>' + formatRupiah(rowApril) + '</td>';
+                        tr += '<td>' + formatRupiah(rowMei) + '</td>';
+                        tr += '<td>' + formatRupiah(rowJuni) + '</td>';
+                        tr += '<td>' + formatRupiah(rowJuli) + '</td>';
+                        tr += '<td>' + formatRupiah(rowAgustus) + '</td>';
+                        tr += '<td>' + formatRupiah(rowSeptember) + '</td>';
+                        tr += '<td>' + formatRupiah(rowOktober) + '</td>';
+                        tr += '<td>' + formatRupiah(rowNovember) + '</td>';
+                        tr += '<td>' + formatRupiah(rowDesember) + '</td>';
+                        tr += '<td>' + formatRupiah(rowPenyusutanBerjalan) +
+                            '</td>'; // Rupiah format for total_penyusutan_berjalan
+                        tr += '<td>' + formatRupiah(rowAkumulasiPenyusutan) +
+                            '</td>'; // Rupiah format for akumulasi_penyusutan
+                        tr += '<td>' + formatRupiah(rowNilaiBukuTerakhir) +
+                            '</td>'; // Rupiah format for nilai_buku_terakhir
+                        tr += '<td>' + rowPenyusutanKe +
+                            '</td>'; // Rupiah format for penyusutan_ke
+                        tr += '<td>' + rowPengguna + '</td>'; // Rupiah format for pengguna
+                        tr += '</tr>';
+
+                        table.row.add($(tr)).draw();
+                    });
+
+                    // Update total in tfoot
+                    $('#total-harga').text(formatRupiah(
+                        totalHarga)); // Rupiah format for total harga
+                    $('#total-umur').text(totalUmur); // Format for total umur
+                    $('#total-penyusutan-perbulan').text(formatRupiah(
+                        totalPenyusutanPerbulan)); // Rupiah format for total penyusutan_perbulan
+                    $('#total-penyusutan-awal').text(formatRupiah(
+                        totalPenyusutanAwal)); // Rupiah format for total total_penyusutan_awal
+                    $('#total-januari').text(formatRupiah(totalJanuari));
+                    $('#total-februari').text(formatRupiah(totalFebruari));
+                    $('#total-maret').text(formatRupiah(totalMaret));
+                    $('#total-april').text(formatRupiah(totalApril));
+                    $('#total-mei').text(formatRupiah(totalMei));
+                    $('#total-juni').text(formatRupiah(totalJuni));
+                    $('#total-juli').text(formatRupiah(totalJuli));
+                    $('#total-agustus').text(formatRupiah(totalAgustus));
+                    $('#total-september').text(formatRupiah(totalSeptember));
+                    $('#total-oktober').text(formatRupiah(totalOktober));
+                    $('#total-november').text(formatRupiah(totalNovember));
+                    $('#total-desember').text(formatRupiah(totalDesember));
+                    $('#total-penyusutan-berjalan').text(formatRupiah(
+                        totalPenyusutanBerjalan)); // Rupiah format for total penyusutan_berjalan
+                    $('#total-akumulasi-penyusutan').text(formatRupiah(
+                        totalAkumulasiPenyusutan)); // Rupiah format for total akumulasi_penyusutan
+                    $('#total-nilai-buku-terakhir').text(formatRupiah(
+                        totalNilaiBukuTerakhir)); // Rupiah format for total nilai_buku_terakhir
+                    $('#total-penyusutan-ke').text(formatRupiah(
+                        totalPenyusutanKe)); // Rupiah format for total penyusutan_ke
+                    $('#total-pengguna').text(totalPengguna); // Rupiah format for total pengguna
+                }
+            });
+        }
+
+        // Initialize DataTable
+        $('#inventaris-table').DataTable({
+            "paging": true,
+            "lengthChange": true,
+            "searching": true,
+            "ordering": true,
+            "info": true,
+            "autoWidth": false,
+            "responsive": false,
+            "scrollX": false, // Enable horizontal scroll
+            "fixedColumns": false, // Enable fixed columns if needed
+            "columnDefs": [{
+                "width": "200px",
+                "targets": '_all'
+            }], // Adjust the width as needed
+            dom: 'Bfrtip', // This is required to show buttons on the top of the table
+            buttons: [
+                {
+                    extend: 'copy',
+                    exportOptions: {
+                        format: {
+                            body: function (data, row, column, node) {
+                                // Hilangkan format Rupiah dan kembalikan ke angka biasa
+                                return data.replace(/Rp\s?|,|\./g, '');
+                            }
+                        }
+                    }
+                },
+                {
+                    extend: 'csv',
+                    exportOptions: {
+                        format: {
+                            body: function (data, row, column, node) {
+                                return data.replace(/Rp\s?|,|\./g, '');
+                            }
+                        }
+                    }
+                },
+                {
+                    extend: 'excel',
+                    footer: true, // Untuk menampilkan footer (di mana total akan ditambahkan)
+                    exportOptions: {
+                        format: {
+                            body: function (data, row, column, node) {
+                                return data.replace(/Rp\s?|,|\./g, '');
+                            },
+                            footer: function (data, row, column, node) {
+                                // Menghapus format Rupiah dari footer juga
+                                return data.replace(/Rp\s?|,|\./g, '');
+                            }
+                        }
+                    },
+                    customize: function (xlsx) {
+                        var sheet = xlsx.xl.worksheets['sheet1.xml'];
+
+                        // Menghitung total dari kolom yang Anda inginkan (misalnya kolom ke-3)
+                        var total = 0;
+                        $('#inventaris-table tbody tr').each(function () {
+                            var value = parseFloat($(this).find('td:eq(2)').text().replace(/Rp\s?|,|\./g, ''));
+                            total += !isNaN(value) ? value : 0;
+                        });
+
+                        // Menambahkan total ke baris terakhir di Excel
+                        var row = $('row:last', sheet);
+                        row.after('<row><c t="inlineStr" r="A"><is><t>Total</t></is></c><c t="inlineStr" r="C"><is><t>' + total + '</t></is></c></row>');
+                    }
+                },
+                {
+                    extend: 'pdf',
+                    exportOptions: {
+                        format: {
+                            body: function (data, row, column, node) {
+                                return data.replace(/Rp\s?|,|\./g, '');
+                            }
+                        }
+                    }
+                },
+                'print'
+            ]
+        });
+
+
+
+        // Initial fetch
+        fetchData();
+
+        // Fetch data when the selected branch changes
+        $('#region').change(function() {
+            $('#kode_branch').html('');
+            $('#area').html('');
+
+            $('#area').val('');
+            $('#kode_branch').val('');
+            fetchData();
+        });
+        $('#area').change(function() {
+            $('#kode_branch').html('');
+
+            $('#kode_branch').val('');
+            fetchData();
+        });
+        $('#kode_branch').change(function() {
+            fetchData();
+        });
+    });
+</script>

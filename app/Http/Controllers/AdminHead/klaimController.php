@@ -14,8 +14,10 @@ class klaimController extends Controller
     public function index()
     {
         $data['title'] = 'Klaim Pembelian';
-        $data['pengajuan'] = Pengajuan::where('status_approve', 'klaim-admin-head')
-        ->get();
+        $data['pengajuan'] = Pengajuan::join('branch', 'branch.code_area', 'pengajuans.code_area')
+        ->select(['pengajuans.*', 'branch.code_area'])
+        ->where('pengajuans.status_approve', 'admin-head')
+        ->where('branch.code_region', auth()->user()->code_region)->get();
         return view('admin-head.approval.klaim.index', $data);
     }
 
