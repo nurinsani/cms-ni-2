@@ -68,7 +68,6 @@
                 <thead>
                     <tr>
                         <th scope="col">CABANG/AP</th>
-                        <!-- <th scope="col">COA</th> -->
                         <th scope="col">Keperluan</th>
                         <th scope="col">Qty</th>
                         <th scope="col" width="120px">Jumlah</th>
@@ -88,14 +87,6 @@
                                 @endforeach
                             </ul>
                         </td>
-                        <!-- <td>
-                            <ul class="p-0" style="list-style: none">
-                                <br>
-                                @foreach ($pengajuan->pengajuan_details as $item)
-                                    <li>{{ $item->jenis_peralatan->param_peralatan->coa }}</li>
-                                @endforeach
-                            </ul>
-                        </td> -->
                         <td>
                             <ul class="p-0" style="list-style: none">
                                 @foreach ($pengajuan->pengajuan_details as $item)

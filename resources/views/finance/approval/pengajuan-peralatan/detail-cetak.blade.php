@@ -299,22 +299,18 @@
                     <br>
                     <b class="mt-1 d-block">Admin</b>
                 </div>
+                @if ($pengajuan->approval1 == null)
+                
+                @else
                 <div class="col text-center">
                     <p>Diketahui Oleh,</p>
-                    @if ($pengajuan->approval1 == null)
-                        -
-                    @else
-                        {!! DNS2D::getBarcodeSVG($kode_approve1, 'QRCODE', 2, 2) !!}
-                    @endif
+                    {!! DNS2D::getBarcodeSVG($kode_approve1, 'QRCODE', 2, 2) !!}
                     <div class="py-4"></div>
-                    @if ($pengajuan->approval1 == null)
-                        -
-                    @else
                     <span class="border-bottom pb-1">{{ $pengajuan->approval1->name ?? '' }}</span>
-                    @endif
                     <br>
                     <b class="mt-1 d-block">Admin Head</b>
                 </div>
+                @endif
                 <div class="col text-center">
                     <p>Disetujui Oleh,</p>
                     {!! DNS2D::getBarcodeSVG($kode_approve3, 'QRCODE', 2, 2) !!}
@@ -335,11 +331,7 @@
                     <tbody>
                         <tr>
                             <td class="w-50 p-5 text-center">
-                                @if ($pengajuan->approval2 == null)
-                                    -
-                                @else
                                 {!! DNS2D::getBarcodeSVG("$kode_approve2", 'QRCODE', 2, 2) !!}
-                                @endif
                                 <div class="py-4"></div>
                                 {{ $pengajuan->approval2->name ?? '' }}
                                 <hr>
