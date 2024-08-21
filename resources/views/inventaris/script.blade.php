@@ -297,12 +297,14 @@
             $('#kode_branch').val('');
             fetchData();
         });
+        
         $('#area').change(function() {
             $('#kode_branch').html('');
 
             $('#kode_branch').val('');
             fetchData();
         });
+
         $('#kode_branch').change(function() {
             fetchData();
         });

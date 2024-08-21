@@ -355,7 +355,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/export-excel/jurnal-kp', [MiscController::class, 'jurnalKPExcel']);
     Route::get('/get/area-by-branch/{id}', [MiscController::class, 'areaByBranch']);
     Route::post('/get-branches', [DataUserController::class, 'getBranches']);
-    Route::get('/inventaris', [InventarisController::class, 'index'])->name('inventaris.index');
+    Route::get('/admin/inventaris', [InventarisController::class, 'index'])->name('inventaris.index');
+    Route::get('/akunting/inventaris', [InventarisController::class, 'index'])->name('inventaris.index');
+    Route::get('/admin-head/inventaris', [InventarisController::class, 'index'])->name('inventaris.index');
+
     Route::get('/fetch-data', [InventarisController::class, 'fetchData'])->name('inventaris.fetchData');
     Route::get('/inventaris/data', [InventarisController::class, 'getData'])->name('inventaris.data');
 });

@@ -74,6 +74,8 @@ class ApprovalPeralatanController extends Controller
             'status_cetak' => 'sudah-cetak-fpd',
         ]);
 
+        dd($data);
+
         return view('finance.approval.pengajuan-peralatan.detail-cetak', $data);
     }
 

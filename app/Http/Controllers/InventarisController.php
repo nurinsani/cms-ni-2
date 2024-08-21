@@ -164,8 +164,6 @@ class InventarisController extends Controller
             'areas' => $areas,
             'branches' => $branches,
         ]);
-    }
-    
-    
+    }  
 
 }

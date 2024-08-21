@@ -301,9 +301,17 @@
                 </div>
                 <div class="col text-center">
                     <p>Diketahui Oleh,</p>
-                    {!! DNS2D::getBarcodeSVG($kode_approve1, 'QRCODE', 2, 2) !!}
+                    @if ($pengajuan->approval1 == null)
+                        -
+                    @else
+                        {!! DNS2D::getBarcodeSVG($kode_approve1, 'QRCODE', 2, 2) !!}
+                    @endif
                     <div class="py-4"></div>
+                    @if ($pengajuan->approval1 == null)
+                        -
+                    @else
                     <span class="border-bottom pb-1">{{ $pengajuan->approval1->name ?? '' }}</span>
+                    @endif
                     <br>
                     <b class="mt-1 d-block">Admin Head</b>
                 </div>
@@ -327,7 +335,11 @@
                     <tbody>
                         <tr>
                             <td class="w-50 p-5 text-center">
+                                @if ($pengajuan->approval2 == null)
+                                    -
+                                @else
                                 {!! DNS2D::getBarcodeSVG("$kode_approve2", 'QRCODE', 2, 2) !!}
+                                @endif
                                 <div class="py-4"></div>
                                 {{ $pengajuan->approval2->name ?? '' }}
                                 <hr>

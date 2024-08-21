@@ -113,7 +113,7 @@ class Inventaris extends Model
                     // jadi pembelian > tgl penyusutan
                     // buat flagging/status "rencana" dan "done"
                     
-                    if ($tanggal_sekarang == 19) {
+                    if ($tanggal_sekarang == 22) {
                         if ($value->penyusutan_ke + count($value->susut) !== 48) {
                             if ($value->status_branch !== 'AUDIT') {
                                 Penyusutan::create([
@@ -256,18 +256,14 @@ class Inventaris extends Model
                         foreach ($penyusutan as $row) {
                             $status_branch = $row->status_branch;   
     
+                            $isArea     = Branch::where('code_area', $status_branch)
+                            ->where('status_aktif', 'aktif')
+                            ->count();
+
                             $isRegion   = Branch::where('code_region', $status_branch)
                                 ->where('status_aktif', 'aktif')
                                 ->count();
-    
-                            $isArea     = Branch::where('code_area', $status_branch)
-                                ->where('status_aktif', 'aktif')
-                                ->count();
-
-                            // $isArea     = Branch::where('code_area', $status_branch)
-                            //     ->where('status_aktif', 'aktif')
-                            //     ->count();
-    
+                            
                             $credit = round($row->penyusutan_per_bulan);
     
                             $credit = round($credit, 2);
@@ -305,7 +301,7 @@ class Inventaris extends Model
                                     TransaksiPembebananAp::create([
                                         'kode_branch' => $ids[$j],
                                         'kode_transaksi' => 'BU' . '/' . $ids[$j] . '/' . $kode_transaksi_ap,
-                                        'kode_rekening' => '2500000',
+                                        'kode_rekening' => '58312',
                                         'tanggal_transaksi' => date('Y-m-d'),
                                         'jenis_transaksi' => 'Bukti SYSTEM',
                                         'keterangan' => 'Jurnal Pembebanan Inventaris' .' '. $row->keterangan .' ' . date('M Y'),
@@ -316,7 +312,7 @@ class Inventaris extends Model
                                     TransaksiPembebananAp::create([
                                         'kode_branch' => $ids[$j],
                                         'kode_transaksi' => 'BU' . '/' . $ids[$j] . '/' . $kode_transaksi_ap,
-                                        'kode_rekening' => '58312',
+                                        'kode_rekening' => '2500000',
                                         'tanggal_transaksi' => date('Y-m-d'),
                                         'jenis_transaksi' => 'Bukti SYSTEM',
                                         'keterangan' => 'Jurnal Pembebanan Inventaris' .' '. $row->keterangan .' ' . date('M Y'),
@@ -328,7 +324,7 @@ class Inventaris extends Model
                                 TransaksiPembebananAp::create([
                                     'kode_branch' => $row->kode_branch,
                                     'kode_transaksi' => 'BU' . '/' . $row->kode_branch . '/' . $kode_transaksi_ap,
-                                    'kode_rekening' => '2500000',
+                                    'kode_rekening' => '57202',
                                     'tanggal_transaksi' => date('Y-m-d'),
                                     'jenis_transaksi' => 'Bukti SYSTEM',
                                     'keterangan' => 'Jurnal Pembebanan Inventaris' .' '. $row->keterangan .' ' . date('M Y'),
@@ -339,7 +335,7 @@ class Inventaris extends Model
                                 TransaksiPembebananAp::create([
                                     'kode_branch' => $row->kode_branch,
                                     'kode_transaksi' => 'BU' . '/' . $row->kode_branch . '/' . $kode_transaksi_ap,
-                                    'kode_rekening' => '57202',
+                                    'kode_rekening' => '2500000',
                                     'tanggal_transaksi' => date('Y-m-d'),
                                     'jenis_transaksi' => 'Bukti SYSTEM',
                                     'keterangan' => 'Jurnal Pembebanan Inventaris' .' '. $row->keterangan .' ' . date('M Y'),
@@ -393,7 +389,7 @@ class Inventaris extends Model
                                     TransaksiPembebananAp::create([
                                         'kode_branch' => $ids[$j],
                                         'kode_transaksi' => 'BU' . '/' . $ids[$j] . '/' . $kode_transaksi_ap,
-                                        'kode_rekening' => '2500000',
+                                        'kode_rekening' => '58312',
                                         'tanggal_transaksi' => date('Y-m-d'),
                                         'jenis_transaksi' => 'Bukti SYSTEM',
                                         'keterangan' => 'Jurnal Pembebanan Inventaris' .' '. $row->keterangan .' ' . date('M Y'),
@@ -404,7 +400,7 @@ class Inventaris extends Model
                                     TransaksiPembebananAp::create([
                                         'kode_branch' => $ids[$j],
                                         'kode_transaksi' => 'BU' . '/' . $ids[$j] . '/' . $kode_transaksi_ap,
-                                        'kode_rekening' => '58312',
+                                        'kode_rekening' => '2500000',
                                         'tanggal_transaksi' => date('Y-m-d'),
                                         'jenis_transaksi' => 'Bukti SYSTEM',
                                         'keterangan' => 'Jurnal Pembebanan Inventaris' .' '. $row->keterangan .' ' . date('M Y'),
@@ -416,7 +412,7 @@ class Inventaris extends Model
                                 TransaksiPembebananAp::create([
                                     'kode_branch' => $row->kode_branch,
                                     'kode_transaksi' => 'BU' . '/' . $row->kode_branch . '/' . $kode_transaksi_ap,
-                                    'kode_rekening' => '2500000',
+                                    'kode_rekening' => '57202',
                                     'tanggal_transaksi' => date('Y-m-d'),
                                     'jenis_transaksi' => 'Bukti SYSTEM',
                                     'keterangan' => 'Jurnal Pembebanan Inventaris' .' '. $row->keterangan .' ' . date('M Y'),
@@ -427,7 +423,7 @@ class Inventaris extends Model
                                 TransaksiPembebananAp::create([
                                     'kode_branch' => $row->kode_branch,
                                     'kode_transaksi' => 'BU' . '/' . $row->kode_branch . '/' . $kode_transaksi_ap,
-                                    'kode_rekening' => '57202',
+                                    'kode_rekening' => '2500000',
                                     'tanggal_transaksi' => date('Y-m-d'),
                                     'jenis_transaksi' => 'Bukti SYSTEM',
                                     'keterangan' => 'Jurnal Pembebanan Inventaris' .' '. $row->keterangan .' ' . date('M Y'),
