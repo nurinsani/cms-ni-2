@@ -113,7 +113,7 @@ class Inventaris extends Model
                     // jadi pembelian > tgl penyusutan
                     // buat flagging/status "rencana" dan "done"
                     
-                    if ($tanggal_sekarang == 22) {
+                    if ($tanggal_sekarang == 21) {
                         if ($value->penyusutan_ke + count($value->susut) !== 48) {
                             if ($value->status_branch !== 'AUDIT') {
                                 Penyusutan::create([

@@ -27,7 +27,7 @@
                             <th>Nomor Rekening</th>
                             <th>Nama Bank</th>
                             <th>Atas Nama</th>
-                            <th width="280px">Action</th>
+                            <th width="240px">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -81,6 +81,8 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <script type="text/javascript">
         $(function() {
             $.ajaxSetup({
@@ -129,7 +131,7 @@
             });
 
             // edit
-            $('body').on('click', '.editProduct', function() {
+            $('body').on('click', '.editRekening', function() {
                 var rekening_id = $(this).data('id');
                 $.get("{{ route('admin.rekening.index') }}" + '/' + rekening_id + '/edit', function(data) {
                     $('#modelHeading').html("Edit Data Rekening");
@@ -144,7 +146,7 @@
 
             $('#simpan').click(function(e) {
                 e.preventDefault();
-                $(this).html('Sending..');
+                $(this).html('Sending...');
 
                 $.ajax({
                     data: $('#RekeningForm').serialize(),
@@ -152,34 +154,70 @@
                     type: "POST",
                     dataType: 'json',
                     success: function(data) {
-
                         $('#RekeningForm').trigger("reset");
                         $('#ajaxModel').modal('hide');
-                        location.reload();
-                        table.draw();
-
+                        
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Berhasil!',
+                            text: 'Data berhasil disimpan.',
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(() => {
+                            location.reload();
+                            table.draw();
+                        });
                     },
                     error: function(data) {
                         console.log('Error:', data);
+                        
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Terjadi kesalahan saat menyimpan data.',
+                        });
+                        
                         $('#simpan').html('Simpan Data');
                     }
                 });
             });
 
-            $('body').on('click', '.deleteProduct', function() {
-
+            $('body').on('click', '.hapusRekening', function() {
                 var rekening_id = $(this).data("id");
-                confirm("Kamu yakin mau hapus data ini?");
-
-                $.ajax({
-                    type: "DELETE",
-                    url: "{{ route('admin.rekening.store') }}" + '/' + rekening_id,
-                    success: function(data) {
-                        location.reload();
-                        table.draw();
-                    },
-                    error: function(data) {
-                        console.log('Error:', data);
+                
+                Swal.fire({
+                    title: 'Apakah Anda yakin?',
+                    text: "Anda tidak akan dapat mengembalikan ini!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Ya, hapus!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            type: "DELETE",
+                            url: "{{ route('admin.rekening.store') }}" + '/' + rekening_id,
+                            success: function(data) {
+                                Swal.fire(
+                                    'Terhapus!',
+                                    'Data Anda telah dihapus.',
+                                    'success'
+                                ).then(() => {
+                                    location.reload();
+                                    table.draw();
+                                });
+                            },
+                            error: function(data) {
+                                Swal.fire(
+                                    'Gagal!',
+                                    'Terjadi kesalahan saat menghapus data.',
+                                    'error'
+                                );
+                                console.log('Error:', data);
+                            }
+                        });
                     }
                 });
             });

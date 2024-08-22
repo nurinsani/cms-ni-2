@@ -105,7 +105,7 @@
                                     class="btn btn-xs btn-success">Detail</a>
                                 @if ($data->status_approve == 'admin')
                                     <button type="submit" onclick="hapus_data('#delete_form{{ $data->id }}')"
-                                        class="btn btn-sm btn-danger">Hapus</button>
+                                        class="btn btn-xs btn-danger">Hapus</button>
                                     <form class="d-inline" id="delete_form{{ $data->id }}"
                                         action="{{ route('admin.pengajuan.destroy', $data->id) }}" method="post">
                                         @csrf

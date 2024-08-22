@@ -44,7 +44,7 @@
             <li>Nomor : {{ $pengajuan->nomor }}</li>
             <li>Kepada : Ketua dan Pengurus KSPPS Nur Insani</li>
             <li>Dari : {{ $pengajuan->user->name }}</li>
-            <li>Tanggal : {{ $pengajuan->tanggal_pengajuan }}</li>
+            <li>Tanggal : {{ $pengajuan->tanggal_pengajuan->format('d-M-Y'); }}</li>
         </ul>
 
         <div class="table-responsive">

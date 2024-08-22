@@ -140,7 +140,6 @@
                                     @endforeach
                                 </ul>
                             </td>
-                            @if ($item->jenis_peralatan->group_inventaris == 'ya')
                                 <td>
                                     <ul class="p-0" style="list-style: none">
                                         @foreach ($pengajuan->pengajuan_details as $item)
@@ -149,7 +148,6 @@
                                         @endforeach
                                     </ul>
                                 </td>
-                            @endif
                             <td>
                                 @if ($item->rekening_id == null)
                                     Transfer ke <br>{{ $item->pengajuan->user->nama_bank }}

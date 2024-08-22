@@ -18,11 +18,12 @@ class PengajuanAhController extends Controller
     public function index()
     {
         $data['title'] = 'Pengajuan Pembelian';
-        // $data['pengajuan'] = Pengajuan::where('code_area', auth()->user()->code_area)->get();
-        $data['pengajuan'] = Pengajuan::join('branch', 'branch.code_area', 'pengajuans.code_area')
+        $data['pengajuan'] = Pengajuan::join('branch', 'branch.code_area', '=', 'pengajuans.code_area')
         ->select(['pengajuans.*', 'branch.code_area'])
-        // ->where('pengajuans.status_approve', 'admin-head')
-        ->where('branch.code_region', auth()->user()->code_region)->get();
+        ->where('branch.code_region', auth()->user()->code_region)
+        ->distinct()
+        ->get();
+        // dd($data);
         return view('admin-head.pengajuan.index', $data);
     }
 

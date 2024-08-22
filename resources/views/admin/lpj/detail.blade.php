@@ -59,7 +59,7 @@
                         <li>Nomor : {{ $lpj->nomor }}</li>
                         <li>Kepada : Ketua dan Pengurus KSPPS Nur Insani</li>
                         <li>Dari : {{ $lpj->user->name }}</li>
-                        <li>Tanggal : {{ $lpj->tanggal_pengajuan }}</li>
+                        <li>Tanggal : {{ $lpj->tanggal_pengajuan->format('d-M-Y') }}</li>
                     </ul>
 
                     <div class="table-responsive">
@@ -70,11 +70,12 @@
                             class="btn btn-sm btn-primary">Upload Bukti Pengembalian
                         </a>
 
-                        <div class="">
+                        <div>
                             @if ($lpj->nominal_pengembalian == true)
                                 <div class="text-danger">*Bukti Pengembalian sudah di upload.</div>
                             @endif
                         </div>
+                        
                         <table class="table table-bordered">
                             <thead>
                                 <tr>

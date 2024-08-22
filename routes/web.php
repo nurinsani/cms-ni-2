@@ -46,7 +46,7 @@ use App\Models\Admin\Peralatan;
 use App\Models\Inventaris;
 
 // DaftarBdd::jurnal_bdd();
-Inventaris::penyusutan();
+// Inventaris::penyusutan();
 
 Route::get('/', function () {
     return view('auth.login');

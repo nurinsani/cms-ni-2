@@ -83,6 +83,7 @@ class PengajuanItController extends Controller
         foreach ($temp_pengajuan as $item) {
             $pengajuan_detail = New PengajuanDetail;
             $pengajuan_detail->pengajuan_id = $pengajuan->id;
+            $pengajuan_detail->rekening_id = $item->rekening_id;
             $pengajuan_detail->kode_branch = $item->kode_branch;
             $pengajuan_detail->kode_area = $item->kode_area;
             $pengajuan_detail->jenis_peralatan_id = $item->jenis_peralatan_id;
@@ -166,7 +167,7 @@ class PengajuanItController extends Controller
         $data['title'] = 'Cetak PDF';
         $data['pengajuan'] = Pengajuan::find($id);
 
-        $data = PDF::loadview('admin.pengajuan-peralatan.export-pdf', $data);
+        // $data = PDF::loadview('admin.pengajuan-peralatan.export-pdf', $data);
 
     }
 }
