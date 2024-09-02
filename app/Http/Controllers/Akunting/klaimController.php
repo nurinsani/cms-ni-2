@@ -54,7 +54,7 @@ class klaimController extends Controller
                                 'jumlah' => $item->kuantitas,
                                 'harga_perolehan' => $item->harga_pembelian,
                                 'umur' => 48,
-                                'keterangan' => $pengajuan->keterangan
+                                'keterangan' => $item->keterangan
                             ]);
                         } else {
                             RencanaPenyusutan::create([
@@ -69,7 +69,7 @@ class klaimController extends Controller
                                 'jumlah' => $item->kuantitas,
                                 'harga_perolehan' => $item->harga_pembelian,
                                 'umur' => 48,
-                                'keterangan' => $pengajuan->keterangan
+                                'keterangan' => $item->keterangan
                             ]);
                         }
                     } else {
@@ -86,7 +86,7 @@ class klaimController extends Controller
                                 'jumlah' => $item->kuantitas,
                                 'harga_perolehan' => $item->harga_pembelian,
                                 'umur' => 48,
-                                'keterangan' => $pengajuan->keterangan
+                                'keterangan' => $item->keterangan
                             ]);
                         } else {
                             Inventaris::create([
@@ -101,7 +101,7 @@ class klaimController extends Controller
                                 'jumlah' => $item->kuantitas,
                                 'harga_perolehan' => $item->harga_pembelian,
                                 'umur' => 48,
-                                'keterangan' => $pengajuan->keterangan
+                                'keterangan' => $item->keterangan
                             ]);
                         }
                     }
@@ -118,7 +118,7 @@ class klaimController extends Controller
                             'tanggal_perolehan' => $item->tanggal_perolehan,
                             'jumlah' => $item->kuantitas,
                             'harga_perolehan' => $item->harga_pembelian,
-                            'keterangan' => $pengajuan->keterangan
+                            'keterangan' => $item->keterangan
                         ]);
                     } else {
                         Peralatan::create([
@@ -132,7 +132,7 @@ class klaimController extends Controller
                             'tanggal_perolehan' => $item->tanggal_perolehan,
                             'jumlah' => $item->kuantitas,
                             'harga_perolehan' => $item->harga_pembelian,
-                            'keterangan' => $pengajuan->keterangan
+                            'keterangan' => $item->keterangan
                         ]);
                     }
                 }

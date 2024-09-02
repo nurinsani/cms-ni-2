@@ -121,6 +121,9 @@
                                             <option value="{{ $item->kode_branch }}">{{ $item->unit }}</option>
                                         @endforeach
                                     </select>
+                                    <small class="text-danger">* pilih salah satu AP atau Cabang, jangan pilih dua2 nya. <br> 
+                                        jika ingin pengajuan untuk AP pilih ini!
+                                    </small>
                                 </div>
 
                                 <div class="form-group">
@@ -131,6 +134,9 @@
                                             @endforeach
                                             <option value="{{ $item->code_area }}">{{ $item->area }}</option>
                                     </select>
+                                    <small class="text-danger">* pilih salah satu AP atau Cabang, jangan pilih dua2 nya. <br> 
+                                        jika ingin pengajuan untuk Wilayah pilih ini!
+                                    </small>
                                 </div>
     
                                 <div class="form-group">
@@ -198,6 +204,11 @@
                                         @endforeach
                                     </select>
                                     <small class="text-red">*isi jika ingin menggunakan rekening lain, jika tidak diisi maka akan menggunakan rekening pembuat</small>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="" class="form-label">Keterangan</label>
+                                    <textarea name="keterangan" class="form-control" id="keterangan" cols="5" rows="3" required></textarea>
                                 </div>
 
                             </div>

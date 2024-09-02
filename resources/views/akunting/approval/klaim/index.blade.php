@@ -52,7 +52,7 @@
                     </ul>
                 </td>
                 <td>Rp. {{ number_format($data->subtotal()) }}</td>
-                <td>{{ $data->tanggal_pengajuan }}</td>
+                <td>{{ $data->tanggal_pengajuan->format('d-M-Y'); }}</td>
                 <td>
                     <a href="{{ url('akunting/klaim/detail', $data->id) }}" class="btn btn-sm btn-primary">Detail</a>
                     <button type="submit" onclick="approve('#approve{{ $data->id }}')" class="btn btn-sm btn-success">Approve</button>

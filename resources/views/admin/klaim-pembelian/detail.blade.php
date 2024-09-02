@@ -61,7 +61,7 @@
                 <li>Nomor : {{ $klaim->nomor }}</li>
                 <li>Kepada : Ketua dan Pengurus KSPPS Nur Insani</li>
                 <li>Dari : {{ $klaim->user->name }}</li>
-                <li>Tanggal : {{ $klaim->tanggal_pengajuan }}</li>
+                <li>Tanggal : {{ $klaim->tanggal_pengajuan->format('d-M-Y') }}</li>
             </ul>
 
             <div class="table-responsive">

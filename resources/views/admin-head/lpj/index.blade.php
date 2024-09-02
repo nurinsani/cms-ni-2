@@ -59,8 +59,7 @@
                                     @endforeach
                                 </ul>
                             </td>
-                            <td>{{ $item->tanggal_pengajuan }}</td>
-                            {{-- <td>{{ $item->keterangan }}</td> --}}
+                            <td>{{ $item->tanggal_pengajuan->format('d-M-Y') }}</td>
                             <td>
                                 <a href="{{ url('admin-head/lpj', $item->id) }}" class="btn btn-sm btn-primary">Lihat</a>
                                 {{-- <a href="{{ route('admin.ajukan_lpj', $item->id) }}" class="btn btn-sm btn-success">Ajukan

@@ -16,7 +16,8 @@ class klaimController extends Controller
         $data['title'] = 'Klaim Pembelian';
         $data['pengajuan'] = Pengajuan::join('branch', 'branch.code_area', 'pengajuans.code_area')
         ->select(['pengajuans.*', 'branch.code_area'])
-        ->where('pengajuans.status_approve', 'admin-head')
+        ->where('pengajuans.status_approve', 'klaim-admin-head')
+        ->distinct()
         ->where('branch.code_region', auth()->user()->code_region)->get();
         return view('admin-head.approval.klaim.index', $data);
     }

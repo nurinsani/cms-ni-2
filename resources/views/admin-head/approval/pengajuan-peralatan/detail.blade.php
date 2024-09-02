@@ -72,14 +72,6 @@
                                 @endforeach
                             </ul>
                         </td>
-                        <!-- <td>
-                            <ul class="p-0" style="list-style: none">
-                                <br>
-                                @foreach ($pengajuan->pengajuan_details as $item)
-                                    <li>{{ $item->jenis_peralatan->param_peralatan->coa }}</li>
-                                @endforeach
-                            </ul>
-                        </td> -->
                         <td>
                             <ul class="p-0" style="list-style: none">
                                 @foreach ($pengajuan->pengajuan_details as $item)
