@@ -11,4 +11,7 @@ class RencanaPenyusutan extends Model
 
     protected $table = 'rencana_penyusutan';
 
+    protected $guarded = [];
+
+
 }

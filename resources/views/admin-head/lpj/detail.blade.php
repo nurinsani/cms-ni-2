@@ -160,7 +160,7 @@
                                     </button>
                                 </div>
                                 <div class="modal-body">
-                                    <form action="{{ route('admin.lpj.update', $lpj->id) }}" method="post"
+                                    <form action="{{ route('admin-head.lpj.update', $lpj->id) }}" method="post"
                                         enctype="multipart/form-data">
                                         @method('PUT')
                                         @csrf
@@ -197,6 +197,25 @@
                                             @enderror
                                         </div>
 
+                                        <div class="mb-3">
+                                            <label for="" class="form-label">Lampiran (Optional)</label>
+                                            <input type="file"
+                                                class="form-control @error('lampiran') is-invalid @enderror"
+                                                name="lampiran" value="{{ old('lampiran') }}"
+                                                placeholder="">
+                                            @error('lampiran')
+                                                <small class="text-danger">{{ $message }}</small>
+                                            @enderror
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="" class="form-label">Keterangan</label>
+                                            <textarea name="keterangan" class="form-control @error('keterangan') is-invalid @enderror" placeholder="LPJ Pembelian ...">{{ old('keterangan') }}</textarea>
+                                            @error('keterangan')
+                                                <small class="text-danger">{{ $message }}</small>
+                                            @enderror
+                                        </div>
+
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary"
                                                 data-dismiss="modal">Tutup</button>
@@ -221,7 +240,7 @@
                                 </div>
                                 <div class="modal-body">
                                     @if ($lpj->nominal_pengembalian == false)
-                                        <form action="{{ url('admin/lpj/upload-bukti-pengembalian', $lpj->id) }}"
+                                        <form action="{{ url('admin-head/lpj/upload-bukti-pengembalian', $lpj->id) }}"
                                             method="post" enctype="multipart/form-data">
                                             @method('PUT')
                                             @csrf

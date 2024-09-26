@@ -189,6 +189,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('lpj', [LpjAhController::class, 'index']);
         Route::get('lpj/{id}', [LpjAhController::class, 'detail']);
         Route::get('ajukan_lpj/{id}', [LpjAhController::class, 'ajukan_lpj']);
+        Route::put('lpj/upload-bukti-pengembalian/{id}', [LpjController::class, 'upload_bukti_pengembalian']);
+
+        Route::resources([
+            'lpj' => LpjAhController::class,
+        ]);
 
         Route::get('klaim-pembelian', [AdminHeadKlaimController::class, 'index']);
         Route::get('klaim/detail/{id}', [AdminHeadKlaimController::class, 'detail']);
@@ -289,7 +294,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('pengajuan-bdd', [ItController::class, 'pengajuan_bdd'])->name('pengajuan_bdd');
         Route::post('approve/{id}', [ItController::class, 'approve'])->name('approve');
         Route::post('approve-bdd/{id}', [ItController::class, 'approve_bdd'])->name('approve_bdd');
-        Route::post('get-branches', [DataUserController::class, 'getBranches']);
+        // Route::post('get-branches', [DataUserController::class, 'getBranches']);
         Route::post('tolak/{id}', [ItController::class, 'tolak'])->name('tolak');
         Route::get('pengajuan-detail/{id}', [ItController::class, 'pengajuan_detail'])->name('pengajuan-detail');
 

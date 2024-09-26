@@ -77,14 +77,16 @@ class Inventaris extends Model
     public static function penyusutan()
     {
         try {
+            DB::beginTransaction();
+
             $i = 0;
-    
+
             $inventaris = Inventaris::all();
-    
+
             $penyusutan = Penyusutan::whereMonth('tanggal_penyusutan', date('m'))
                 ->whereYear('tanggal_penyusutan', date('Y'))
                 ->first();
-    
+
             if (!$penyusutan) {
                 foreach ($inventaris as $value) {
                     $tanggal_sekarang = date('d', time());
@@ -92,34 +94,37 @@ class Inventaris extends Model
                     $penyusutan = intval($value->umur);
                     $kode_branch = $value->kode_branch;
                     $kredit = Branch::firstWhere('kode_branch', $kode_branch);
-    
+
                     if (!$kredit) {
                         continue; // Skip if no matching Branch found
                     }
-    
+
                     $debet = Branch::where('code_area', $kredit->code_area)->get();
-    
+
                     if ($debet->isEmpty()) {
                         continue; // Skip if no matching Debet branches found
                     }
-    
+
                     $hasil_penyusutan = $harga_perolehan > 0 && $penyusutan > 0 ?
                         $harga_perolehan / $penyusutan :
                         0;
-    
+
                     $hasil_pembebanan = $hasil_penyusutan / $debet->count();
-    
+
                     // buat table rencana penyusustan
                     // jadi pembelian > tgl penyusutan
                     // buat flagging/status "rencana" dan "done"
-                    
+
+                    $branch = Branch::where('kode_branch', $kode_branch)->first();
+
                     if ($tanggal_sekarang == 15) {
                         if ($value->penyusutan_ke + count($value->susut) !== 48) {
                             if ($value->status_branch !== 'AUDIT') {
                                 Penyusutan::create([
                                     'inventaris_id' => $value->id,
                                     'user_id' => $value->user_id,
-                                    'kode_branch' => $value->kode_branch,
+                                    'kode_branch' => $branch->kode_branch,
+                                    'gl' => $branch->GL,
                                     'kode_peralatan' => $value->kode_peralatan,
                                     'nama_peralatan' => $value->jenis,
                                     'keterangan' => $value->keterangan,
@@ -132,45 +137,45 @@ class Inventaris extends Model
                                 ]);
                             }
                         }
-    
+
                         $i++;
                     }
                 }
-    
+
                 $branches = Branch::all();
-    
+
                 foreach ($branches as $branch) {
                     $penyusutan = Penyusutan::where('kode_branch', $branch->kode_branch)
                         ->whereMonth('tanggal_penyusutan', date('m'))
                         ->whereYear('tanggal_penyusutan', date('Y'))
                         ->whereIn('status_branch', ['AP', 'ALL'])
                         ->get();
-    
+
                     if (count($penyusutan) > 0) {
                         $penyusutan_per_bulan = Penyusutan::where('kode_branch', $branch->kode_branch)
                             ->whereMonth('tanggal_penyusutan', date('m'))
                             ->whereYear('tanggal_penyusutan', date('Y'))
                             ->sum('penyusutan_per_bulan');
-    
+
                         if ($branch->kode_branch == '1010') {
                             $transaksiKpDebet = TransaksiKp::where('kode_branch', $branch->kode_branch)
                                 ->whereMonth('tanggal_transaksi', date('m'))
                                 ->whereYear('tanggal_transaksi', date('Y'))
                                 ->where('debet', '>', 0)
                                 ->first();
-    
+
                             $transaksiKpKredit = TransaksiKp::where('kode_branch', $branch->kode_branch)
                                 ->whereMonth('tanggal_transaksi', date('m'))
                                 ->whereYear('tanggal_transaksi', date('Y'))
                                 ->where('kredit', '>', 0)
                                 ->first();
-    
+
                             $kode_transaksi = date('m') . random_int(100000, 999999);
                             if ($transaksiKpDebet && $transaksiKpKredit) {
                                 TransaksiKp::where('id', $transaksiKpDebet->id)->update([
                                     'debet' => $penyusutan_per_bulan,
                                 ]);
-    
+
                                 TransaksiKp::where('id', $transaksiKpKredit->id)->update([
                                     'kredit' => $penyusutan_per_bulan,
                                 ]);
@@ -185,7 +190,7 @@ class Inventaris extends Model
                                     'debet' => $penyusutan_per_bulan,
                                     'kredit' => 0,
                                 ]);
-    
+
                                 TransaksiKp::create([
                                     'kode_branch' => $branch->kode_branch,
                                     'kode_transaksi' => 'BU' . '/' . $branch->kode_branch . '/' . $kode_transaksi,
@@ -203,13 +208,13 @@ class Inventaris extends Model
                                 ->whereYear('tanggal_transaksi', date('Y'))
                                 ->where('kredit', '>', 0)
                                 ->first();
-    
+
                             $transaksiApDebet = TransaksiAp::where('kode_branch', $branch->kode_branch)
                                 ->whereMonth('tanggal_transaksi', date('m'))
                                 ->whereYear('tanggal_transaksi', date('Y'))
                                 ->where('debet', '>', 0)
                                 ->first();
-    
+
                             $kode_transaksi = date('m') . random_int(100000, 999999);
                             if ($transaksiApKredit && $transaksiApDebet) {
                                 TransaksiAp::where('id', $transaksiApDebet->id)->update([
@@ -229,7 +234,7 @@ class Inventaris extends Model
                                     'debet' => $penyusutan_per_bulan,
                                     'kredit' => 0,
                                 ]);
-    
+
                                 TransaksiAp::create([
                                     'kode_branch' => $branch->kode_branch,
                                     'kode_transaksi' => 'BU' . '/' . $branch->kode_branch . '/' . $kode_transaksi,
@@ -245,58 +250,70 @@ class Inventaris extends Model
                     } else {
                         continue;
                     }
-    
-                    $penyusutan = Penyusutan::where('kode_branch', $branch->kode_branch)
-                        ->whereMonth('tanggal_penyusutan', date('m'))
+
+                    $penyusutan = Penyusutan::whereMonth('tanggal_penyusutan', date('m'))
                         ->whereYear('tanggal_penyusutan', date('Y'))
                         ->whereNotIn('status_branch', ['AP', 'ALL'])
                         ->get();
-    
+
                     if (count($penyusutan) > 0) {
                         foreach ($penyusutan as $row) {
-                            $status_branch = $row->status_branch;   
-    
+                            $status_branch = $row->status_branch;
+
                             $isArea     = Branch::where('code_area', $status_branch)
-                            ->where('status_aktif', 'aktif')
-                            ->count();
+                                ->where('status_aktif', 'aktif')
+                                ->count();
 
                             $isRegion   = Branch::where('code_region', $status_branch)
                                 ->where('status_aktif', 'aktif')
                                 ->count();
-                            
+
                             $credit = round($row->penyusutan_per_bulan);
-    
+
                             $credit = round($credit, 2);
-    
+
                             $ids = [];
-    
+                            $gl = [];
+
                             if ($isRegion > 0) {
-                                $debet = round(($credit / ($isRegion)), 2);
-    
+
+                                if ($status_branch == '9999') {
+                                    $otherBranches = Branch::whereIn('code_region', ['3333', '2222'])
+                                        // ->where('kode_branch', '<>', $row->kode_branch)
+                                        ->where('status_aktif', 'aktif')
+                                        ->get();
+
+                                    $debet = round(($credit / (count($otherBranches))), 2);
+                                } else {
+                                    $debet = round(($credit / ($isRegion)), 2);
+
+                                    $otherBranches = Branch::where('code_region', $status_branch)
+                                        ->where('kode_branch', '<>', $row->kode_branch)
+                                        ->where('status_aktif', 'aktif')
+                                        ->get();
+                                }
+
                                 $credit = $credit - $debet;
-    
-                                $otherBranches = Branch::where('code_region', $status_branch)
-                                    ->where('kode_branch', '<>', $row->kode_branch)
-                                    ->where('status_aktif', 'aktif')
-                                    ->get();
-    
+
                                 foreach ($otherBranches as $other) {
                                     $ids[] = $other->kode_branch;
+                                    $gl[] = $other->GL;
                                 }
-    
+
                                 $kode_transaksi_kp = date('m') . random_int(100000, 999999);
+
                                 for ($j = 0; $j < count($ids); $j++) {
                                     TransaksiPembebananKp::create([
                                         'kode_branch' => 1010,
                                         'kode_transaksi' => 'BU' . '/' . 1010 . '/' . $kode_transaksi_kp,
-                                        'kode_rekening' => '1010-'.$other->GL,
+                                        'kode_rekening' => '1010-' . $gl[$j],
                                         'tanggal_transaksi' => date('Y-m-d'),
                                         'jenis_transaksi' => 'Bukti SYSTEM',
-                                        'keterangan' => 'Jurnal Pembebanan Inventaris' .' '. $row->keterangan .' ' . date('M Y'),
+                                        'keterangan' => 'Jurnal Pembebanan Inventaris' . ' ' . $row->keterangan . ' ' . date('M Y'),
                                         'debet' => $debet,
                                         'kredit' => 0,
                                     ]);
-    
+
                                     $kode_transaksi_ap = date('m') . random_int(100000, 999999);
                                     TransaksiPembebananAp::create([
                                         'kode_branch' => $ids[$j],
@@ -304,87 +321,105 @@ class Inventaris extends Model
                                         'kode_rekening' => '58312',
                                         'tanggal_transaksi' => date('Y-m-d'),
                                         'jenis_transaksi' => 'Bukti SYSTEM',
-                                        'keterangan' => 'Jurnal Pembebanan Inventaris' .' '. $row->keterangan .' ' . date('M Y'),
-                                        'debet' => 0,
-                                        'kredit' => $debet,
+                                        'keterangan' => 'Jurnal Pembebanan Inventaris' . ' ' . $row->keterangan . ' ' . date('M Y'),
+                                        'debet' => $debet,
+                                        'kredit' => 0,
                                     ]);
-    
+
                                     TransaksiPembebananAp::create([
                                         'kode_branch' => $ids[$j],
                                         'kode_transaksi' => 'BU' . '/' . $ids[$j] . '/' . $kode_transaksi_ap,
                                         'kode_rekening' => '2500000',
                                         'tanggal_transaksi' => date('Y-m-d'),
                                         'jenis_transaksi' => 'Bukti SYSTEM',
-                                        'keterangan' => 'Jurnal Pembebanan Inventaris' .' '. $row->keterangan .' ' . date('M Y'),
-                                        'debet' => $debet,
-                                        'kredit' => 0,
+                                        'keterangan' => 'Jurnal Pembebanan Inventaris' . ' ' . $row->keterangan . ' ' . date('M Y'),
+                                        'debet' => 0,
+                                        'kredit' => $debet,
                                     ]);
                                 }
-    
+
                                 TransaksiPembebananAp::create([
                                     'kode_branch' => $row->kode_branch,
                                     'kode_transaksi' => 'BU' . '/' . $row->kode_branch . '/' . $kode_transaksi_ap,
                                     'kode_rekening' => '57202',
                                     'tanggal_transaksi' => date('Y-m-d'),
                                     'jenis_transaksi' => 'Bukti SYSTEM',
-                                    'keterangan' => 'Jurnal Pembebanan Inventaris' .' '. $row->keterangan .' ' . date('M Y'),
+                                    'keterangan' => 'Jurnal Pembebanan Inventaris' . ' ' . $row->keterangan . ' ' . date('M Y'),
                                     'debet' => 0,
                                     'kredit' => $credit,
                                 ]);
-    
+
                                 TransaksiPembebananAp::create([
                                     'kode_branch' => $row->kode_branch,
                                     'kode_transaksi' => 'BU' . '/' . $row->kode_branch . '/' . $kode_transaksi_ap,
                                     'kode_rekening' => '2500000',
                                     'tanggal_transaksi' => date('Y-m-d'),
                                     'jenis_transaksi' => 'Bukti SYSTEM',
-                                    'keterangan' => 'Jurnal Pembebanan Inventaris' .' '. $row->keterangan .' ' . date('M Y'),
+                                    'keterangan' => 'Jurnal Pembebanan Inventaris' . ' ' . $row->keterangan . ' ' . date('M Y'),
                                     'debet' => $credit,
                                     'kredit' => 0,
                                 ]);
-    
+
                                 TransaksiPembebananKp::create([
                                     'kode_branch' => 1010,
                                     'kode_transaksi' => 'BU' . '/' . 1010 . '/' . $kode_transaksi_kp,
-                                    'kode_rekening' => '1010-'.$other->GL,
+                                    'kode_rekening' => '1010-' . $row->gl,
                                     'tanggal_transaksi' => date('Y-m-d'),
                                     'jenis_transaksi' => 'Bukti SYSTEM',
-                                    'keterangan' => 'Jurnal Pembebanan Inventaris' .' '. $row->keterangan .' ' . date('M Y'),
+                                    'keterangan' => 'Jurnal Pembebanan Inventaris' . ' ' . $row->keterangan . ' ' . date('M Y'),
                                     'debet' => 0,
                                     'kredit' => $credit,
                                 ]);
                             } else {
                                 if ($isArea != 0) {
                                     $debet = round(($credit / $isArea), 2);
-                                    $credit = $credit - $debet;
+                                    $credit = $credit;
                                 } else {
                                     $debet = 0;
-                                    $credit = $credit - $debet;
+                                    $credit = $credit;
                                 }
                                 // $debet = round(($credit / ($isArea)), 2);
-    
-                                $otherBranches = Branch::where('code_area', $status_branch)
-                                    ->where('kode_branch', '<>', $row->kode_branch)
-                                    ->where('status_aktif', 'aktif')
-                                    ->get();
-    
+
+                                if ($status_branch == '9999') {
+                                    $otherBranches = Branch::whereIn('code_region', ['3333', '2222'])
+                                        ->where('status_aktif', 'aktif')
+                                        ->get();
+
+                                    $debet = round(($credit / count($otherBranches)), 2);
+                                } else {
+                                    if ($isArea != 0) {
+                                        $debet = round(($credit / $isArea), 2);
+                                    } else {
+                                        $debet = 0;
+                                    }
+
+                                    $otherBranches = Branch::where('code_area', $status_branch)
+                                        ->where('kode_branch', '<>', $row->kode_branch)
+                                        ->where('status_aktif', 'aktif')
+                                        ->get();
+                                }
+
+                                $credit = $credit - $debet;
+
                                 foreach ($otherBranches as $other) {
                                     $ids[] = $other->kode_branch;
+                                    $gl[] = $other->GL;
                                 }
-    
+
                                 $kode_transaksi_kp = date('m') . random_int(100000, 999999);
+
                                 for ($j = 0; $j < count($ids); $j++) {
                                     TransaksiPembebananKp::create([
                                         'kode_branch' => 1010,
                                         'kode_transaksi' => 'BU' . '/' . 1010 . '/' . $kode_transaksi_kp,
-                                        'kode_rekening' => '1010-'.$other->GL,
+                                        'kode_rekening' => '1010-' .  $gl[$j],
                                         'tanggal_transaksi' => date('Y-m-d'),
                                         'jenis_transaksi' => 'Bukti SYSTEM',
-                                        'keterangan' => 'Jurnal Pembebanan Inventaris' .' '. $row->keterangan .' ' . date('M Y'),
+                                        'keterangan' => 'Jurnal Pembebanan Inventaris' . ' ' . $row->keterangan . ' ' . date('M Y'),
                                         'debet' => $debet,
                                         'kredit' => 0,
                                     ]);
-    
+
                                     $kode_transaksi_ap = date('m') . random_int(100000, 999999);
                                     TransaksiPembebananAp::create([
                                         'kode_branch' => $ids[$j],
@@ -392,52 +427,52 @@ class Inventaris extends Model
                                         'kode_rekening' => '58312',
                                         'tanggal_transaksi' => date('Y-m-d'),
                                         'jenis_transaksi' => 'Bukti SYSTEM',
-                                        'keterangan' => 'Jurnal Pembebanan Inventaris' .' '. $row->keterangan .' ' . date('M Y'),
-                                        'debet' => 0,
-                                        'kredit' => $debet,
+                                        'keterangan' => 'Jurnal Pembebanan Inventaris' . ' ' . $row->keterangan . ' ' . date('M Y'),
+                                        'debet' => $debet,
+                                        'kredit' => 0,
                                     ]);
-    
+
                                     TransaksiPembebananAp::create([
                                         'kode_branch' => $ids[$j],
                                         'kode_transaksi' => 'BU' . '/' . $ids[$j] . '/' . $kode_transaksi_ap,
                                         'kode_rekening' => '2500000',
                                         'tanggal_transaksi' => date('Y-m-d'),
                                         'jenis_transaksi' => 'Bukti SYSTEM',
-                                        'keterangan' => 'Jurnal Pembebanan Inventaris' .' '. $row->keterangan .' ' . date('M Y'),
-                                        'debet' => $debet,
-                                        'kredit' => 0,
+                                        'keterangan' => 'Jurnal Pembebanan Inventaris' . ' ' . $row->keterangan . ' ' . date('M Y'),
+                                        'debet' => 0,
+                                        'kredit' => $debet,
                                     ]);
                                 }
-    
+
                                 TransaksiPembebananAp::create([
                                     'kode_branch' => $row->kode_branch,
                                     'kode_transaksi' => 'BU' . '/' . $row->kode_branch . '/' . $kode_transaksi_ap,
                                     'kode_rekening' => '57202',
                                     'tanggal_transaksi' => date('Y-m-d'),
                                     'jenis_transaksi' => 'Bukti SYSTEM',
-                                    'keterangan' => 'Jurnal Pembebanan Inventaris' .' '. $row->keterangan .' ' . date('M Y'),
+                                    'keterangan' => 'Jurnal Pembebanan Inventaris' . ' ' . $row->keterangan . ' ' . date('M Y'),
                                     'debet' => 0,
-                                    'kredit' => $credit,
+                                    'kredit' => $credit
                                 ]);
-    
+
                                 TransaksiPembebananAp::create([
                                     'kode_branch' => $row->kode_branch,
                                     'kode_transaksi' => 'BU' . '/' . $row->kode_branch . '/' . $kode_transaksi_ap,
                                     'kode_rekening' => '2500000',
                                     'tanggal_transaksi' => date('Y-m-d'),
                                     'jenis_transaksi' => 'Bukti SYSTEM',
-                                    'keterangan' => 'Jurnal Pembebanan Inventaris' .' '. $row->keterangan .' ' . date('M Y'),
+                                    'keterangan' => 'Jurnal Pembebanan Inventaris' . ' ' . $row->keterangan . ' ' . date('M Y'),
                                     'debet' => $credit,
                                     'kredit' => 0,
                                 ]);
-    
+
                                 TransaksiPembebananKp::create([
                                     'kode_branch' => 1010,
                                     'kode_transaksi' => 'BU' . '/' . 1010 . '/' . $kode_transaksi_kp,
-                                    'kode_rekening' => '1010-'.$other->GL,
+                                    'kode_rekening' => '1010-' . $row->gl,
                                     'tanggal_transaksi' => date('Y-m-d'),
                                     'jenis_transaksi' => 'Bukti SYSTEM',
-                                    'keterangan' => 'Jurnal Pembebanan Inventaris' .' '. $row->keterangan .' ' . date('M Y'),
+                                    'keterangan' => 'Jurnal Pembebanan Inventaris' . ' ' . $row->keterangan . ' ' . date('M Y'),
                                     'debet' => 0,
                                     'kredit' => $credit,
                                 ]);
@@ -447,10 +482,14 @@ class Inventaris extends Model
                         continue;
                     }
                 }
-    
-                // Log::info('schadule inventaris dijalankan ' . $i . ' data ditambahkan');
+
+                DB::commit();
+                Log::info('schadule inventaris dijalankan ' . $i . ' data ditambahkan');
             }
         } catch (\Throwable $th) {
+            DB::rollBack();
+
+            dd($th);
             Log::error($th->getMessage());
         }
     }

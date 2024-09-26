@@ -7,8 +7,8 @@
         </div>
         <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
-                <li class="breadcrumb-item"><a href="{{ route('it.dashboard') }}">Home</a></li>
-                <li class="breadcrumb-item"><a href="{{ route('it.pengajuan.index') }}">Pengajuan</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('admin.pengajuan.index') }}">Pengajuan</a></li>
                 <li class="breadcrumb-item active">{{ $title }}</li>
             </ol>
         </div>
@@ -22,11 +22,14 @@
                 @csrf
                 <div class="row">
                     <div class="col-12 col-md-12">
-                        <button type="button" class="btn btn-success mb-3" data-toggle="modal"
+                        <a href="{{ url('admin/pengajuan') }}" class="btn btn-sm btn-danger mb-3 mr-1">
+                            <i class="fas fa-arrow-left"></i> Kembali
+                        </a>
+                        <button type="button" class="btn btn-sm btn-success mb-3" data-toggle="modal"
                             data-target="#modal-peralatan">
-                            + Tambah Pengajuan
+                            <i class="fas fa-plus"></i> Tambah Pengajuan
                         </button>
-                        <div class="table-responsive">
+                        <div class="table-sm table-responsive">
                             <table class="table table-hover table-bordered">
                                 <thead>
                                     <tr>
@@ -55,7 +58,7 @@
                                         <td>{{ $item->no_telp }}</td>
                                         <td>{{ $item->pengguna }}</td>
                                         <td>
-                                            <a href="{{ url('it/temp-pengajuan/'. $item->id) }}" onclick="hapus_data('#delete_form{{ $item->id }}')" class="btn btn-sm btn-danger">
+                                            <a href="{{ url('admin/temp-pengajuan/'. $item->id) }}" onclick="hapus_data('#delete_form{{ $item->id }}')" class="btn btn-sm btn-danger">
                                                 <i class="fas fa-trash"></i>
                                             </a>
                                         </td>
@@ -70,7 +73,7 @@
                 </div>
                 <div class="row mb-2">
                     <div class="col-md">
-                        <button type="submit" class="btn btn-primary">Ajukan</button>
+                        <button type="submit" class="btn btn-sm btn-primary">Ajukan Peralatan</button>
                     </div>
                 </div>
             </form>
@@ -82,13 +85,13 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title">Tambah Peralatan</h4>
+                    <h4 class="modal-title">Tambah Pengajuan</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
     
-                <form action="{{ url('admin-head/temp-pengajuan') }}" method="post">
+                <form action="{{ url('admin-head/temp-pengajuan') }}" method="post" enctype="multipart/form-data">
                     @csrf
                     <div class="modal-body">
                         <div class="row">
@@ -118,17 +121,24 @@
                                             <option value="{{ $item->kode_branch }}">{{ $item->unit }}</option>
                                         @endforeach
                                     </select>
+                                    <small class="text-danger">* pilih salah satu AP atau Cabang, jangan pilih dua2 nya. <br> 
+                                        jika ingin pengajuan untuk AP pilih ini!
+                                    </small>
                                 </div>
 
                                 <div class="form-group">
                                     <label for="" class="form-label">Pilih Cabang</label>
-                                    <select name="kode_area" class="form-control">
-                                        @foreach ($branch as $item)
-                                            <option value="" hidden>-- Pilih Cabangs --</option>
-                                            @endforeach
+                                    <select name="kode_area" id="kode_area" class="form-control">
+                                        <option value="" hidden>-- Pilih Cabang --</option>
+                                        @foreach ($area as $item)
                                         <option value="{{ $item->code_area }}">{{ $item->area }}</option>
+                                        @endforeach
                                     </select>
+                                    <small class="text-danger">* pilih salah satu AP atau Cabang, jangan pilih dua2 nya. <br> 
+                                        jika ingin pengajuan untuk Wilayah pilih ini!
+                                    </small>
                                 </div>
+
     
                                 <div class="form-group">
                                     <label for="" class="form-label">Merk</label>
@@ -139,12 +149,14 @@
                                     <label for="" class="form-label">Type</label>
                                     <input type="text" name="type" id="type" class="form-control" placeholder="Masukan Type" required>
                                 </div>
-                            </div>
-                            <div class="col-md-6">
+
                                 <div class="form-group">
                                     <label for="" class="form-label">Kuantitas</label>
                                     <input type="number" name="kuantitas" id="kuantitas" class="form-control" placeholder="Masukan Kuantitas" required>
                                 </div>
+                            </div>
+
+                            <div class="col-md-6">
                 
                                 <div class="form-group">
                                     <label for="" class="form-label">Harga</label>
@@ -168,13 +180,34 @@
                                         placeholder="Masukan Nama Pengguna" required>
                                 </div>
 
+                                <div class="form-group">
+                                    <label for="" class="form-label">Upload MOA</label>
+                                    <input type="file" name="moa" id="moa" class="form-control" placeholder="Masukan MOA">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="" class="form-label">Rekening</label>
+                                    <select name="rekening_id" id="" class="form-control">
+                                        <option value="">-- Pilih Rekening Tujuan --</option>
+                                        @foreach ($rekening as $item)
+                                        <option value="{{ $item->id }}">{{ $item->no_rek }} - {{ $item->nama_bank }} - {{ $item->atas_nama }}</option>
+                                        @endforeach
+                                    </select>
+                                    <small class="text-red">*isi jika ingin menggunakan rekening lain, jika tidak diisi maka akan menggunakan rekening pembuat</small>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="" class="form-label">Keterangan</label>
+                                    <textarea name="keterangan" class="form-control" id="keterangan" cols="5" rows="3" required></textarea>
+                                </div>
+
                             </div>
                         </div>
                     </div>
     
                     <div class="modal-footer justify-content-between">
-                        <button type="button" class="btn btn-danger" data-dismiss="modal">Kembali</button>
-                        <button type="submit" class="btn btn-primary">Tambah</button>
+                        <button type="button" class="btn-sm btn-danger" data-dismiss="modal">Kembali</button>
+                        <button type="submit" class="btn-sm btn-primary">Tambah</button>
                     </div>
                 </form>
             </div>
@@ -193,7 +226,7 @@
                     </button>
                 </div>
     
-                <form action="{{ url('admin/temp-pengajuan') }}" method="post">
+                <form action="{{ url('admin-head/temp-pengajuan') }}" method="post">
                     @csrf
                     <div class="modal-body">
                         <div class="row">
