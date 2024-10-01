@@ -72,14 +72,6 @@
                                 @endforeach
                             </ul>
                         </td>
-                        <!-- <td>
-                            <ul class="p-0" style="list-style: none">
-                                <br>
-                                @foreach ($pengajuan->pengajuan_details as $item)
-                                    <li>{{ $item->jenis_peralatan->param_peralatan->coa }}</li>
-                                @endforeach
-                            </ul>
-                        </td> -->
                         <td>
                             <ul class="p-0" style="list-style: none">
                                 @foreach ($pengajuan->pengajuan_details as $item)
@@ -128,7 +120,7 @@
                 </tbody>
                 <tfoot>
                     <tr>
-                        <td colspan="5"><strong>Subtotal</strong></td>
+                        <td colspan="4"><strong>Subtotal</strong></td>
                         <td colspan="3"><strong>Rp. {{ number_format($pengajuan->subtotal())}}</strong></td>
                     </tr>
                 </tfoot>

@@ -294,7 +294,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('pengajuan-bdd', [ItController::class, 'pengajuan_bdd'])->name('pengajuan_bdd');
         Route::post('approve/{id}', [ItController::class, 'approve'])->name('approve');
         Route::post('approve-bdd/{id}', [ItController::class, 'approve_bdd'])->name('approve_bdd');
-        // Route::post('get-branches', [DataUserController::class, 'getBranches']);
+        Route::post('get-branches', [DataUserController::class, 'getBranches']);
         Route::post('tolak/{id}', [ItController::class, 'tolak'])->name('tolak');
         Route::get('pengajuan-detail/{id}', [ItController::class, 'pengajuan_detail'])->name('pengajuan-detail');
 

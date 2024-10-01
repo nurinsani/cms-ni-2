@@ -53,7 +53,6 @@ class LpjAhController extends Controller
                 $namafile = time().'.'.$gambar->getClientOriginalExtension();
                 $gambar->move('images/lpj/struk_pembelian', $namafile);
 
-                // $data['struk_pembelian'] = $this->upload_file($request->file('struk_pembelian'), 'lpj/struk-pembelian');
             }
 
             $data['struk_pembelian'] = $namafile;
@@ -63,7 +62,6 @@ class LpjAhController extends Controller
                 $namafile = time().'.'.$gambar->getClientOriginalExtension();
                 $gambar->move('images/lpj/lampiran', $namafile);
 
-                // $data['struk_pembelian'] = $this->upload_file($request->file('struk_pembelian'), 'lpj/struk-pembelian');
             }
 
             $data['lampiran'] = $namafile;

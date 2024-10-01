@@ -117,7 +117,7 @@ class Inventaris extends Model
 
                     $branch = Branch::where('kode_branch', $kode_branch)->first();
 
-                    if ($tanggal_sekarang == 15) {
+                    if ($tanggal_sekarang == 30) {
                         if ($value->penyusutan_ke + count($value->susut) !== 48) {
                             if ($value->status_branch !== 'AUDIT') {
                                 Penyusutan::create([

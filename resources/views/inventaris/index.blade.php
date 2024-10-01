@@ -26,28 +26,55 @@
             </div>
             <div class="card-body">
                 @if (Auth::check() && Auth::user()->hasRole('admin'))
-                    <form id="filter-form" class="mb-4">
+                    @if (Auth::user()->code_area !==1010)
+                        <form id="filter-form" class="mb-4">
+                            <div class="row">
+                                <div class="col-4 form-group">
+                                    <label for="region">Pilih Region:</label>
+                                    <select name="region" id="region" class="form-control">
+                                        <option value="">-- Semua Region --</option>
+                                        @for ($i = 0; $i < count($regions); $i++)
+                                            <option value="{{ $regions[$i] }}">{{ $regions[$i] }}</option>
+                                        @endfor
+                                    </select>
+                                </div>
+                                <div class="col-4 form-group">
+                                    <label for="area">Pilih Area:</label>
+                                    <select name="area" id="area" class="form-control"></select>
+                                </div>
+                                <div class="col-4 form-group">
+                                    <label for="kode_branch">Pilih Branch:</label>
+                                    <select name="kode_branch" id="kode_branch" class="form-control"></select>
+                                </div>
+                            </div>
+                        </form>
+                    @endif
+
+                    @if (Auth::user()->code_area == 1010)
                         <div class="row">
-                            <div class="col-4 form-group">
-                                <label for="region">Pilih Region:</label>
-                                <select name="region" id="region" class="form-control">
-                                    <option value="">-- Semua Region --</option>
-                                    @for ($i = 0; $i < count($regions); $i++)
-                                        <option value="{{ $regions[$i] }}">{{ $regions[$i] }}</option>
-                                    @endfor
-                                </select>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="" class="form-label">Pilih Area</label>
+                                    <select name="area" id="area" class="form-control">
+                                        <option value="">-- Pilih Area --</option>
+                                        @foreach ($area as $row)
+                                            <option value="{{ $row }}">{{ $row }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
-                            <div class="col-4 form-group">
-                                <label for="area">Pilih Area:</label>
-                                <select name="area" id="area" class="form-control"></select>
-                            </div>
-                            <div class="col-4 form-group">
-                                <label for="kode_branch">Pilih Branch:</label>
-                                <select name="kode_branch" id="kode_branch" class="form-control"></select>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="" class="form-label">Pilih Wilayah</label>
+                                    <select name="kode_branch" id="kode_branch" class="form-control">
+                                        <option value="">-- Pilih Wilayah --</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
-                    </form>
+                    @endif
                 @endif
+
 
                 @if (Auth::check() && Auth::user()->hasRole('akunting'))
                 <div class="row">

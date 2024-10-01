@@ -55,7 +55,7 @@ class ApprovalLpjController extends Controller
                     ]);
                 } else {
                     if ($item->harga_pembelian > 500000) {
-                        if ($item->tanggal_perolehan >= 16) {
+                        if ($item->tanggal_perolehan >= 16 && $item->tanggal_perolehan <= 31) {
                             if ($item->kode_branch == NULL) {
                                 RencanaPenyusutan::create([
                                     'user_id' => auth()->user()->id,

@@ -106,7 +106,7 @@
                                                     class="btn btn-sm btn-primary">Buat LPJ</a>
                                             @else
                                                 <a href="#" onclick="buat_lpj({{ $item->id }} )"
-                                                    class="btn btn-sm btn-success disabled">
+                                                    class="btn btn-sm btn-success">
                                                     <i class="far fa-check-square"></i>
                                                 </a>
                                             @endif

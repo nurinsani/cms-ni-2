@@ -70,7 +70,13 @@
                         <td>
                             <ul class="p-0" style="list-style: none">
                                 @foreach ($pengajuan->pengajuan_details as $item)
-                                <li>{{ $item->ap->unit ?? $item->area->area }}</li>
+                                    @if ($item->ap->unit == null)
+                                        <li>{{ $item->area->area }}</li>
+                                    @elseif($item->ap->area == null)
+                                        <li>{{ $item->ap->unit }}</li>
+                                    @else
+                                    <li>tes</li>
+                                    @endif
                                 @endforeach
                             </ul>
                         </td>
