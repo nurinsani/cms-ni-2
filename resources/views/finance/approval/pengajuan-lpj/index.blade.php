@@ -27,7 +27,7 @@
                         <tr>
                             <th>No</th>
                             <th>Nomor</th>
-                            <th>Cabang</th>
+                            <th>Area</th>
                             <th>Tanggal Pembelian</th>
                             <th>Nama Peralatan</th>
                             <th>Aksi</th>
@@ -38,7 +38,7 @@
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ $data->nomor }}</td>
-                                <td>{{ $data->code_area }}</td>
+                                <td>{{ $data->area->area }}</td>
                                 <td>{{ $data->tanggal_pengajuan->format('d-M-Y'); }}</td>
                                 <td>
                                     <ul class="p-0" style="list-style: none">

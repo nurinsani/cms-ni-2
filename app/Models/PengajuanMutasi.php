@@ -17,13 +17,13 @@ class PengajuanMutasi extends Model
         return $this->belongsTo(PengajuanDetail::class);
     }
 
-    public function ap()
+    public function branch()
     {
-        return $this->belongsTo(Branch::class, 'ke_cabang');
+        return $this->belongsTo(Branch::class, 'ke_cabang', 'kode_branch');
     }
 
     public function peralatan()
     {
-        return $this->belongsTo(Peralatan::class, 'peralatan_id');
+        return $this->belongsTo(Inventaris::class, 'peralatan_id', 'id');
     }
 }

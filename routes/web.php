@@ -153,6 +153,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('inventaris', [AkuntingController::class, 'inventaris']);
         Route::get('jurnal-kp', [JurnalController::class, 'jurnal_kp']);
         Route::get('jurnal-ap', [JurnalController::class, 'jurnal_ap']);
+        Route::get('jurnal-penyusutan-kp', [JurnalController::class, 'jurnal_penyusutan_kp']);
+        Route::get('jurnal-penyusutan-ap', [JurnalController::class, 'jurnal_penyusutan_ap']);
+        Route::get('jurnal-pembebanan-kp', [JurnalController::class, 'jurnal_pembebanan_kp']);
+        Route::get('jurnal-pembebanan-ap', [JurnalController::class, 'jurnal_pembebanan_ap']);
     });
 
     Route::group(['prefix' => 'admin-head', 'as' => 'admin-head.', 'middleware' => 'role:admin-head'], function () {
@@ -358,6 +362,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/export-excel-peralatan', [PeralatanController::class, 'excel'])->name('peralatan.export');
     Route::post('/export-excel-inventaris', [MiscController::class, 'inventarisExcel']);
     Route::post('/export-excel/jurnal-kp', [MiscController::class, 'jurnalKPExcel']);
+    Route::post('/export-excel/jurnal-ap', [MiscController::class, 'jurnalAPExcel']);
+
     Route::get('/get/area-by-branch/{id}', [MiscController::class, 'areaByBranch']);
     Route::post('/get-branches', [DataUserController::class, 'getBranches']);
     Route::get('/admin/inventaris', [InventarisController::class, 'index'])->name('inventaris.index');
@@ -366,6 +372,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/fetch-data', [InventarisController::class, 'fetchData'])->name('inventaris.fetchData');
     Route::get('/inventaris/data', [InventarisController::class, 'getData'])->name('inventaris.data');
+    Route::get('/get-inventaris/{kodeBranch}', [PengajuanMutasiController::class, 'getInventaris']);
 });
 
 

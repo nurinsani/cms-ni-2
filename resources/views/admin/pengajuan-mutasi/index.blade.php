@@ -17,7 +17,8 @@
 @section('content')
 <div class="card">
     <div class="card-header">
-        <a href="{{ route('admin.pengajuan-mutasi.create') }}" class="btn btn-primary">Tambah</a>
+        <a href="{{ route('admin.pengajuan-mutasi.create') }}" class="btn btn-sm btn-primary">
+          <i class="fa fa-plus"></i> Tambah</a>
     </div>
     <!-- /.card-header -->
     <div class="card-body">
@@ -37,18 +38,24 @@
           @foreach ($penganjuan_mutasi as $item)
               <tr>
                 <td>{{ $loop->iteration }}</td>
-                <td>{{ $item->peralatan->nama_peralatan }}</td>
+                <td>{{ $item->peralatan->jenis }}</td>
                 <td>{{ $item->peralatan->ap->unit }}</td>
-                <td>{{ $item->ap->unit }}</td>
+                <td>{{ $item->branch->unit }}</td>
                 <td>{{ $item->bulan_mutasi }}</td>
-                <td>{{ $item->status_approve }}</td>
+                <td>
+                  <span class="badge bg-success">
+                    {{ $item->status_approve }}</td>
+                  </span>
                 <td>
                   <a href="{{ route('admin.pengajuan-mutasi.edit', $item->id) }}" class="btn btn-sm btn-primary">Edit</a>
+                  @if ($item->status_approve === 'mutasi-admin')
                   <button type="submit" onclick="hapus_data('#delete_form{{ $item->id }}')" class="btn btn-sm btn-danger">Hapus</button>
                   <form class="d-inline" id="delete_form{{ $item->id }}" action="{{ route('admin.pengajuan-mutasi.destroy', $item->id) }}" method="post">
                     @csrf
                     @method('delete')
                   </form>
+                      
+                  @endif
                 </td>
               </tr>
           @endforeach

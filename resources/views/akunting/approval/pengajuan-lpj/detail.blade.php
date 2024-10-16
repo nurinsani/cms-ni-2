@@ -101,17 +101,17 @@
                                     <td colspan="3"><strong>Rp. {{ number_format($lpj->subtotal()) }}</strong></td>
                                 </tr>
                                 <tr>
-                                    <td colspan="7"><strong>Total Pembelian</strong></td>
+                                    <td colspan="6"><strong>Total Pembelian</strong></td>
                                     <td colspan="2"><strong>Rp. {{ number_format($lpj->total_pembelian()) }}</strong></td> 
                                 </tr>
                                 @if ($lpj->total_pembelian() > $lpj->subtotal())
                                     <tr>
-                                        <td colspan="7"><strong>Kekurangan</strong></td>
+                                        <td colspan="6"><strong>Kekurangan</strong></td>
                                         <td colspan="2"><strong>Rp. {{ number_format($lpj->total_pembelian() - $lpj->subtotal())}}</strong></td> 
                                     </tr>
                                 @else
                                     <tr>
-                                        <td colspan="7"><strong>Sisa/Pengembalian</strong></td>
+                                        <td colspan="6"><strong>Sisa/Pengembalian</strong></td>
                                         <td colspan="2"><strong>Rp. {{ number_format($lpj->subtotal() - $lpj->total_pembelian())}}</strong></td> 
                                     </tr>
                                 @endif
@@ -123,17 +123,6 @@
                 <!-- /.card-body -->
             </div>
         </div>
-        {{-- <div class="col d-print-none">
-        <div class="card">
-            <div class="card-header">
-                Bukti Transaksi
-            </div>
-            <div class="card-body d-flex">
-                <img src="{{ Storage::url($lpj->struk_pembelian) }}" onclick="window.open('{{ Storage::url($lpj->struk_pembelian) }}')" class="w-50 mr-2" alt="">
-                <img src="{{ Storage::url($lpj->bukti_pengembalian) }}" onclick="window.open('{{ Storage::url($lpj->bukti_pengembalian) }}')" class="w-50 mr-2" alt="">
-            </div>
-        </div>
-    </div> --}}
     </div>
 @endsection
 

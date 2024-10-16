@@ -105,7 +105,7 @@
                                                     class="btn btn-sm btn-primary">Buat LPJ</a>
                                             @else
                                                 <a href="#" onclick="buat_lpj({{ $item->id }} )"
-                                                    class="btn btn-sm btn-success disabled">
+                                                    class="btn btn-sm btn-success">
                                                     <i class="far fa-check-square"></i>
                                                 </a>
                                             @endif
@@ -194,6 +194,11 @@
                                             @error('struk_pembelian')
                                                 <small class="text-danger">{{ $message }}</small>
                                             @enderror
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="" class="form-label">Keterangan</label>
+                                            <textarea name="keterangan_lpj" class="form-control" cols="5" placeholder="LPJ Pembelian ..." required></textarea>
                                         </div>
 
                                         <div class="modal-footer">

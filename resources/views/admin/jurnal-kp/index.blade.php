@@ -19,22 +19,32 @@
         <div class="card-body">
             <div class="row">
                 <div class="col-md-6">
-                    <form action="{{ url('export-excel/jurnal-kp') }}" method="POST">
+                    <form action="{{ url('akunting/jurnal-kp') }}" method="GET">
                         @csrf
+                        <div class="row">
+                            <div class="col-4 mb-3">Pilih Tanggal Awal</div>
+                            <div class="col-4 mb-3">Pilih Tanggal Akhir</div>
+                        </div>
                         <div class="row">
                             <div class="col-4">
                                 <div class="form-group">
-                                    <input type="date" class="form-control date" id="start_date"name="start_date">
+                                    <input type="date" name="start_date" class="form-control" required>
                                 </div>
                             </div>
                             <div class="col-4">
                                 <div class="form-group">
-                                    <input type="date" class="form-control date" id="end_date" name="end_date">
+                                    <input type="date" name="end_date" class="form-control" required>
                                 </div>
                             </div>
                             <div class="col-4">
-                                <button class="btn btn-sm btn-success my-2">Export</button>
+                                <button class="btn btn-primary" type="submit">
+                                    <i class="fas fa-filter"></i> FILTER
+                                </button>
+                                <a class="btn btn-warning" href="{{ url('akunting/jurnal-kp') }}">
+                                    <i class="fas fa-sync-alt"></i> RESET
+                                </a>
                             </div>
+                            
                         </div>
                     </form>
                 </div>
@@ -45,14 +55,15 @@
     <div class="card">
         <!-- /.card-header -->
         <div class="card-body">
-            <table id="table" class="table table-bordered table-hover">
+            <table id="example1" class="table table-bordered table-hover">
                 <thead>
                     <tr>
-                        <th>No</th>
-                        <th>Tanggal Transaksi</th>
+                        <th>Kode Branch</th>
                         <th>Kode Transaksi</th>
                         <th>Kode Rekening</th>
+                        <th>Tanggal Transaksi</th>
                         <th>Jenis Transaksi</th>
+                        <th>Keterangan</th>
                         <th>Debet</th>
                         <th>Kredit</th>
                     </tr>
@@ -60,13 +71,14 @@
                 <tbody>
                     @foreach ($jurnal_kp as $item)
                         <tr>
-                            <td>{{ $loop->iteration }}</td>
-                            <td>{{ $item->tanggal_transaksi }}</td>
+                            <td>{{ $item->kode_branch }}</td>
                             <td>{{ $item->kode_transaksi }}</td>
                             <td>{{ $item->kode_rekening }}</td>
+                            <td>{{ \Carbon\Carbon::parse($item->tanggal_transaksi)->format('m/d/Y') }}</td>
                             <td>{{ $item->jenis_transaksi }}</td>
-                            <td>Rp. {{ number_format($item->debet) }}</td>
-                            <td>Rp. {{ number_format($item->kredit) }}</td>
+                            <td>{{ $item->keterangan }}</td>
+                            <td>{{ $item->debet }}</td>
+                            <td>{{ $item->kredit }}</td>
                         </tr>
                     @endforeach
                 </tbody>
@@ -74,35 +86,14 @@
         </div>
         <!-- /.card-body -->
     </div>
+
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.3/css/buttons.dataTables.min.css">
+
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.3/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.3/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.3/js/buttons.print.min.js"></script>
 @endsection
-@push('js')
-    <script>
-        $(function() {
-            const table = $('#table').DataTable();
-
-            function filterEvents() {
-                const startDate = $('#start_date').val();
-                const endDate = $('#end_date').val();
-
-                $.fn.dataTable.ext.search.push(
-                    function(settings, data, dataIndex) {
-                        const eventDate = data[1]; // use data for the date column
-
-                        if (
-                            (startDate === '' || eventDate >= startDate) &&
-                            (endDate === '' || eventDate <= endDate)
-                        ) {
-                            return true;
-                        }
-                        return false;
-                    }
-                );
-
-                table.draw();
-                $.fn.dataTable.ext.search.pop();
-            }
-
-            $('.date').on('change', filterEvents);
-        });
-    </script>
-@endpush

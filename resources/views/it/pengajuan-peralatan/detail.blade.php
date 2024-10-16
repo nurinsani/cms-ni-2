@@ -61,7 +61,7 @@
                 <li>Nomor : {{ $pengajuan->nomor }}</li>
                 <li>Kepada : Ketua dan Pengurus KSPPS Nur Insani</li>
                 <li>Dari : {{ $pengajuan->user->name }}</li>
-                <li>Tanggal : {{ $pengajuan->tanggal_pengajuan }}</li>
+                <li>Tanggal : {{ $pengajuan->tanggal_pengajuan->format('d-M-Y') }}</li>
             </ul>
 
             <div class="table-responsive">
@@ -126,13 +126,12 @@
                             <td>
                                 Transfer ke <br>{{ $item->pengajuan->user->nama_bank }} {{ $item->pengajuan->user->no_rek }}
                                 A/N {{ $item->pengajuan->user->atas_nama }}
-                                {{-- {{ $pengajuan->keterangan }} --}}
                             </td>
                         </tr>
                     </tbody>
                     <tfoot>
                         <tr>
-                            <td colspan="6"><strong>Subtotal</strong></td>
+                            <td colspan="6"><strong>Total Uang Muka</strong></td>
                             <td colspan="2"><strong>Rp. {{ number_format($pengajuan->subtotal()) }}</strong></td>
                         </tr>
                     </tfoot>

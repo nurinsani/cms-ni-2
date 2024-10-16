@@ -51,8 +51,7 @@
             <table class="table table-bordered">
                 <thead>
                     <tr>
-                        <th scope="col">CABANG/AP</th>
-                        <!-- <th scope="col">COA</th> -->
+                        <th scope="col">Branch</th>
                         <th scope="col">Keperluan</th>
                         <th scope="col">Qty</th>
                         <th scope="col" width="120px">Jumlah</th>
@@ -101,9 +100,15 @@
                             </ul>
                         </td>
                         <td>
-                            <ul class="p-0" style="list-style: none">
+                            <ul class="p-0" style="width: 180px; list-style: none">
                                 @foreach ($pengajuan->pengajuan_details as $item)
-                                <a href="" onclick="window.open('{{ url('files/moa/'.$item->moa) }}')">{{ $item->moa }}</a>
+                                <li>
+                                    @if ($item->moa == null)
+                                    (tidak ada berkas)
+                                    @else
+                                    <a href="" onclick="window.open('{{ url('files/moa/'.$item->moa) }}')">{{ $item->moa }}</a>
+                                    @endif
+                                </li>
                                 @endforeach
                             </ul>
                         </td>
@@ -120,7 +125,7 @@
                 </tbody>
                 <tfoot>
                     <tr>
-                        <td colspan="4"><strong>Subtotal</strong></td>
+                        <td colspan="4"><strong>Total Uang Muka</strong></td>
                         <td colspan="3"><strong>Rp. {{ number_format($pengajuan->subtotal())}}</strong></td>
                     </tr>
                 </tfoot>

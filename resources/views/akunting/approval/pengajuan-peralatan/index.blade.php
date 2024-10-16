@@ -22,7 +22,7 @@
                     <tr>
                         <th>No</th>
                         <th>Nomor</th>
-                        <th>cabang</th>
+                        <th>Area</th>
                         <th>COA</th>
                         <th>Keterangan</th>
                         <th>Nominal</th>
@@ -46,8 +46,7 @@
                             <td>
                                 <ul class="p-0" style="list-style: none">
                                     @foreach ($data->pengajuan_details as $item)
-                                        <li> {{ $item->jenis_peralatan->nama_jenis }} {{ $item->merk }}
-                                            {{ $item->type }} </li>
+                                        <li> {{ $item->jenis_peralatan->nama_jenis }} </li>
                                     @endforeach
                                 </ul>
                             </td>

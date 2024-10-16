@@ -113,42 +113,34 @@
                                     </select>
                                 </div>
 
-                                
-    
                                 <div class="form-group">
-                                    <label for="" class="form-label">Pilih Opsi</label>
+                                    <label for="" class="form-label">Pilih Branch</label>
                                     <select id="select-option" class="form-control">
-                                        <option value="" hidden>-- Pilih Opsi --</option>
-                                        <option value="ap">AP</option>
-                                        <option value="cabang">Cabang</option>
-                                        <option value="region">Region</option>
+                                        <option value="" hidden>-- Pilih Branch --</option>
+                                        <option value="ap">Unit</option>
+                                        <option value="cabang">Area</option>
+                                        {{-- <option value="region">Region</option> --}}
                                     </select>
                                 </div>
                                 
                                 <div id="select-ap" class="form-group d-none">
-                                    <label for="" class="form-label">Pilih AP</label>
-                                    <select name="kode_branch" id="kode_branch" class="form-control">
-                                        <option value="" hidden>-- Pilih AP --</option>
+                                    <label for="" class="form-label">Pilih Unit</label>
+                                    <select name="kode_branch" id="kode_branch" class="form-control select2bs4">
+                                        <option value="">-- Pilih Unit --</option>
                                         @foreach ($branch as $item)
                                             <option value="{{ $item->kode_branch }}">{{ $item->unit }}</option>
                                         @endforeach
                                     </select>
-                                    <small class="text-danger">* pilih salah satu AP atau Cabang, jangan pilih dua2 nya. <br> 
-                                        jika ingin pengajuan untuk AP pilih ini!
-                                    </small>
                                 </div>
                                 
                                 <div id="select-cabang" class="form-group d-none">
-                                    <label for="" class="form-label">Pilih Cabang</label>
+                                    <label for="" class="form-label">Pilih Area</label>
                                     <select name="kode_area" id="kode_area" class="form-control">
-                                        <option value="" hidden>-- Pilih Cabang --</option>
+                                        <option value="">-- Pilih Area --</option>
                                         @foreach ($branch as $item)
-                                            <option value="{{ $item->code_area }}">{{ $item->area }}</option>
                                         @endforeach
+                                        <option value="{{ $item->code_area }}">{{ $item->area }}</option>
                                     </select>
-                                    <small class="text-danger">* pilih salah satu AP atau Cabang, jangan pilih dua2 nya. <br> 
-                                        jika ingin pengajuan untuk Wilayah pilih ini!
-                                    </small>
                                 </div>
                                 
                                 <div id="select-region" class="form-group d-none">
@@ -164,7 +156,6 @@
                                     </small>
                                 </div>
 
-    
                                 <div class="form-group">
                                     <label for="" class="form-label">Merk</label>
                                     <input type="text" name="merk" class="form-control" placeholder="Masukan Merk" required>
@@ -179,14 +170,14 @@
                                     <label for="" class="form-label">Kuantitas</label>
                                     <input type="number" name="kuantitas" id="kuantitas" class="form-control" placeholder="Masukan Kuantitas" required>
                                 </div>
+
+                                <div class="form-group">
+                                    <label for="harga" class="form-label">Harga</label>
+                                    <input type="text" name="harga" id="harga" class="form-control" placeholder="Masukkan harga" required>
+                                </div>
                             </div>
 
                             <div class="col-md-6">
-                
-                                <div class="form-group">
-                                    <label for="" class="form-label">Harga</label>
-                                    <input type="number" name="harga" id="harga" class="form-control" placeholder="Masukan harga" required>
-                                </div>
     
                                 <div class="form-group">
                                     <label for="" class="form-label">Nama Toko</label>
@@ -212,7 +203,7 @@
 
                                 <div class="form-group">
                                     <label for="" class="form-label">Rekening</label>
-                                    <select name="rekening_id" id="" class="form-control">
+                                    <select name="rekening_id" id="" class="form-control select2bs4">
                                         <option value="">-- Pilih Rekening Tujuan --</option>
                                         @foreach ($rekening as $item)
                                         <option value="{{ $item->id }}">{{ $item->no_rek }} - {{ $item->nama_bank }} - {{ $item->atas_nama }}</option>
@@ -223,7 +214,7 @@
 
                                 <div class="form-group">
                                     <label for="" class="form-label">Keterangan</label>
-                                    <textarea name="keterangan" class="form-control" id="keterangan" cols="5" rows="3" required></textarea>
+                                    <textarea name="keterangan" class="form-control" id="keterangan" cols="5" rows="3" placeholder="UM Pembelian ..." required></textarea>
                                 </div>
 
                             </div>
@@ -337,30 +328,31 @@
             </div>
         </div>
     </div>
-        
     @endforeach
 
     @push('js')
 
-    <script>
-        document.getElementById('select-option').addEventListener('change', function() {
-            var selectedValue = this.value;
-    
-            // Hide semua dropdown
-            document.getElementById('select-ap').classList.add('d-none');
-            document.getElementById('select-cabang').classList.add('d-none');
-            document.getElementById('select-region').classList.add('d-none');
-    
-            // Show the corresponding dropdown based on selection
-            if (selectedValue === 'ap') {
-                document.getElementById('select-ap').classList.remove('d-none');
-            } else if (selectedValue === 'cabang') {
-                document.getElementById('select-cabang').classList.remove('d-none');
-            } else if (selectedValue === 'region') {
-                document.getElementById('select-region').classList.remove('d-none');
-            }
-        });
-    </script>
+        <script>
+            document.getElementById('select-option').addEventListener('change', function() {
+                var selectedValue = this.value;
+        
+                // Hide semua dropdown
+                document.getElementById('select-ap').classList.add('d-none');
+                document.getElementById('select-cabang').classList.add('d-none');
+                // document.getElementById('select-region').classList.add('d-none');
+        
+                // Show the corresponding dropdown based on selection
+                if (selectedValue === 'ap') {
+                    document.getElementById('select-ap').classList.remove('d-none');
+                } else if (selectedValue === 'cabang') {
+                    document.getElementById('select-cabang').classList.remove('d-none');
+                }
+
+                // else if (selectedValue === 'region') {
+                //     document.getElementById('select-region').classList.remove('d-none');
+                // }
+            });
+        </script>
 
         <script type="text/javascript">
             var id = 0;
@@ -439,5 +431,5 @@
         </script>
     @endpush
 
-    @include('sweetalert::alert')
+@include('sweetalert::alert')
 @endsection

@@ -14,7 +14,7 @@ class ApprovalMutasiController extends Controller
     public function index()
     {
         $data['title'] = 'Mutasi';
-        $data['mutasi'] = PengajuanMutasi::where('status_approve', 'admin-head')->get();
+        $data['mutasi'] = PengajuanMutasi::where('status_approve', 'mutasi-admin-head')->get();
         return view('admin-head.approval.pengajuan-mutasi.index', $data);
     }
 
@@ -24,13 +24,9 @@ class ApprovalMutasiController extends Controller
         try {
             DB::beginTransaction();
             $mutasi = PengajuanMutasi::findOrfail($id);
-            $mutasi->status_approve = 'akunting-it';
-            $mutasi->atasan_1 = auth()->user()->id;
+            $mutasi->status_approve = 'mutasi-akunting';
+            $mutasi->approve_ah = auth()->user()->id;
             $mutasi->save();
-
-            // $pengajuan = Peralatan::findOrfail($mutasi->pengajuan_detail_id);
-            // $pengajuan->kode_branch = $mutasi->ke_cabang;
-            // $pengajuan->update();
 
             DB::commit();
 

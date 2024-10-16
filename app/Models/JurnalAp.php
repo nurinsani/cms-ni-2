@@ -10,5 +10,8 @@ class JurnalAp extends Model
     use HasFactory;
 
     protected $table = 'transaksi_ap';
+    protected $casts = [
+        'tanggal_transaksi' => 'date',  // atau 'datetime'
+    ];
 
 }

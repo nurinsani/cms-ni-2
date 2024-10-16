@@ -6,8 +6,8 @@ use App\Models\Branch;
 use Illuminate\Http\Request;
 use App\Models\PengajuanMutasi;
 use App\Http\Controllers\Controller;
-use App\Models\Admin\PengajuanDetail;
 use App\Models\Admin\Peralatan;
+use App\Models\Inventaris;
 
 class PengajuanMutasiController extends Controller
 {
@@ -31,8 +31,12 @@ class PengajuanMutasiController extends Controller
     public function create()
     {
         $data['title'] = 'Tambah Pengajuan Mutasi';
-        $data['peralatan'] = Peralatan::all();
-        $data['branch'] = Branch::all();
+        $data['inventaris'] = Inventaris::all();
+        $data['mutasi_ke'] = Branch::all();
+        $data['branch'] = Branch::where('code_area', auth()->user()->code_area)
+        // ->select('unit')
+        ->distinct()
+        ->get();
         return view('admin.pengajuan-mutasi.create', $data);
     }
 
@@ -44,19 +48,22 @@ class PengajuanMutasiController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'peralatan_id' => 'required',
-            'ke_cabang' => 'required',
-            'bulan_mutasi' => 'required',
-        ]);
+
+        // dd($request);
+        // $request->validate([
+        //     'peralatan_id' => 'required',
+        //     'ke_cabang' => 'required',
+        //     'bulan_mutasi' => 'required',
+        // ]);
 
         // $peralatan = Peralatan::where('peralatan_id', $request->peralatan_id);
 
         $mutasi = New PengajuanMutasi;
         $mutasi->peralatan_id = $request->peralatan_id;
+        $mutasi->dari_cabang = $request->dari_cabang;
         $mutasi->ke_cabang = $request->ke_cabang;
         $mutasi->bulan_mutasi = $request->bulan_mutasi;
-        $mutasi->status_approve = 'admin-head';
+        $mutasi->status_approve = 'mutasi-admin-head';
         $mutasi->user_id = auth()->user()->id;
         $mutasi->save();
         
@@ -124,4 +131,27 @@ class PengajuanMutasiController extends Controller
         $pengajuanMutasi->delete();
         return redirect()->route('admin.pengajuan-mutasi.index')->with('success', 'Data berhasil dihapus');
     }
+
+    // public function getInventaris($kodeBranch)
+    // {
+    //     $inventaris = Inventaris::where('kode_branch', $kodeBranch)->get(); // Mengambil data inventaris berdasarkan kode_branch
+    //     // dd($inventaris);
+    //     return response()->json($inventaris); // Mengembalikan data dalam format JSON
+    // }
+
+    public function getInventaris($kodeBranch)
+    {
+        // Ambil data inventaris berdasarkan kode_branch yang dipilih, kecuali yang memiliki status_branch "AUDIT"
+        $inventaris = Inventaris::where('kode_branch', $kodeBranch)
+                                ->where('status_branch', '!=', 'AUDIT')
+                                ->get();
+    
+        // Tambahkan ini untuk melihat data yang diambil
+        if ($inventaris->isEmpty()) {
+            return response()->json(['message' => 'No data found for this kode_branch: ' . $kodeBranch], 404);
+        }
+    
+        return response()->json($inventaris);
+    }    
+
 }

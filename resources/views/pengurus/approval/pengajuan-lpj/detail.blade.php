@@ -60,87 +60,10 @@
                         <li>Nomor : {{ $lpj->nomor }}</li>
                         <li>Kepada : Ketua dan Pengurus KSPPS Nur Insani</li>
                         <li>Dari : {{ $lpj->user->name }}</li>
-                        <li>Tanggal : {{ $lpj->tanggal_pengajuan }}</li>
-                        <li>Cabang : {{ $lpj->ap->unit ?? $lpj->area->area}}</li>
+                        <li>Tanggal : {{ $lpj->tanggal_pengajuan->format('d-M-Y'); }}</li>
                     </ul>
 
                     <div class="table-responsive">
-                        {{-- @foreach ($lpj->pengajuan_details as $item)
-                        @endforeach
-                        @if ($item->kode_area == TRUE)
-                        <table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th scope="col">No</th>
-                                    <th scope="col">COA</th>
-                                    <th scope="col">Nama jenis Peralatan</th>
-                                    <th scope="col">Merk/Type</th>
-                                    <th scope="col">Pengajuan</th>
-                                        @foreach ($lpj->pengajuan_details as $item)
-                                        @endforeach
-                                        @php
-                                            $branch = App\Models\Branch::where('code_area', $item->kode_area)->get();
-                                        @endphp
-                                        @foreach ($branch as $b)
-                                        <th>
-                                            {{ Str::ucfirst($b->unit) }}
-                                        </th>
-                                        @endforeach
-                                    <th scope="col">Harga Pembelian</th>
-                                    <th>Struk pembelian</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($lpj->pengajuan_details as $item)
-                                    <tr>
-                                        <td>{{ $loop->iteration }}</td>
-                                        
-                                        <td>{{ $item->jenis_peralatan->param_peralatan->coa }}</td>
-                                        <td>{{ $item->jenis_peralatan->nama_jenis }}</td>
-                                        <td>{{ $item->merk }}</td>
-                                        <td>Rp. {{ number_format($item->harga * $item->kuantitas) }}</td>
-                                            @foreach ($item->avarage() as $a)
-                                            <td class="branch_unit" harga='{{ $a->harga }}' unit='{{ $a->unit }}'>
-                                                Rp. {{ number_format($a->harga) }}
-                                            </td>
-                                            @endforeach
-                                        <td>
-                                            {{ number_format(($item->harga_pembelian / $branch->count()) * $branch->count()) }}
-                                        </td>
-                                        <td><a href="" onclick="window.open('{{ url('images/lpj/struk_pembelian/'.$item->struk_pembelian) }}')">{{ $item->struk_pembelian }}</a></td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                            <tfoot>
-                                <tr>
-                                    <td colspan="4"><strong>Jumlah</strong></td>
-                                    <td colspan="1"><strong>Rp. {{ number_format($lpj->subtotal()) }}</strong</td>
-                                    @foreach ($lpj->pengajuan_details as $item)
-                                    @endforeach
-
-                                    @foreach ($item->avarage() as $a)
-                                    <td>
-                                        <strong id="hasil_{{ $a->unit }}">0</strong>
-                                    </td>
-                                    @endforeach
-                                    <td colspan="1"><strong>Rp. {{ number_format($lpj->total_pembelian()) }}</strong></td>
-                                </tr>
-                                @if ($lpj->total_pembelian() > $lpj->subtotal())
-                                    <tr>
-                                        <td colspan="4"><strong>Kekurangan</strong></td>
-                                        <td colspan="2"><strong>Rp. {{ number_format($lpj->total_pembelian() - $lpj->subtotal())}}</strong></td> 
-                                    </tr>
-                                @else
-                                    <tr>
-                                        <td colspan="4"><strong>Sisa/Pengembalian</strong></td>
-                                        <td colspan="2"><strong>Rp. {{ number_format($lpj->subtotal() - $lpj->total_pembelian())}}</strong></td> 
-                                    </tr>
-                                @endif
-                            </tfoot>
-                        </table>
-                        @endif --}}
-                        
-                        {{-- @if ($item->kode_branch == TRUE) --}}
                         <table class="table table-bordered">
                             <thead>
                                 <tr>
@@ -151,7 +74,7 @@
                                     <th scope="col">Merk/Type</th>
                                     <th scope="col">Pengajuan</th>
                                     <th scope="col">Harga Pembelian</th>
-                                    <th>Struk Pembelian</th>
+                                    <th>Struk pembelian</th>
                                     <th>Bukti Pengembalian</th>
                                     {{-- <th scope="col">Aksi</th> --}}
                                 </tr>
@@ -178,24 +101,22 @@
                                     <td colspan="3"><strong>Rp. {{ number_format($lpj->subtotal()) }}</strong></td>
                                 </tr>
                                 <tr>
-                                    <td colspan="7"><strong>Total Pembelian</strong></td>
+                                    <td colspan="6"><strong>Total Pembelian</strong></td>
                                     <td colspan="2"><strong>Rp. {{ number_format($lpj->total_pembelian()) }}</strong></td> 
                                 </tr>
                                 @if ($lpj->total_pembelian() > $lpj->subtotal())
                                     <tr>
-                                        <td colspan="7"><strong>Kekurangan</strong></td>
+                                        <td colspan="6"><strong>Kekurangan</strong></td>
                                         <td colspan="2"><strong>Rp. {{ number_format($lpj->total_pembelian() - $lpj->subtotal())}}</strong></td> 
                                     </tr>
                                 @else
                                     <tr>
-                                        <td colspan="7"><strong>Sisa/Pengembalian</strong></td>
+                                        <td colspan="6"><strong>Sisa/Pengembalian</strong></td>
                                         <td colspan="2"><strong>Rp. {{ number_format($lpj->subtotal() - $lpj->total_pembelian())}}</strong></td> 
                                     </tr>
                                 @endif
                             </tfoot>
                         </table>
-                        {{-- @endif --}}
-                        
                     </div>
 
                 </div>

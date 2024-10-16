@@ -48,28 +48,27 @@
                 <h4>PERMOHONAN DANA</h4>
                 {{-- <h4>WILAYAH {{ $pengajuan->area->area }}</h4> --}}
                 {{-- <h4>PERIODE AGUSTUS 2023</h4> --}}
-                <h4>TANGGAL {{ $pengajuan->tanggal_pengajuan }}</h4>
+                <h4>TANGGAL {{ $pengajuan->tanggal_pengajuan->format('d-M-Y') }}</h4>
             </div>
             <div class=""></div>
         </div>
         <!-- /.card-header -->
         <div class="card-body">
-            <a href="{{ url()->previous() }}" class="btn btn-sm btn-primary mb-3 d-print-none">
+            <a href="{{ url('admin/pengajuan') }}" class="btn btn-sm btn-primary mb-3 d-print-none">
                 <i class="fas fa-arrow-left"></i> Kembali
             </a>
             <ul class="p-0" style="list-style: none">
                 <li>Nomor : {{ $pengajuan->nomor }}</li>
                 <li>Kepada : Ketua dan Pengurus KSPPS Nur Insani</li>
                 <li>Dari : {{ $pengajuan->user->name }}</li>
-                <li>Tanggal : {{ $pengajuan->tanggal_pengajuan }}</li>
+                <li>Tanggal : {{ $pengajuan->tanggal_pengajuan->format('d-M-Y') }}</li>
             </ul>
 
             <div class="table-responsive">
                 <table class="table table-bordered">
                     <thead>
                         <tr>
-                            <th scope="col">CABANG/AP</th>
-                            <!-- <th scope="col">COA</th> -->
+                            <th scope="col">Branch</th>
                             <th scope="col">Keperluan</th>
                             <th scope="col">Qty</th>
                             <th scope="col" width="120px">Jumlah</th>
@@ -89,14 +88,6 @@
                                     @endforeach
                                 </ul>
                             </td>
-                            <!-- <td>
-                                <ul class="p-0" style="list-style: none">
-                                    <br>
-                                    @foreach ($pengajuan->pengajuan_details as $item)
-                                        <li>{{ $item->jenis_peralatan->param_peralatan->coa }}</li>
-                                    @endforeach
-                                </ul>
-                            </td> -->
                             <td>
                                 <ul class="p-0" style="list-style: none">
                                     @foreach ($pengajuan->pengajuan_details as $item)
@@ -126,9 +117,15 @@
                                 </ul>
                             </td>
                             <td>
-                                <ul class="p-0" style="list-style: none">
+                                <ul class="p-0" style="width: 180px; list-style: none">
                                     @foreach ($pengajuan->pengajuan_details as $item)
-                                    <a href="" onclick="window.open('{{ url('files/moa/'.$item->moa) }}')">{{ $item->moa }}</a>
+                                    <li>
+                                        @if ($item->moa == null)
+                                        (tidak ada berkas)
+                                        @else
+                                        <a href="" onclick="window.open('{{ url('files/moa/'.$item->moa) }}')">{{ $item->moa }}</a>
+                                        @endif
+                                    </li>
                                     @endforeach
                                 </ul>
                             </td>
@@ -145,7 +142,7 @@
                     </tbody>
                     <tfoot>
                         <tr>
-                            <td colspan="5"><strong>Subtotal</strong></td>
+                            <td colspan="4"><strong>Total Uang Muka</strong></td>
                             <td colspan="3"><strong>Rp. {{ number_format($pengajuan->subtotal())}}</strong></td>
                         </tr>
                     </tfoot>
@@ -153,66 +150,7 @@
     
             </div>
 
-            {{-- @if ($pengajuan->status_approve == 'lpj-admin')
-                <div class="d-flex justify-content-between mt-4">
-                    <div class="col text-center">
-                        <p>Diajukan Oleh,</p>
-                        <div class="py-4"></div>
-                        <span class="border-bottom pb-1">{{ $pengajuan->user->name ?? '' }}</span>
-                        <br>
-                        <b class="mt-1 d-block">Admin</b>
-                    </div>
-                    <div class="col text-center">
-                        <p>Diketahui Oleh,</p>
-                        <div class="py-4"></div>
-                        <span class="border-bottom pb-1">{{ $pengajuan->atasan1->name ?? '' }}</span>
-                        <br>
-                        <b class="mt-1 d-block">Admin Head</b>
-                    </div>
-                    <div class="col text-center">
-                        <p>Diperiksa Oleh,</p>
-                        <div class="py-4"></div>
-                        <span class="border-bottom pb-1">{{ $pengajuan->atasan2->name ?? '' }}</span>
-                        <br>
-                        @if ($pengajuan->atasan2->username == 'it')
-                            <b class="mt-1 d-block">Kabag IT</b>
-                        @else
-                            <b class="mt-1 d-block">Akunting</b>
-                        @endif
-                    </div>
-                    <div class="col text-center">
-                        <p>Disetujui Oleh,</p>
-                        <div class="py-4"></div>
-                        <span class="border-bottom pb-1">{{ $pengajuan->atasan3->name ?? '' }}</span>
-                        <br>
-                        <b class="mt-1 d-block">Pengurus</b>
-                    </div>
-                </div>
-                <div class="col-4 mt-5">
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th scope="col" class="text-center">DIPROSES,</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td class="w-50 p-5 text-center">
-                                    {{ $pengajuan->atasan4->name ?? '' }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="text-center">
-                                    Finance
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            @endif --}}
-
             @if ($pengajuan->status_approve == 'lpj-admin')
-                {{-- <a href="{{ url('admin/export-pdf-peralatan', $pengajuan->id) }}" class="btn btn-sm btn-danger">Cetak PDF</a> --}}
                 <button type="button" onclick="window.print()" class="btn btn-sm btn-danger mt-5 d-print-none">Cetak PDF</button>
             @endif
 

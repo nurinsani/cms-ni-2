@@ -58,7 +58,7 @@
                         <button type="button" onclick="window.print()" class="btn btn-primary d-print-none">Print</button>
                         @endif
                     </div>
-                    <a href="{{ url('finance/approval-lpj/approve') }}" class="btn btn-sm btn-primary mb-3 d-print-none">
+                    <a href="{{ url('finance/approval-lpj') }}" class="btn btn-sm btn-primary mb-3 d-print-none">
                         <i class="fas fa-arrow-left"></i> Kembali
                     </a>
 
@@ -66,7 +66,7 @@
                         <li>Nomor : {{ $lpj->nomor }}</li>
                         <li>Kepada : Ketua dan Pengurus KSPPS Nur Insani</li>
                         <li>Dari : {{ $lpj->user->name }}</li>
-                        <li>Tanggal : {{ $lpj->tanggal_pengajuan }}</li>
+                        <li>Tanggal : {{ $lpj->tanggal_pengajuan->format('d-M-Y') }}</li>
                     </ul>
 
                     <div class="table-responsive">
@@ -114,17 +114,17 @@
                                     <td colspan="3"><strong>Rp. {{ number_format($lpj->subtotal()) }}</strong></td>
                                 </tr>
                                 <tr>
-                                    <td colspan="7"><strong>Total Pembelian</strong></td>
+                                    <td colspan="6"><strong>Total Pembelian</strong></td>
                                     <td colspan="2"><strong>Rp. {{ number_format($lpj->total_pembelian()) }}</strong></td> 
                                 </tr>
                                 @if ($lpj->total_pembelian() > $lpj->subtotal())
                                     <tr>
-                                        <td colspan="7"><strong>Kekurangan</strong></td>
+                                        <td colspan="6"><strong>Kekurangan</strong></td>
                                         <td colspan="2"><strong>Rp. {{ number_format($lpj->total_pembelian() - $lpj->subtotal())}}</strong></td> 
                                     </tr>
                                 @else
                                     <tr>
-                                        <td colspan="7"><strong>Sisa/Pengembalian</strong></td>
+                                        <td colspan="6"><strong>Sisa/Pengembalian</strong></td>
                                         <td colspan="2"><strong>Rp. {{ number_format($lpj->subtotal() - $lpj->total_pembelian())}}</strong></td> 
                                     </tr>
                                 @endif

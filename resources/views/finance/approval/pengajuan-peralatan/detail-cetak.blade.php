@@ -162,7 +162,7 @@
                     </tbody>
                     <tfoot>
                         <tr>
-                            <td colspan="5"><strong>Subtotal</strong></td>
+                            <td colspan="5"><strong>Total Uang Muka</strong></td>
                             <td colspan="3"><strong>Rp. {{ number_format($pengajuan->subtotal()) }}</strong></td>
                         </tr>
                     </tfoot>
@@ -213,8 +213,8 @@
                     <table class="table table-bordered">
                         <thead>
                             <tr>
-                                <th scope="col" class="text-center">Di Setujui Oleh,</th>
-                                <th scope="col" class="text-center">Di Setujui Oleh,</th>
+                                <th scope="col" class="text-center">Disetujui Oleh,</th>
+                                <th scope="col" class="text-center">Disetujui Oleh,</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -298,7 +298,7 @@
                     <b class="mt-1 d-block">Admin</b>
                 </div>
                 @if ($pengajuan->approval1 == null)
-                
+                    
                 @else
                 <div class="col text-center">
                     <p>Diketahui Oleh,</p>

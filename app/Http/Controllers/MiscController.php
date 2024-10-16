@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exports\InventarisExport;
+use App\Exports\JurnalApExport;
 use App\Exports\jurnalKpExport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -38,5 +39,12 @@ class MiscController extends Controller
     public function jurnalKPExcel(Request $request)
     {
         return Excel::download(new jurnalKpExport($request), 'jurnal_kp.xlsx');
+    }
+
+    public function jurnalAPExcel(Request $request)
+    {
+        $today = now()->format('Y-m-d');
+        $fileName = 'jurnal_ap_' . $today . '.xlsx';
+        return Excel::download(new JurnalApExport($request), $fileName);
     }
 }

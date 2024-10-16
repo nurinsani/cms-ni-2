@@ -63,13 +63,13 @@
                                 @if ($data->status_approve == 'lpj-admin')
                                     <span class="badge bg-success">Disetujui</span>
                                 @elseif($data->status_approve == 'lpj-admin-head')
-                                    <span class="badge bg-success">Disetujui</span>
+                                    <span class="badge bg-warning">LPJ AH</span>
                                 @elseif($data->status_approve == 'lpj-akunting-it')
-                                    <span class="badge bg-success">Disetujui</span>
+                                    <span class="badge bg-warning">LPJ Akunting/IT</span>
                                 @elseif($data->status_approve == 'lpj-pengurus')
-                                    <span class="badge bg-success">Disetujui</span>
+                                    <span class="badge bg-warning">LPJ Pengurus</span>
                                 @elseif($data->status_approve == 'lpj-finance')
-                                    <span class="badge bg-success">Disetujui</span>
+                                    <span class="badge bg-warning">LPJ Finance</span>
                                 @elseif($data->status_approve == 'admin-head')
                                     <span class="badge bg-warning">AH</span>
                                 @elseif($data->status_approve == 'akunting-it')

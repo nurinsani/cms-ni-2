@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Akunting;
 
 use App\Http\Controllers\Controller;
-use App\Models\Admin\Peralatan;
+use App\Models\Inventaris;
 use App\Models\PengajuanMutasi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -14,8 +14,8 @@ class ApprovalMutasiController extends Controller
     public function index()
     {
         $data['title'] = 'Mutasi';
-        $data['mutasi'] = PengajuanMutasi::where('status_approve', 'akunting-it')->get();
-        return view('admin-head.approval.pengajuan-mutasi.index', $data);
+        $data['mutasi'] = PengajuanMutasi::where('status_approve', 'mutasi-akunting')->get();
+        return view('akunting.approval.pengajuan-mutasi.index', $data);
     }
 
     public function approve(Request $request, $id)
@@ -24,11 +24,11 @@ class ApprovalMutasiController extends Controller
         try {
             DB::beginTransaction();
             $mutasi = PengajuanMutasi::findOrfail($id);
-            $mutasi->status_approve = 'selesai';
-            $mutasi->atasan_2 = auth()->user()->id;
+            $mutasi->status_approve = 'mutasi-selesai';
+            $mutasi->approve_akunting = auth()->user()->id;
             $mutasi->save();
 
-            $pengajuan = Peralatan::findOrfail($mutasi->peralatan_id);
+            $pengajuan = Inventaris::findOrfail($mutasi->peralatan_id);
             $pengajuan->kode_branch = $mutasi->ke_cabang;
             $pengajuan->update();
 

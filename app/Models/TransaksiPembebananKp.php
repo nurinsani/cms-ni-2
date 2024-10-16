@@ -9,8 +9,10 @@ class TransaksiPembebananKp extends Model
 {
     use HasFactory;
 
-    protected $guarded = ['id'];
+    protected $guarded = [];
 
     protected $table = 'transaksi_pembebanan_kp';
-    protected $dates = ['tanggal_transaksi'];
+    protected $casts = [
+        'tanggal_transaksi' => 'date',  // atau 'datetime'
+    ];
 }

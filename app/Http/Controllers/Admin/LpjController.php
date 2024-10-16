@@ -20,6 +20,7 @@ class LpjController extends Controller
         'pengajuan_detail_id' => 'required',
         'tanggal_perolehan' => 'required',
         'harga_pembelian' => 'required',
+        'keterangan_lpj' => 'required',
     ];
     /**
      * Display a listing of the resource.
@@ -129,8 +130,6 @@ class LpjController extends Controller
                 $gambar = $request->struk_pembelian;
                 $namafile = time().'.'.$gambar->getClientOriginalExtension();
                 $gambar->move('images/lpj/struk_pembelian', $namafile);
-
-                // $data['struk_pembelian'] = $this->upload_file($request->file('struk_pembelian'), 'lpj/struk-pembelian');
             }
 
             $data['struk_pembelian'] = $namafile;

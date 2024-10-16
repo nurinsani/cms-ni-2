@@ -37,23 +37,23 @@
                         @foreach ($mutasi as $data)
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
-                                <td>{{ $data->peralatan->nama_peralatan }}</td>
+                                <td>{{ $data->peralatan->jenis }}</td>
                                 <td>{{ $data->peralatan->ap->unit }}</td>
 
-                                <td>{{ $data->ap->unit }}</td>
+                                <td>{{ $data->branch->unit }}</td>
                                 <td>{{ $data->bulan_mutasi }}</td>
                                 <td>    
                                     <button type="submit" onclick="approve('#approve{{ $data->id }}')"
                                         class="btn btn-sm btn-success">Approve</button>
                                     <form class="d-inline" id="approve{{ $data->id }}"
-                                        action="{{ url('akunting/approval-mutasi/approve', $data->id) }}" method="post">
+                                        action="{{ url('admin-head/approval-mutasi/approve', $data->id) }}" method="post">
                                         @csrf
                                     </form>
 
                                     <button type="submit" onclick="tolak('#tolak{{ $data->id }}')"
                                         class="btn btn-sm btn-danger">Tolak</button>
                                     <form class="d-inline" id="tolak{{ $data->id }}"
-                                        action="{{ url('akunting/approval-mutasi/tolak', $data->id) }}" method="post">
+                                        action="{{ url('admin-head/approval-mutasi/tolak', $data->id) }}" method="post">
                                         @csrf
                                     </form>
                                 </td>

@@ -117,7 +117,7 @@ class Inventaris extends Model
 
                     $branch = Branch::where('kode_branch', $kode_branch)->first();
 
-                    if ($tanggal_sekarang == 30) {
+                    if ($tanggal_sekarang == 16) {
                         if ($value->penyusutan_ke + count($value->susut) !== 48) {
                             if ($value->status_branch !== 'AUDIT') {
                                 Penyusutan::create([
@@ -158,13 +158,13 @@ class Inventaris extends Model
                             ->sum('penyusutan_per_bulan');
 
                         if ($branch->kode_branch == '1010') {
-                            $transaksiKpDebet = TransaksiKp::where('kode_branch', $branch->kode_branch)
+                            $transaksiKpDebet = TransaksiPenyusutanKp::where('kode_branch', $branch->kode_branch)
                                 ->whereMonth('tanggal_transaksi', date('m'))
                                 ->whereYear('tanggal_transaksi', date('Y'))
                                 ->where('debet', '>', 0)
                                 ->first();
 
-                            $transaksiKpKredit = TransaksiKp::where('kode_branch', $branch->kode_branch)
+                            $transaksiKpKredit = TransaksiPenyusutanKp::where('kode_branch', $branch->kode_branch)
                                 ->whereMonth('tanggal_transaksi', date('m'))
                                 ->whereYear('tanggal_transaksi', date('Y'))
                                 ->where('kredit', '>', 0)
@@ -172,15 +172,15 @@ class Inventaris extends Model
 
                             $kode_transaksi = date('m') . random_int(100000, 999999);
                             if ($transaksiKpDebet && $transaksiKpKredit) {
-                                TransaksiKp::where('id', $transaksiKpDebet->id)->update([
+                                TransaksiPenyusutanKp::where('id', $transaksiKpDebet->id)->update([
                                     'debet' => $penyusutan_per_bulan,
                                 ]);
 
-                                TransaksiKp::where('id', $transaksiKpKredit->id)->update([
+                                TransaksiPenyusutanKp::where('id', $transaksiKpKredit->id)->update([
                                     'kredit' => $penyusutan_per_bulan,
                                 ]);
                             } else {
-                                TransaksiKp::create([
+                                TransaksiPenyusutanKp::create([
                                     'kode_branch' => $branch->kode_branch,
                                     'kode_transaksi' => 'BU' . '/' . $branch->kode_branch . '/' . $kode_transaksi,
                                     'kode_rekening' => '1010-52915',
@@ -191,7 +191,7 @@ class Inventaris extends Model
                                     'kredit' => 0,
                                 ]);
 
-                                TransaksiKp::create([
+                                TransaksiPenyusutanKp::create([
                                     'kode_branch' => $branch->kode_branch,
                                     'kode_transaksi' => 'BU' . '/' . $branch->kode_branch . '/' . $kode_transaksi,
                                     'kode_rekening' => '1010-1672000',
@@ -203,13 +203,13 @@ class Inventaris extends Model
                                 ]);
                             }
                         } else {
-                            $transaksiApKredit = TransaksiAp::where('kode_branch', $branch->kode_branch)
+                            $transaksiApKredit = TransaksiPenyusutanAp::where('kode_branch', $branch->kode_branch)
                                 ->whereMonth('tanggal_transaksi', date('m'))
                                 ->whereYear('tanggal_transaksi', date('Y'))
                                 ->where('kredit', '>', 0)
                                 ->first();
 
-                            $transaksiApDebet = TransaksiAp::where('kode_branch', $branch->kode_branch)
+                            $transaksiApDebet = TransaksiPenyusutanAp::where('kode_branch', $branch->kode_branch)
                                 ->whereMonth('tanggal_transaksi', date('m'))
                                 ->whereYear('tanggal_transaksi', date('Y'))
                                 ->where('debet', '>', 0)
@@ -217,14 +217,14 @@ class Inventaris extends Model
 
                             $kode_transaksi = date('m') . random_int(100000, 999999);
                             if ($transaksiApKredit && $transaksiApDebet) {
-                                TransaksiAp::where('id', $transaksiApDebet->id)->update([
+                                TransaksiPenyusutanAp::where('id', $transaksiApDebet->id)->update([
                                     'debet' => $penyusutan_per_bulan,
                                 ]);
-                                TransaksiAp::where('id', $transaksiApKredit->id)->update([
+                                TransaksiPenyusutanAp::where('id', $transaksiApKredit->id)->update([
                                     'kredit' => $penyusutan_per_bulan,
                                 ]);
                             } else {
-                                TransaksiAp::create([
+                                TransaksiPenyusutanAp::create([
                                     'kode_branch' => $branch->kode_branch,
                                     'kode_transaksi' => 'BU' . '/' . $branch->kode_branch . '/' . $kode_transaksi,
                                     'kode_rekening' => '52915',
@@ -235,7 +235,7 @@ class Inventaris extends Model
                                     'kredit' => 0,
                                 ]);
 
-                                TransaksiAp::create([
+                                TransaksiPenyusutanAp::create([
                                     'kode_branch' => $branch->kode_branch,
                                     'kode_transaksi' => 'BU' . '/' . $branch->kode_branch . '/' . $kode_transaksi,
                                     'kode_rekening' => '1672000',
@@ -478,8 +478,6 @@ class Inventaris extends Model
                                 ]);
                             }
                         }
-                    } else {
-                        continue;
                     }
                 }
 

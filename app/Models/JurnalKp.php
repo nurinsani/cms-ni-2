@@ -10,4 +10,7 @@ class JurnalKp extends Model
     use HasFactory;
 
     protected $table = 'transaksi_kp';
+    protected $casts = [
+        'tanggal_transaksi' => 'date',  // atau 'datetime'
+    ];
 }
