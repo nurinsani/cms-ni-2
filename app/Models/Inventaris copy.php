@@ -374,6 +374,7 @@ class Inventaris extends Model
                                     $debet = 0;
                                     $credit = $credit;
                                 }
+                                
                                 // $debet = round(($credit / ($isArea)), 2);
 
                                 if ($status_branch == '9999') {

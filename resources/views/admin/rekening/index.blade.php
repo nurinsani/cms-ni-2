@@ -123,6 +123,7 @@
 
             // modal tambah
             $('#tambahDataRekening').click(function() {
+            console.log('hghghhg');
                 $('#simpan').val("create-product");
                 $('#rekening_id').val('');
                 $('#RekeningForm').trigger("reset");

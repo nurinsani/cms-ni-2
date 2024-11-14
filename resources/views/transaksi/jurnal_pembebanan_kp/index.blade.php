@@ -19,7 +19,7 @@
         <div class="card-body">
             <div class="row">
                 <div class="col-md-6">
-                    <form action="{{ url('akunting/jurnal-pembebanan-kp') }}" method="GET">
+                    <form action="{{ url('jurnal-pembebanan-kp') }}" method="GET">
                         @csrf
                         <div class="row">
                             <div class="col-4 mb-3">Pilih Tanggal Awal</div>
@@ -40,12 +40,31 @@
                                 <button class="btn btn-primary" type="submit">
                                     <i class="fas fa-filter"></i> FILTER
                                 </button>
-                                <a class="btn btn-warning" href="{{ url('akunting/jurnal-pembebanan-kp') }}">
+                                <a class="btn btn-warning" href="{{ url('jurnal-pembebanan-kp') }}">
                                     <i class="fas fa-sync-alt"></i> RESET
                                 </a>
                             </div>
+
                             
                         </div>
+                    </form>
+                </div>
+                <div class="col-4">
+                    <form action="{{ route('jalankanPenyusutan') }}" method="POST">
+                        @csrf
+                        <button type="submit" class="btn btn-primary">Jalankan Penyusutan</button>
+                    </form>
+                </div>
+                <div class="col-4">
+                    <form action="{{ route('jalankanJurnalPenyusutan') }}" method="POST">
+                        @csrf
+                        <button type="submit" class="btn btn-primary">Jalankan Jurnal Penyusutan</button>
+                    </form>
+                </div>
+                <div class="col-4">
+                    <form action="{{ route('jalankanJurnalPembebanan') }}" method="POST">
+                        @csrf
+                        <button type="submit" class="btn btn-primary">Jalankan Jurnal Pembebanan</button>
                     </form>
                 </div>
             </div>

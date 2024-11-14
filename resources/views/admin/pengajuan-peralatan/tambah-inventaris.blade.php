@@ -118,7 +118,7 @@
                                         <option value="" hidden>-- Pilih Branch --</option>
                                         <option value="ap">Unit</option>
                                         <option value="cabang">Area</option>
-                                        {{-- <option value="region">Region</option> --}}
+                                        <option value="region">Region</option>
                                     </select>
                                 </div>
                                 
@@ -155,13 +155,14 @@
                                     </small>
                                 </div>
 
-                                {{-- <div class="form-group">
+                                <div class="form-group">
                                     <label for="" class="form-label">Pilih User</label>
                                     <select name="kode_user" id="kode_area" class="form-control">
                                         <option value="">-- Pilih User --</option>
                                             <option value="9999">Business Head</option>
+                                            <option value="9999">QA</option>
                                     </select>
-                                </div> --}}
+                                </div>
     
                                 <div class="form-group">
                                     <label for="" class="form-label">Merk</label>
@@ -185,6 +186,15 @@
                             </div>
 
                             <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="" class="form-label">Umur</label>
+                                    <select name="umur" id="" class="form-control">
+                                        <option value="" hidden>-- Pilih Umur --</option>
+                                        <option value="24">24 Bulan</option>
+                                        <option value="48">48 Bulan</option>
+                                    </select>
+                                </div>
+
                                 <div class="form-group">
                                     <label for="" class="form-label">Nama Toko</label>
                                     <input type="text" name="nama_toko" id="nama_toko" class="form-control" placeholder="Masukan Nama Toko" required>

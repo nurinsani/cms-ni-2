@@ -100,7 +100,9 @@ class ApprovalLpjController extends Controller
                     }
                     
                     // Jurnal LPJ Pembelian Peralatan Cabang
-                    $branch = Branch::where('code_area', $cabang->kode_area)->get();
+                    $branch = Branch::where('code_area', $cabang->kode_area)
+                    ->where('status_aktif', 'aktif')
+                    ->get();
                     $total = $branch->count();
 
                     // jurnal LPJ pembelian untuk cabang di KP
@@ -112,7 +114,7 @@ class ApprovalLpjController extends Controller
                             'kode_rekening' => '1010'.'-'.$data->GL,
                             'tanggal_transaksi' => Carbon::now(),
                             'jenis_transaksi' => 'Bukti SYSTEM',
-                            'keterangan' => $cabang->keterangan_lpj,
+                            'keterangan' => $cabang->keterangan,
                             'debet' => $cabang->harga_pembelian / $total,
                             'kredit' => 0
                         ]);
@@ -124,7 +126,7 @@ class ApprovalLpjController extends Controller
                         'kode_rekening' => '1010-1929000',
                         'tanggal_transaksi' => Carbon::now(),
                         'jenis_transaksi' => 'Bukti SYSTEM',
-                        'keterangan' => $cabang->keterangan_lpj,
+                        'keterangan' => $cabang->keterangan,
                         'debet' => 0,
                         'kredit' => $pengajuan->subtotal()
                     ]);
@@ -139,7 +141,7 @@ class ApprovalLpjController extends Controller
                             'kode_rekening' => $cabang->jenis_peralatan->param_peralatan->coa,
                             'tanggal_transaksi' => Carbon::now(),
                             'jenis_transaksi' => 'Bukti SYSTEM',
-                            'keterangan' => $cabang->keterangan_lpj,
+                            'keterangan' => $cabang->keterangan,
                             'debet' => $cabang->harga_pembelian / $total,
                             'kredit' => 0
                         ]);
@@ -150,7 +152,7 @@ class ApprovalLpjController extends Controller
                             'kode_rekening' => '2500000',
                             'tanggal_transaksi' => Carbon::now(),
                             'jenis_transaksi' => 'Bukti SYSTEM',
-                            'keterangan' => $cabang->keterangan_lpj,
+                            'keterangan' => $cabang->keterangan,
                             'debet' => 0,
                             'kredit' => $cabang->harga_pembelian / $total
                         ]);
@@ -166,7 +168,7 @@ class ApprovalLpjController extends Controller
                             'kode_rekening' => $item->jenis_peralatan->param_peralatan->coa,
                             'tanggal_transaksi' => Carbon::now(),
                             'jenis_transaksi' => 'Bukti SYSTEM',
-                            'keterangan' => $item->keterangan_lpj,
+                            'keterangan' => $item->keterangan,
                             'debet' => $item->harga_pembelian,
                             'kredit' => 0
                         ]);
@@ -177,14 +179,14 @@ class ApprovalLpjController extends Controller
                             'kode_rekening' => '2500000',
                             'tanggal_transaksi' => Carbon::now(),
                             'jenis_transaksi' => 'Bukti SYSTEM',
-                            'keterangan' => $item->keterangan_lpj,
+                            'keterangan' => $item->keterangan,
                             'debet' => 0,
                             'kredit' => $item->harga_pembelian,
                         ]);
                     }
 
                     // Jurnal Pembelian Untuk KP
-                    $kode_transaksi_ap = date('m').random_int(100000, 999999);
+                    // $kode_transaksi_ap = date('m').random_int(100000, 999999);
                     foreach ($pengajuan->pengajuan_details as $item) {
                         $subtotal = 0;
                         $total = $item->harga * $item->kuantitas;
@@ -193,11 +195,11 @@ class ApprovalLpjController extends Controller
                         // jurnal di KP
                         TransaksiKp::create([
                             'kode_branch' => 1010,
-                            'kode_transaksi' => 'BU'.'/'.'1010'.'/'.$kode_transaksi_ap,
+                            'kode_transaksi' => 'BU'.'/'.'1010'.'/'.$kode_transaksi,
                             'kode_rekening' => '1010-'.$item->ap->GL,
                             'tanggal_transaksi' => Carbon::now(),
                             'jenis_transaksi' => 'Bukti SYSTEM',
-                            'keterangan' => $item->keterangan_lpj,
+                            'keterangan' => $item->keterangan,
                             'debet' => $item->harga_pembelian,
                             'kredit' => 0
                         ]);
@@ -205,11 +207,11 @@ class ApprovalLpjController extends Controller
 
                     TransaksiKp::create([
                         'kode_branch' => 1010,
-                        'kode_transaksi' => 'BU'.'/'.'1010'.'/'.$kode_transaksi_ap,
+                        'kode_transaksi' => 'BU'.'/'.'1010'.'/'.$kode_transaksi,
                         'kode_rekening' => '1010-1929000',
                         'tanggal_transaksi' => Carbon::now(),
                         'jenis_transaksi' => 'Bukti SYSTEM',
-                        'keterangan' => $item->keterangan_lpj,
+                        'keterangan' => $item->keterangan,
                         'debet' => 0,
                         'kredit' => $pengajuan->subtotal()
                     ]);
@@ -221,6 +223,7 @@ class ApprovalLpjController extends Controller
             
             // jurnal LPJ pembelian lebih besar dari pengajuan
             if ($pengajuan->subtotal() < $pengajuan->total_pembelian()) {
+                
                 if ($cabang->kode_branch == NULL) {
                     // Jurnal Pembelian Peralatan Cabang
                     foreach ($pengajuan->pengajuan_details as $key => $cabang) {
@@ -228,15 +231,17 @@ class ApprovalLpjController extends Controller
                         $total = $cabang->harga * $cabang->kuantitas;
                         $subtotal = $subtotal + $total;
                     }
-
-                    $branch = Branch::where('code_area', $cabang->kode_area)->get();
-                    $ap = Branch::where('code_area', $cabang->kode_area)->get();
+                    
+                    $branch = Branch::where('code_area', $cabang->kode_area)
+                    ->where('status_aktif', 'aktif')
+                    ->get();
                     $total = $branch->count();
                     // jurnal pembelian untuk cabang KP
+                    $kode_transaksi = date('m').random_int(100000, 999999);
                     foreach ($branch as $key => $data) {
                         TransaksiKp::create([
                             'kode_branch' => 1010,
-                            'kode_transaksi' => 'BU'.'/'.'1010'.'/'.'12345678',
+                            'kode_transaksi' => 'BU'.'/'.'1010'.'/'.$kode_transaksi,
                             'kode_rekening' => '1010'.'-'.$data->GL,
                             'tanggal_transaksi' => Carbon::now(),
                             'jenis_transaksi' => 'Bukti SYSTEM',
@@ -248,7 +253,7 @@ class ApprovalLpjController extends Controller
         
                     TransaksiKp::create([
                         'kode_branch' => 1010,
-                        'kode_transaksi' => 'BU'.'/'.'1010'.'/'.Str::random(10),
+                        'kode_transaksi' => 'BU'.'/'.'1010'.'/'.$kode_transaksi,
                         'kode_rekening' => '1010-1929000',
                         'tanggal_transaksi' => Carbon::now(),
                         'jenis_transaksi' => 'Bukti SYSTEM',
@@ -259,7 +264,7 @@ class ApprovalLpjController extends Controller
 
                     TransaksiKp::create([
                         'kode_branch' => 1010,
-                        'kode_transaksi' => 'BU'.'/'.'1010'.'/'.Str::random(10),
+                        'kode_transaksi' => 'BU'.'/'.'1010'.'/'.$kode_transaksi,
                         'kode_rekening' => '1010-1312000',
                         'tanggal_transaksi' => Carbon::now(),
                         'jenis_transaksi' => 'Bukti SYSTEM',
@@ -270,10 +275,11 @@ class ApprovalLpjController extends Controller
                     // end jurnal pembelian untuk cabang KP
                     
                     // jurnal pembelian untuk cabang AP
+                    $kode_transaksi = date('m').random_int(100000, 999999);
                     foreach ($branch as $key => $data) {
                         TransaksiAp::create([
                             'kode_branch' => $data->kode_branch,
-                            'kode_transaksi' => 'BU'.'/'.$data->kode_branch.'/'.Str::random(10),
+                            'kode_transaksi' => 'BU'.'/'.$data->kode_branch.'/'.$kode_transaksi,
                             'kode_rekening' => $cabang->jenis_peralatan->param_peralatan->coa,
                             'tanggal_transaksi' => Carbon::now(),
                             'jenis_transaksi' => 'Bukti SYSTEM',
@@ -284,7 +290,7 @@ class ApprovalLpjController extends Controller
 
                         TransaksiAp::create([
                             'kode_branch' => $data->kode_branch,
-                            'kode_transaksi' => 'BU'.'/'.$data->kode_branch.'/'.Str::random(10),
+                            'kode_transaksi' => 'BU'.'/'.$data->kode_branch.'/'.$kode_transaksi,
                             'kode_rekening' => '2500000',
                             'tanggal_transaksi' => Carbon::now(),
                             'jenis_transaksi' => 'Bukti SYSTEM',
@@ -301,9 +307,10 @@ class ApprovalLpjController extends Controller
                         $subtotal = $subtotal + $total;
                         
                         // jurnal di AP
+                        $kode_transaksi = date('m').random_int(100000, 999999);
                         TransaksiAp::create([
                             'kode_branch' => $item->ap->kode_branch,
-                            'kode_transaksi' => 'BU'.'/'.$item->ap->kode_branch.'/'.Str::random(10),
+                            'kode_transaksi' => 'BU'.'/'.$item->ap->kode_branch.'/'.$kode_transaksi,
                             'kode_rekening' => $item->jenis_peralatan->param_peralatan->coa,
                             'tanggal_transaksi' => Carbon::now(),
                             'jenis_transaksi' => 'Bukti SYSTEM',
@@ -314,7 +321,7 @@ class ApprovalLpjController extends Controller
         
                         TransaksiAp::create([
                             'kode_branch' => $item->ap->kode_branch,
-                            'kode_transaksi' => 'BU'.'/'.$item->ap->kode_branch.'/'.Str::random(10),
+                            'kode_transaksi' => 'BU'.'/'.$item->ap->kode_branch.'/'.$kode_transaksi,
                             'kode_rekening' => '2500000',
                             'tanggal_transaksi' => Carbon::now(),
                             'jenis_transaksi' => 'Bukti SYSTEM',
@@ -329,7 +336,7 @@ class ApprovalLpjController extends Controller
                         // jurnal di KP
                         TransaksiKp::create([
                             'kode_branch' => 1010,
-                            'kode_transaksi' => 'BU'.'/'.'1010'.'/'.Str::random(10),
+                            'kode_transaksi' => 'BU'.'/'.'1010'.'/'.$kode_transaksi,
                             'kode_rekening' => '1010-'.$item->ap->GL,
                             'tanggal_transaksi' => Carbon::now(),
                             'jenis_transaksi' => 'Bukti SYSTEM',
@@ -342,7 +349,7 @@ class ApprovalLpjController extends Controller
     
                     TransaksiKp::create([
                         'kode_branch' => 1010,
-                        'kode_transaksi' => 'BU'.'/'.'1010'.'/'.Str::random(10),
+                        'kode_transaksi' => 'BU'.'/'.'1010'.'/'.$kode_transaksi,
                         'kode_rekening' => '1010-1929000',
                         'tanggal_transaksi' => Carbon::now(),
                         'jenis_transaksi' => 'Bukti SYSTEM',
@@ -353,7 +360,7 @@ class ApprovalLpjController extends Controller
                     
                     TransaksiKp::create([
                         'kode_branch' => 1010,
-                        'kode_transaksi' => 'BU'.'/'.'1010'.'/'.Str::random(10),
+                        'kode_transaksi' => 'BU'.'/'.'1010'.'/'.$kode_transaksi,
                         'kode_rekening' => '1010-1312000',
                         'tanggal_transaksi' => Carbon::now(),
                         'jenis_transaksi' => 'Bukti SYSTEM',
@@ -368,16 +375,16 @@ class ApprovalLpjController extends Controller
             // jurnal LPJ pembelian lebih kecil dari pengajuan
             if ($pengajuan->subtotal() > $pengajuan->total_pembelian()) {
                 if ($cabang->tanggal_perolehan == NULL) {
-                    $kode_transaksi = date('m').random_int(100000, 999999);
+                    $kode_transaksi_kp = date('m').random_int(100000, 999999);
                         foreach ($pengajuan->pengajuan_details as $item) {
                             // jurnal di KP
                             TransaksiKp::create([
                                 'kode_branch' => 1010,
-                                'kode_transaksi' => 'BU'.'/'.'1010'.'/'.$kode_transaksi,
+                                'kode_transaksi' => 'BU'.'/'.'1010'.'/'.$kode_transaksi_kp,
                                 'kode_rekening' => '1010-'.$item->ap->GL,
                                 'tanggal_transaksi' => Carbon::now(),
                                 'jenis_transaksi' => 'Bukti SYSTEM',
-                                'keterangan' => $item->keterangan_lpj,
+                                'keterangan' => $item->keterangan,
                                 'debet' => 0,
                                 'kredit' => 0
                             ]);
@@ -385,22 +392,22 @@ class ApprovalLpjController extends Controller
             
                         TransaksiKp::create([
                             'kode_branch' => 1010,
-                            'kode_transaksi' => 'BU'.'/'.'1010'.'/'.$kode_transaksi,
+                            'kode_transaksi' => 'BU'.'/'.'1010'.'/'.$kode_transaksi_kp,
                             'kode_rekening' => '1010-1311000',
                             'tanggal_transaksi' => Carbon::now(),
                             'jenis_transaksi' => 'Bukti SYSTEM',
-                            'keterangan' => 'LPJ '.$cabang->keterangan,
+                            'keterangan' => $item->keterangan,
                             'debet' => 0,
                             'kredit' => 0
                         ]);
             
                         TransaksiKp::create([
                             'kode_branch' => 1010,
-                            'kode_transaksi' => 'BU'.'/'.'1010'.'/'.$kode_transaksi,
+                            'kode_transaksi' => 'BU'.'/'.'1010'.'/'.$kode_transaksi_kp,
                             'kode_rekening' => '1010-1929000',
                             'tanggal_transaksi' => Carbon::now(),
                             'jenis_transaksi' => 'Bukti SYSTEM',
-                            'keterangan' => 'LPJ '.$cabang->keterangan,
+                            'keterangan' => $item->keterangan,
                             'debet' => 0,
                             'kredit' => 0
                         ]);
@@ -417,7 +424,7 @@ class ApprovalLpjController extends Controller
                                 'kode_rekening' => $item->jenis_peralatan->param_peralatan->coa,
                                 'tanggal_transaksi' => Carbon::now(),
                                 'jenis_transaksi' => 'Bukti SYSTEM',
-                                'keterangan' => 'LPJ '.$cabang->keterangan,
+                                'keterangan' => $item->keterangan,
                                 'debet' => 0,
                                 'kredit' => 0
                             ]);
@@ -428,7 +435,7 @@ class ApprovalLpjController extends Controller
                                 'kode_rekening' => '2500000',
                                 'tanggal_transaksi' => Carbon::now(),
                                 'jenis_transaksi' => 'Bukti SYSTEM',
-                                'keterangan' => 'LPJ '.$cabang->keterangan,
+                                'keterangan' => $item->keterangan,
                                 'debet' => 0,
                                 'kredit' => 0
                             ]);
@@ -442,7 +449,9 @@ class ApprovalLpjController extends Controller
                             $subtotal = $subtotal + $total;
                         }
     
-                        $branch = Branch::where('code_area', $cabang->kode_area)->get();
+                        $branch = Branch::where('code_area', $cabang->kode_area)
+                        ->where('status_aktif', 'aktif')
+                        ->get();
                         $total = $branch->count();
                         // jurnal pembelian untuk cabang KP
                         $kode_transaksi = date('m').random_int(100000, 999999);
@@ -453,7 +462,7 @@ class ApprovalLpjController extends Controller
                                 'kode_rekening' => '1010'.'-'.$data->GL,
                                 'tanggal_transaksi' => Carbon::now(),
                                 'jenis_transaksi' => 'Bukti SYSTEM',
-                                'keterangan' => $cabang->keterangan_lpj,
+                                'keterangan' => $item->keterangan,
                                 'debet' => $cabang->harga_pembelian / $total,
                                 'kredit' => 0
                             ]);
@@ -465,7 +474,7 @@ class ApprovalLpjController extends Controller
                             'kode_rekening' => '1010-1311000',
                             'tanggal_transaksi' => Carbon::now(),
                             'jenis_transaksi' => 'Bukti SYSTEM',
-                            'keterangan' => $cabang->keterangan_lpj,
+                            'keterangan' => $item->keterangan,
                             'debet' => $pengajuan->nominal_pengembalian,
                             'kredit' => 0
                         ]);
@@ -476,7 +485,7 @@ class ApprovalLpjController extends Controller
                             'kode_rekening' => '1010-1929000',
                             'tanggal_transaksi' => Carbon::now(),
                             'jenis_transaksi' => 'Bukti SYSTEM',
-                            'keterangan' => $cabang->keterangan_lpj,
+                            'keterangan' => $item->keterangan,
                             'debet' => 0,
                             'kredit' => $pengajuan->subtotal()
                         ]);
@@ -491,7 +500,7 @@ class ApprovalLpjController extends Controller
                                 'kode_rekening' => $cabang->jenis_peralatan->param_peralatan->coa,
                                 'tanggal_transaksi' => Carbon::now(),
                                 'jenis_transaksi' => 'Bukti SYSTEM',
-                                'keterangan' => $cabang->keterangan_lpj,
+                                'keterangan' => $item->keterangan,
                                 'debet' => $cabang->harga_pembelian / $total,
                                 'kredit' => 0
                             ]);
@@ -502,7 +511,7 @@ class ApprovalLpjController extends Controller
                                 'kode_rekening' => '2500000',
                                 'tanggal_transaksi' => Carbon::now(),
                                 'jenis_transaksi' => 'Bukti SYSTEM',
-                                'keterangan' => $cabang->keterangan_lpj,
+                                'keterangan' => $item->keterangan,
                                 'debet' => 0,
                                 'kredit' => $cabang->harga_pembelian / $total
                             ]);
@@ -518,7 +527,7 @@ class ApprovalLpjController extends Controller
                                 'kode_rekening' => '1010-'.$item->ap->GL,
                                 'tanggal_transaksi' => Carbon::now(),
                                 'jenis_transaksi' => 'Bukti SYSTEM',
-                                'keterangan' => $item->keterangan_lpj,
+                                'keterangan' => $item->keterangan,
                                 'debet' => $item->harga_pembelian,
                                 'kredit' => 0
                             ]);
@@ -530,7 +539,7 @@ class ApprovalLpjController extends Controller
                             'kode_rekening' => '1010-1311000',
                             'tanggal_transaksi' => Carbon::now(),
                             'jenis_transaksi' => 'Bukti SYSTEM',
-                            'keterangan' => $item->keterangan_lpj,
+                            'keterangan' => $item->keterangan,
                             'debet' => $pengajuan->subtotal() - $pengajuan->total_pembelian(),
                             'kredit' => 0
                         ]);
@@ -541,7 +550,7 @@ class ApprovalLpjController extends Controller
                             'kode_rekening' => '1010-1929000',
                             'tanggal_transaksi' => Carbon::now(),
                             'jenis_transaksi' => 'Bukti SYSTEM',
-                            'keterangan' => $item->keterangan_lpj,
+                            'keterangan' => $item->keterangan,
                             'debet' => 0,
                             'kredit' => $pengajuan->subtotal()
                         ]);
@@ -558,7 +567,7 @@ class ApprovalLpjController extends Controller
                                 'kode_rekening' => $item->jenis_peralatan->param_peralatan->coa,
                                 'tanggal_transaksi' => Carbon::now(),
                                 'jenis_transaksi' => 'Bukti SYSTEM',
-                                'keterangan' => $item->keterangan_lpj,
+                                'keterangan' => $item->keterangan,
                                 'debet' => $item->harga_pembelian,
                                 'kredit' => 0
                             ]);
@@ -569,7 +578,7 @@ class ApprovalLpjController extends Controller
                                 'kode_rekening' => '2500000',
                                 'tanggal_transaksi' => Carbon::now(),
                                 'jenis_transaksi' => 'Bukti SYSTEM',
-                                'keterangan' => $item->keterangan_lpj,
+                                'keterangan' => $item->keterangan,
                                 'debet' => 0,
                                 'kredit' => $item->harga_pembelian,
                             ]);  
@@ -685,7 +694,9 @@ class ApprovalLpjController extends Controller
                     $subtotal = $subtotal + $total;
                 }
 
-                $branch = Branch::where('code_area', $cabang->kode_area)->get();
+                $branch = Branch::where('code_area', $cabang->kode_area)
+                ->where('status_aktif', 'aktif')
+                ->get();
                 $total = $branch->count();
                 // jurnal pembelian untuk cabang KP
                 $kode_transaksi = date('m').random_int(100000, 999999);
@@ -696,7 +707,7 @@ class ApprovalLpjController extends Controller
                         'kode_rekening' => '1010'.'-'.$data->GL,
                         'tanggal_transaksi' => Carbon::now(),
                         'jenis_transaksi' => 'Bukti SYSTEM',
-                        'keterangan' => $cabang->keterangan_lpj,
+                        'keterangan' => $cabang->keterangan,
                         'debet' => $cabang->harga_pembelian / $total,
                         'kredit' => 0
                     ]);
@@ -708,7 +719,7 @@ class ApprovalLpjController extends Controller
                     'kode_rekening' => '1010-1311000',
                     'tanggal_transaksi' => Carbon::now(),
                     'jenis_transaksi' => 'Bukti SYSTEM',
-                    'keterangan' => 'LPJ ' . $cabang->keterangan_lpj,
+                    'keterangan' => 'LPJ ' . $cabang->keterangan,
                     'debet' => $pengajuan->nominal_pengembalian,
                     'kredit' => 0
                 ]);
@@ -719,7 +730,7 @@ class ApprovalLpjController extends Controller
                     'kode_rekening' => '1010-1929000',
                     'tanggal_transaksi' => Carbon::now(),
                     'jenis_transaksi' => 'Bukti SYSTEM',
-                    'keterangan' => $cabang->keterangan_lpj,
+                    'keterangan' => $cabang->keterangan,
                     'debet' => 0,
                     'kredit' => $pengajuan->subtotal()
                 ]);
@@ -734,7 +745,7 @@ class ApprovalLpjController extends Controller
                         'kode_rekening' => $cabang->jenis_peralatan->param_peralatan->coa,
                         'tanggal_transaksi' => Carbon::now(),
                         'jenis_transaksi' => 'Bukti SYSTEM',
-                        'keterangan' => $cabang->keterangan_lpj,
+                        'keterangan' => $cabang->keterangan,
                         'debet' => $cabang->harga_pembelian / $total,
                         'kredit' => 0
                     ]);
@@ -745,7 +756,7 @@ class ApprovalLpjController extends Controller
                         'kode_rekening' => '2500000',
                         'tanggal_transaksi' => Carbon::now(),
                         'jenis_transaksi' => 'Bukti SYSTEM',
-                        'keterangan' => $cabang->keterangan_lpj,
+                        'keterangan' => $cabang->keterangan,
                         'debet' => 0,
                         'kredit' => $cabang->harga_pembelian / $total
                     ]);
@@ -862,10 +873,11 @@ class ApprovalLpjController extends Controller
         if ($pengajuan->subtotal() < $pengajuan->total_pembelian()) {
             foreach ($pengajuan->pengajuan_details as $item) {
                 // jurnal LPJ pembelian inventaris di kp
+                $kode_transaksi = date('m').random_int(100000, 999999);
                 if ($item->kode_branch == '1010') {
                     TransaksiKp::create([
                         'kode_branch' => 1010,
-                        'kode_transaksi' => 'BU'.'/'.'1010'.'/'.Str::random(10),
+                        'kode_transaksi' => 'BU'.'/'.'1010'.'/'.$kode_transaksi,
                         'kode_rekening' => '1010-'.$item->jenis_peralatan->param_peralatan->coa,
                         'tanggal_transaksi' => Carbon::now(),
                         'jenis_transaksi' => 'Bukti SYSTEM',
@@ -876,7 +888,7 @@ class ApprovalLpjController extends Controller
                 } else {
                     TransaksiKp::create([
                         'kode_branch' => $item->ap->kode_branch,
-                        'kode_transaksi' => 'BU'.'/'.$item->ap->kode_branch.'/'.Str::random(10),
+                        'kode_transaksi' => 'BU'.'/'.$item->ap->kode_branch.'/'.$kode_transaksi,
                         'kode_rekening' => $item->ap->GL,
                         'tanggal_transaksi' => Carbon::now(),
                         'jenis_transaksi' => 'Bukti SYSTEM',
@@ -891,7 +903,7 @@ class ApprovalLpjController extends Controller
                 // jurnal di KP
                 TransaksiKp::create([
                     'kode_branch' => 1010,
-                    'kode_transaksi' => 'BU'.'/'.'1010'.'/'.Str::random(10),
+                    'kode_transaksi' => 'BU'.'/'.'1010'.'/'.$kode_transaksi,
                     'kode_rekening' => $item->ap->GL,
                     'tanggal_transaksi' => $item->tanggal_pembelian,
                     'jenis_transaksi' => 'Bukti SYSTEM',
@@ -903,7 +915,7 @@ class ApprovalLpjController extends Controller
 
             TransaksiKp::create([
                 'kode_branch' => 1010,
-                'kode_transaksi' => 'BU'.'/'.'1010'.'/'.Str::random(10),
+                'kode_transaksi' => 'BU'.'/'.'1010'.'/'.$kode_transaksi,
                 'kode_rekening' => '1010-1312000',
                 'tanggal_transaksi' => Carbon::now(),
                 'jenis_transaksi' => 'Bukti SYSTEM',
@@ -914,7 +926,7 @@ class ApprovalLpjController extends Controller
 
             TransaksiKp::create([
                 'kode_branch' => 1010,
-                'kode_transaksi' => 'BU'.'/'.'1010'.'/'.Str::random(10),
+                'kode_transaksi' => 'BU'.'/'.'1010'.'/'.$kode_transaksi,
                 'kode_rekening' => '1010-1929000',
                 'tanggal_transaksi' => Carbon::now(),
                 'jenis_transaksi' => 'Bukti SYSTEM',
@@ -941,7 +953,7 @@ class ApprovalLpjController extends Controller
         try {
             DB::beginTransaction();
             $pengajuan = Pengajuan::findOrfail($id);
-            $pengajuan->status_approve = 'lpj-akunting-it';
+            $pengajuan->status_approve = 'lpj-admin';
             $pengajuan->save();
             DB::commit();
             return redirect()->back()->with('success', 'Data berhasil Tolak');
@@ -959,5 +971,3 @@ class ApprovalLpjController extends Controller
         return view('finance.approval.pengajuan-lpj.index', $data);
     }
 }
-
-// TODO masih perlu di cek lagi

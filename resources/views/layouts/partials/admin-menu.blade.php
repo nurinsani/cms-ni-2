@@ -183,44 +183,65 @@
     <ul class="nav nav-treeview">
 
         <li class="nav-item">
-            <a href="{{ url('admin/jurnal-kp') }}"
-                class="nav-link {{ request()->is('admin/jurnal-kp*') ? 'active' : '' }}">
+            <a href="{{ url('jurnal-kp') }}"
+                class="nav-link {{ request()->is('jurnal-kp*') ? 'active' : '' }}">
                 <i class="nav-icon far fa-circle nav-icon"></i>
                 <p>
-                    Jurnal KP
+                    Jurnal Pembelian KP
                 </p>
             </a>
         </li>
 
         <li class="nav-item">
-            <a href="{{ url('admin/jurnal-ap') }}"
-                class="nav-link {{ request()->is('admin/jurnal-ap*') ? 'active' : '' }}">
+            <a href="{{ url('jurnal-ap') }}"
+                class="nav-link {{ request()->is('jurnal-ap*') ? 'active' : '' }}">
                 <i class="nav-icon far fa-circle nav-icon"></i>
                 <p>
-                    Jurnal AP
+                    Jurnal Pembelian AP
                 </p>
             </a>
         </li>
 
         <li class="nav-item">
-            <a href="{{ route('admin.jurnal-pembelian.index') }}"
-                class="nav-link {{ request()->is('admin/jurnal-pembelian*') ? 'active' : '' }}">
+            <a href="{{ url('jurnal-penyusutan-kp') }}"
+                class="nav-link {{ request()->is('jurnal-penyusutan-kp*') ? 'active' : '' }}">
                 <i class="nav-icon far fa-circle nav-icon"></i>
                 <p>
-                    Pembelian Peralatan
+                    Jurnal Penyusutan KP
                 </p>
             </a>
         </li>
 
         <li class="nav-item">
-            <a href="{{ route('admin.jurnal-bdd.index') }}"
-                class="nav-link {{ request()->is('admin/jurnal-bdd*') ? 'active' : '' }}">
+            <a href="{{ url('jurnal-penyusutan-ap') }}"
+                class="nav-link {{ request()->is('jurnal-penyusutan-ap*') ? 'active' : '' }}">
                 <i class="nav-icon far fa-circle nav-icon"></i>
                 <p>
-                    BDD
+                    Jurnal Penyusutan AP
                 </p>
             </a>
         </li>
+
+        <li class="nav-item">
+            <a href="{{ url('jurnal-pembebanan-kp') }}"
+                class="nav-link {{ request()->is('jurnal-pembebanan-kp*') ? 'active' : '' }}">
+                <i class="nav-icon far fa-circle nav-icon"></i>
+                <p>
+                    Jurnal Pembebanan KP
+                </p>
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a href="{{ url('jurnal-pembebanan-ap') }}"
+                class="nav-link {{ request()->is('jurnal-pembebanan-ap*') ? 'active' : '' }}">
+                <i class="nav-icon far fa-circle nav-icon"></i>
+                <p>
+                    Jurnal Pembebanan AP
+                </p>
+            </a>
+        </li>
+
     </ul>
 </li>
 

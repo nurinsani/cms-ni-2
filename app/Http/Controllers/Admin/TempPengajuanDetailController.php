@@ -37,6 +37,7 @@ class TempPengajuanDetailController extends Controller
         $temp_pengajuan_detail->tanggal_pembelian = $request->tanggal_pembelian;
         $temp_pengajuan_detail->struk_pembelian = $request->struk_pembelian;
         $temp_pengajuan_detail->keterangan = $request->keterangan;
+        $temp_pengajuan_detail->umur = $request->umur;
         $temp_pengajuan_detail->status_lpj = 'belum';
 
         if ($request->has('moa')) {

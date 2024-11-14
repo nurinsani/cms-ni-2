@@ -112,6 +112,7 @@ class PengajuanController extends Controller
             $pengajuan_detail->rekening_id = $item->rekening_id;
             $pengajuan_detail->kode_branch = $item->kode_branch;
             $pengajuan_detail->kode_area = $item->kode_area;
+            $pengajuan_detail->kode_user = $item->kode_user;
             $pengajuan_detail->jenis_peralatan_id = $item->jenis_peralatan_id;
             $pengajuan_detail->merk = $item->merk;
             $pengajuan_detail->type = $item->type;
@@ -124,6 +125,7 @@ class PengajuanController extends Controller
             $pengajuan_detail->moa = $item->moa;
             $pengajuan_detail->group_approval = $item->group_approval;
             $pengajuan_detail->keterangan = $item->keterangan;
+            $pengajuan_detail->umur = $item->umur;
             $pengajuan_detail->save();
         }
         

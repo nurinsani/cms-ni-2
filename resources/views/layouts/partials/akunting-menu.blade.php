@@ -1,4 +1,4 @@
-<li class="nav-item menu-open">
+<li class="nav-item">
     <a href="{{ route('akunting.dashboard') }}"
         class="nav-link {{ request()->is('akunting/dashboard*') ? 'active' : '' }}">
         <i class="nav-icon fas fa-tachometer-alt"></i>
@@ -7,14 +7,16 @@
         </p>
     </a>
 </li>
+
 <li class="nav-item">
-    <a href="{{ url('/update-password') }}" class="nav-link {{ request()->is('/update-password') ? 'active' : '' }}">
-        <i class="fas fa-fingerprint"></i>
+    <a href="{{ url('/update-password') }}" class="nav-link {{ request()->is('update-password') ? 'active' : '' }}">
+        <i class="nav-icon fas fa-fingerprint"></i>
         <p>
             Ganti Password
         </p>
     </a>
 </li>
+
 <li class="nav-item">
     <a href="#" class="nav-link">
         <i class="nav-icon fas fa-check-double"></i>
@@ -118,10 +120,20 @@
             <i class="fas fa-angle-left right"></i>
         </p>
     </a>
+
     <ul class="nav nav-treeview">
         <li class="nav-item">
-            <a href="{{ url('akunting/jurnal-kp') }}"
-                class="nav-link {{ request()->is('akunting/jurnal-kp*') ? 'active' : '' }}">
+            <a href="{{ url('penyusutan') }}"
+                class="nav-link {{ request()->is('penyusutan*') ? 'active' : '' }}">
+                <i class="nav-icon far fa-circle nav-icon"></i>
+                <p>
+                    Proses Penyusutan
+                </p>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{{ url('jurnal-kp') }}"
+                class="nav-link {{ request()->is('jurnal-kp*') ? 'active' : '' }}">
                 <i class="nav-icon far fa-circle nav-icon"></i>
                 <p>
                     Jurnal Pembelian KP
@@ -130,8 +142,8 @@
         </li>
 
         <li class="nav-item">
-            <a href="{{ url('akunting/jurnal-ap') }}"
-                class="nav-link {{ request()->is('akunting/jurnal-ap*') ? 'active' : '' }}">
+            <a href="{{ url('jurnal-ap') }}"
+                class="nav-link {{ request()->is('jurnal-ap*') ? 'active' : '' }}">
                 <i class="nav-icon far fa-circle nav-icon"></i>
                 <p>
                     Jurnal Pembelian AP
@@ -140,8 +152,8 @@
         </li>
 
         <li class="nav-item">
-            <a href="{{ url('akunting/jurnal-penyusutan-kp') }}"
-                class="nav-link {{ request()->is('akunting/jurnal-penyusutan-kp*') ? 'active' : '' }}">
+            <a href="{{ url('jurnal-penyusutan-kp') }}"
+                class="nav-link {{ request()->is('jurnal-penyusutan-kp*') ? 'active' : '' }}">
                 <i class="nav-icon far fa-circle nav-icon"></i>
                 <p>
                     Jurnal Penyusutan KP
@@ -150,8 +162,8 @@
         </li>
 
         <li class="nav-item">
-            <a href="{{ url('akunting/jurnal-penyusutan-ap') }}"
-                class="nav-link {{ request()->is('akunting/jurnal-penyusutan-ap*') ? 'active' : '' }}">
+            <a href="{{ url('jurnal-penyusutan-ap') }}"
+                class="nav-link {{ request()->is('jurnal-penyusutan-ap*') ? 'active' : '' }}">
                 <i class="nav-icon far fa-circle nav-icon"></i>
                 <p>
                     Jurnal Penyusutan AP
@@ -160,8 +172,8 @@
         </li>
 
         <li class="nav-item">
-            <a href="{{ url('akunting/jurnal-pembebanan-kp') }}"
-                class="nav-link {{ request()->is('akunting/jurnal-pembebanan-kp*') ? 'active' : '' }}">
+            <a href="{{ url('jurnal-pembebanan-kp') }}"
+                class="nav-link {{ request()->is('jurnal-pembebanan-kp*') ? 'active' : '' }}">
                 <i class="nav-icon far fa-circle nav-icon"></i>
                 <p>
                     Jurnal Pembebanan KP
@@ -170,11 +182,11 @@
         </li>
 
         <li class="nav-item">
-            <a href="{{ url('akunting/jurnal-pembebanan-ap') }}"
-                class="nav-link {{ request()->is('akunting/jurnal-pembebanan-ap*') ? 'active' : '' }}">
+            <a href="{{ url('jurnal-pembebanan-ap') }}"
+                class="nav-link {{ request()->is('jurnal-pembebanan-ap*') ? 'active' : '' }}">
                 <i class="nav-icon far fa-circle nav-icon"></i>
                 <p>
-                    Jurnal Pembebanan Ap
+                    Jurnal Pembebanan AP
                 </p>
             </a>
         </li>

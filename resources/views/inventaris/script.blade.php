@@ -1,13 +1,5 @@
 <script>
     $(document).ready(function() {
-        // function formatRupiah(number) {
-        //     return parseFloat(number).toLocaleString('id-ID', {
-        //         style: 'currency',
-        //         currency: 'IDR',
-        //         minimumFractionDigits: 0,
-        //         maximumFractionDigits: 0
-        //     });
-        // }
 
         function formatRupiah(number) {
             return parseFloat(number).toLocaleString('id-ID', {
@@ -16,7 +8,6 @@
                 maximumFractionDigits: 0
             });
         }
-
 
         function fetchData() {
             $.ajax({
@@ -127,7 +118,6 @@
 
                         console.log(totalPengguna);
 
-
                         var tr = '<tr>';
                         tr += '<td>' + row.kode_branch + '</td>';
                         tr += '<td>' + row.kode_peralatan + '</td>';
@@ -207,7 +197,7 @@
             "paging": true,
             "lengthChange": true,
             "searching": true,
-            "ordering": true,
+            "ordering": false,
             "info": true,
             "autoWidth": false,
             "responsive": false,
@@ -219,17 +209,6 @@
             }], // Adjust the width as needed
             dom: 'Bfrtip', // This is required to show buttons on the top of the table
             buttons: [
-                {
-                    extend: 'copy',
-                    exportOptions: {
-                        format: {
-                            body: function (data, row, column, node) {
-                                // Hilangkan format Rupiah dan kembalikan ke angka biasa
-                                return data.replace(/Rp\s?|,|\./g, '');
-                            }
-                        }
-                    }
-                },
                 {
                     extend: 'csv',
                     exportOptions: {

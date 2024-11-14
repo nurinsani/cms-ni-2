@@ -19,7 +19,8 @@
         <div class="card-body">
             <div class="row">
                 <div class="col-md-6">
-                    <form action="{{ url('akunting/jurnal-ap') }}" method="GET">
+
+                    <form action="{{ url('jurnal-ap') }}" method="GET">
                         @csrf
                         <div class="row">
                             <div class="col-4 mb-3">Pilih Tanggal Awal</div>
@@ -40,13 +41,13 @@
                                 <button class="btn btn-primary" type="submit">
                                     <i class="fas fa-filter"></i> FILTER
                                 </button>
-                                <a class="btn btn-warning" href="{{ url('akunting/jurnal-ap') }}">
+                                <a class="btn btn-warning" href="{{ url('jurnal-ap') }}">
                                     <i class="fas fa-sync-alt"></i> RESET
                                 </a>
                             </div>
-                            
                         </div>
                     </form>
+
                 </div>
             </div>
         </div>

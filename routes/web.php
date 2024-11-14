@@ -42,6 +42,7 @@ use App\Http\Controllers\It\ItLpjController;
 use App\Http\Controllers\It\PengajuanItController;
 use App\Http\Controllers\JurnalController;
 use App\Http\Controllers\MiscController;
+use App\Http\Controllers\PenyusutanController;
 use App\Models\Admin\Peralatan;
 use App\Models\Inventaris;
 
@@ -105,6 +106,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Route::get('registrasi-peralatan/qrcode/{id}', [RegistrasiPeralatanController::class, 'generate'])->name('generate');
         Route::get('jurnal-kp', [JurnalController::class, 'jurnal_kp']);
         Route::get('jurnal-ap', [JurnalController::class, 'jurnal_ap']);
+
+        Route::get('jurnal-penyusutan-kp', [JurnalController::class, 'jurnal_penyusutan_kp']);
+        Route::get('jurnal-penyusutan-ap', [JurnalController::class, 'jurnal_penyusutan_ap']);
+        Route::get('jurnal-pembebanan-kp', [JurnalController::class, 'jurnal_pembebanan_kp']);
+        Route::get('jurnal-pembebanan-ap', [JurnalController::class, 'jurnal_pembebanan_ap']);
 
         Route::get('klaim-pembelian', [AdminKlaimController::class, 'index']);
         Route::get('klaim-pembelian/{id}', [AdminKlaimController::class, 'detail']);
@@ -190,14 +196,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('approval-mutasi/approve/{id}', [App\Http\Controllers\AdminHead\ApprovalMutasiController::class, 'approve']);
         Route::post('approval-mutasi/tolak/{id}', [App\Http\Controllers\AdminHead\ApprovalBddController::class, 'tolak']);
 
+        Route::resources([
+            'lpj' => LpjAhController::class,
+        ]);
         Route::get('lpj', [LpjAhController::class, 'index']);
         Route::get('lpj/{id}', [LpjAhController::class, 'detail']);
         Route::get('ajukan_lpj/{id}', [LpjAhController::class, 'ajukan_lpj']);
         Route::put('lpj/upload-bukti-pengembalian/{id}', [LpjController::class, 'upload_bukti_pengembalian']);
-
-        Route::resources([
-            'lpj' => LpjAhController::class,
-        ]);
 
         Route::get('klaim-pembelian', [AdminHeadKlaimController::class, 'index']);
         Route::get('klaim/detail/{id}', [AdminHeadKlaimController::class, 'detail']);
@@ -208,6 +213,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('inventaris', [SupervisorController::class, 'inventaris']);
         Route::get('jurnal-kp', [JurnalController::class, 'jurnal_kp']);
         Route::get('jurnal-ap', [JurnalController::class, 'jurnal_ap']);
+
+        Route::get('jurnal-penyusutan-kp', [JurnalController::class, 'jurnal_penyusutan_kp']);
+        Route::get('jurnal-penyusutan-ap', [JurnalController::class, 'jurnal_penyusutan_ap']);
+        Route::get('jurnal-pembebanan-kp', [JurnalController::class, 'jurnal_pembebanan_kp']);
+        Route::get('jurnal-pembebanan-ap', [JurnalController::class, 'jurnal_pembebanan_ap']);
 
         Route::get('export-excel', [PeralatanController::class, 'excel'])->name('peralatan.export');
     });
@@ -363,6 +373,20 @@ Route::middleware('auth')->group(function () {
     Route::post('/export-excel-inventaris', [MiscController::class, 'inventarisExcel']);
     Route::post('/export-excel/jurnal-kp', [MiscController::class, 'jurnalKPExcel']);
     Route::post('/export-excel/jurnal-ap', [MiscController::class, 'jurnalAPExcel']);
+
+    Route::get('jurnal-kp', [JurnalController::class, 'jurnal_kp']);
+    Route::get('jurnal-ap', [JurnalController::class, 'jurnal_ap']);
+    Route::get('jurnal-penyusutan-kp', [JurnalController::class, 'jurnal_penyusutan_kp']);
+    Route::get('jurnal-penyusutan-ap', [JurnalController::class, 'jurnal_penyusutan_ap']);
+    Route::get('jurnal-pembebanan-kp', [JurnalController::class, 'jurnal_pembebanan_kp']);
+    Route::get('jurnal-pembebanan-ap', [JurnalController::class, 'jurnal_pembebanan_ap']);
+
+    Route::get('/penyusutan', [PenyusutanController::class, 'index'])->name('penyusutan.index');
+    Route::post('/penyusutan', [PenyusutanController::class, 'jalankanPenyusutan'])->name('jalankanPenyusutan');
+    Route::post('/jurnal-penyusutan', [PenyusutanController::class, 'jalankanJurnalPenyusutan'])->name('jalankanJurnalPenyusutan');
+    Route::post('/jurnal-pembebanan', [PenyusutanController::class, 'jalankanJurnalPembebanan'])->name('jalankanJurnalPembebanan');
+
+    
 
     Route::get('/get/area-by-branch/{id}', [MiscController::class, 'areaByBranch']);
     Route::post('/get-branches', [DataUserController::class, 'getBranches']);

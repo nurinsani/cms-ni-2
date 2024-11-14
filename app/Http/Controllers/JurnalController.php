@@ -59,7 +59,7 @@ class JurnalController extends Controller
 
     public function jurnal_penyusutan_ap(Request $request)
     {
-        $title = 'Jurnal Penyusutan KP';
+        $title = 'Jurnal Penyusutan AP';
         if (request()->start_date || request()->end_date) {
             $startDate = $request->start_date;
             $endDate = $request->end_date;
