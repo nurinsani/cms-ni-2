@@ -657,27 +657,29 @@ class ApprovalLpjController extends Controller
             $kode_transaksi = date('m').random_int(100000, 999999);
             if ($item->kode_branch !== '1010') {
                 // jurnal LPJ pembelian inventaris di ap
-                TransaksiAp::create([
-                    'kode_branch' => $item->ap->kode_branch,
-                    'kode_transaksi' => 'BU'.'/'.$item->ap->kode_branch.'/'.$kode_transaksi,
-                    'kode_rekening' => '1652000',
-                    'tanggal_transaksi' => Carbon::now(),
-                    'jenis_transaksi' => 'Bukti SYSTEM',
-                    'keterangan' => $item->keterangan_lpj,
-                    'debet' => $pengajuan->subtotal(),
-                    'kredit' => 0
-                ]);
-
-                TransaksiAp::create([
-                    'kode_branch' => $item->ap->kode_branch,
-                    'kode_transaksi' => 'BU'.'/'.$item->ap->kode_branch.'/'.$kode_transaksi,
-                    'kode_rekening' => '2500000',
-                    'tanggal_transaksi' => Carbon::now(),
-                    'jenis_transaksi' => 'Bukti SYSTEM',
-                    'keterangan' => $item->keterangan_lpj,
-                    'debet' => 0,
-                    'kredit' => $pengajuan->subtotal()
-                ]);
+                foreach ($pengajuan->pengajuan_details as $item) {
+                    TransaksiAp::create([
+                        'kode_branch' => $item->ap->kode_branch,
+                        'kode_transaksi' => 'BU'.'/'.$item->ap->kode_branch.'/'.$kode_transaksi,
+                        'kode_rekening' => $item->jenis_peralatan->param_peralatan->coa,
+                        'tanggal_transaksi' => Carbon::now(),
+                        'jenis_transaksi' => 'Bukti SYSTEM',
+                        'keterangan' => $item->keterangan,
+                        'debet' => $item->harga_pembelian,
+                        'kredit' => 0
+                    ]);
+    
+                    TransaksiAp::create([
+                        'kode_branch' => $item->ap->kode_branch,
+                        'kode_transaksi' => 'BU'.'/'.$item->ap->kode_branch.'/'.$kode_transaksi,
+                        'kode_rekening' => '2500000',
+                        'tanggal_transaksi' => Carbon::now(),
+                        'jenis_transaksi' => 'Bukti SYSTEM',
+                        'keterangan' => $item->keterangan,
+                        'debet' => 0,
+                        'kredit' => $item->harga_pembelian,
+                    ]);
+                }
                 // end jurnal LPJ pembelian inventaris di ap
             }
 

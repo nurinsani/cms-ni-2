@@ -133,7 +133,8 @@ class klaimController extends Controller
                         $total = $cabang->harga * $cabang->kuantitas;
                         $subtotal = $subtotal + $total;
                         // Jurnal LPJ Pembelian Peralatan Cabang
-                        $branch = Branch::where('code_area', $cabang->kode_area)->get();
+                        $branch = Branch::where('code_area', $cabang->kode_area)
+                        ->get();
                         $total_branch = $branch->count();
     
                         // jurnal LPJ pembelian untuk cabang di KP
@@ -193,7 +194,7 @@ class klaimController extends Controller
                     foreach ($pengajuan->pengajuan_details as $item) {
                         $kode_transaksi = date('m').random_int(100000, 999999);
                         TransaksiAp::create([
-                            'kode_branch' => 12,
+                            'kode_branch' => $item->kode_branch,
                             'kode_transaksi' => 'BU'.'/'.$item->kode_branch.'/'.$kode_transaksi,
                             'kode_rekening' => $item->jenis_peralatan->param_peralatan->coa,
                             'tanggal_transaksi' => Carbon::now(),
@@ -204,7 +205,7 @@ class klaimController extends Controller
                         ]);
         
                         TransaksiAp::create([
-                            'kode_branch' => 11,
+                            'kode_branch' => $item->kode_branch,
                             'kode_transaksi' => 'BU'.'/'.$item->kode_branch.'/'.$kode_transaksi,
                             'kode_rekening' => '2500000',
                             'tanggal_transaksi' => Carbon::now(),
@@ -216,7 +217,7 @@ class klaimController extends Controller
         
                         // dd($item->ap->GL);
                         TransaksiKp::create([
-                            'kode_branch' => 1012,
+                            'kode_branch' => 1010,
                             'kode_transaksi' => 'BU'.'/'.'1010'.'/'.$kode_transaksi,
                             'kode_rekening' => '1010'.'-'.$item->ap->GL,
                             'tanggal_transaksi' => Carbon::now(),
@@ -227,7 +228,7 @@ class klaimController extends Controller
                         ]);
         
                         TransaksiKp::create([
-                            'kode_branch' => 1011,
+                            'kode_branch' => 1010,
                             'kode_transaksi' => 'BU'.'/'.'1010'.'/'.$kode_transaksi,
                             'kode_rekening' => '1010-1312000',
                             'tanggal_transaksi' => Carbon::now(),

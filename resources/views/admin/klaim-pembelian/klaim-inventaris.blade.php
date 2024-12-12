@@ -112,31 +112,35 @@
                                         class="form-control">
                                     </select>
                                 </div>
-    
+
                                 <div class="form-group">
-                                    <label for="" class="form-label">Pilih AP</label>
-                                    <select name="kode_branch" id="kode_branch" class="form-control">
+                                    <label for="" class="form-label">Pilih Branch</label>
+                                    <select id="select-option" class="form-control">
+                                        <option value="" hidden>-- Pilih Branch --</option>
+                                        <option value="ap">Unit</option>
+                                        <option value="cabang">Area</option>
+                                        <option value="region">Region</option>
+                                    </select>
+                                </div>
+
+                                <div id="select-ap" class="form-group d-none">
+                                    <label for="" class="form-label">Pilih Unit</label>
+                                    <select name="kode_branch" id="kode_branch" class="form-control select2bs4">
+                                        <option value="">-- Pilih Unit --</option>
                                         @foreach ($branch as $item)
-                                            <option value="" hidden>-- Pilih AP --</option>
                                             <option value="{{ $item->kode_branch }}">{{ $item->unit }}</option>
                                         @endforeach
                                     </select>
-                                    <small class="text-danger">* pilih salah satu AP atau Cabang, jangan pilih dua2 nya. <br> 
-                                        jika ingin pengajuan untuk AP pilih ini!
-                                    </small>
                                 </div>
-
-                                <div class="form-group">
-                                    <label for="" class="form-label">Pilih Cabang</label>
+                                
+                                <div id="select-cabang" class="form-group d-none">
+                                    <label for="" class="form-label">Pilih Area</label>
                                     <select name="kode_area" id="kode_area" class="form-control">
+                                        <option value="">-- Pilih Area --</option>
                                         @foreach ($branch as $item)
-                                            <option value="" hidden>-- Pilih Cabang --</option>
-                                            @endforeach
-                                            <option value="{{ $item->code_area }}">{{ $item->area }}</option>
+                                        @endforeach
+                                        <option value="{{ $item->code_area }}">{{ $item->area }}</option>
                                     </select>
-                                    <small class="text-danger">* pilih salah satu AP atau Cabang, jangan pilih dua2 nya. <br> 
-                                        jika ingin pengajuan untuk Wilayah pilih ini!
-                                    </small>
                                 </div>
     
                                 <div class="form-group">
@@ -152,6 +156,15 @@
                                 <div class="form-group">
                                     <label for="" class="form-label">Kuantitas</label>
                                     <input type="number" name="kuantitas" id="kuantitas" class="form-control" placeholder="Masukan Kuantitas" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="" class="form-label">Umur</label>
+                                    <select name="umur" id="" class="form-control">
+                                        <option value="" hidden>-- Pilih Umur --</option>
+                                        <option value="24">24 Bulan</option>
+                                        <option value="48">48 Bulan</option>
+                                    </select>
                                 </div>
                             </div>
 
@@ -326,6 +339,29 @@
     @endforeach
 
     @push('js')
+
+        <script>
+            document.getElementById('select-option').addEventListener('change', function() {
+                var selectedValue = this.value;
+        
+                // Hide semua dropdown
+                document.getElementById('select-ap').classList.add('d-none');
+                document.getElementById('select-cabang').classList.add('d-none');
+                // document.getElementById('select-region').classList.add('d-none');
+        
+                // Show the corresponding dropdown based on selection
+                if (selectedValue === 'ap') {
+                    document.getElementById('select-ap').classList.remove('d-none');
+                } else if (selectedValue === 'cabang') {
+                    document.getElementById('select-cabang').classList.remove('d-none');
+                }
+
+                // else if (selectedValue === 'region') {
+                //     document.getElementById('select-region').classList.remove('d-none');
+                // }
+            });
+        </script>
+
         <script type="text/javascript">
             var id = 0;
             $('#tambah_peralatan').on('click', function() {

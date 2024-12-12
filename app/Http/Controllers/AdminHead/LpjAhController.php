@@ -28,7 +28,7 @@ class LpjAhController extends Controller
         return view('admin-head.lpj.index', $data);
     }
 
-    public function detail($id)
+    public function show($id)
     {
         $data['title'] = 'Detail LPJ';
         $data['lpj'] = Pengajuan::findOrFail($id);

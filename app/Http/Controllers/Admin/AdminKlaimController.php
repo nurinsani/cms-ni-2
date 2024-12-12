@@ -102,6 +102,7 @@ class AdminKlaimController extends Controller
             $pengajuan_detail->tanggal_perolehan = $item->tanggal_pembelian;
             $pengajuan_detail->struk_pembelian = $item->struk_pembelian;
             $pengajuan_detail->moa = $item->moa;
+            $pengajuan_detail->umur = $item->umur;
             $pengajuan_detail->save();
         }
         
