@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Models\Admin\Peralatan;
 use App\Models\Inventaris;
+use App\Models\InventarisGol2;
 
 class AkuntingController extends Controller
 {
@@ -71,5 +72,45 @@ class AkuntingController extends Controller
         $data['total_peny_2'] = Inventaris::sum('harga_perolehan') / 48 * 10;
 
         return view('akunting.inventaris.index', $data);
+    }
+
+    public function inventaris_gol_2()
+    {
+        $user = auth()->id();
+        $data['title'] = 'Daftar Inventaris Gol II';
+
+        $data['inventarisGol2'] = InventarisGol2::join('branch', 'branch.kode_branch', 'inventaris_gol_2.kode_branch')
+            ->select(['inventaris_gol_2.*', 'branch.area'])
+            ->get();
+
+        // dd($data);
+        $branches = [];
+
+        foreach ($data['inventarisGol2'] as $row) {
+            $branches[] = $row->kode_branch;
+        }
+
+        $data['branches'] = DB::table('branch')
+            ->whereIn('kode_branch', $branches)
+            ->orderBy('unit', 'asc')
+            ->get();
+
+        $area = [];
+
+        foreach ($data['branches'] as $branch) {
+            if (!in_array($branch->area, $area)) {
+                $area[] = $branch->area;
+            }
+        }
+
+        sort($area);
+
+        $data['area'] = $area;
+
+        $data['total_harga_perolehan'] = InventarisGol2::sum('harga_perolehan');
+        $data['total_peny'] = InventarisGol2::sum('harga_perolehan') / 24;
+        $data['total_peny_2'] = InventarisGol2::sum('harga_perolehan') / 24 * 10;
+
+        return view('akunting.inventaris_gol_2.index', $data);
     }
 }

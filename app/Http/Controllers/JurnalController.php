@@ -5,9 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\JurnalAp;
 use App\Models\JurnalKp;
 use App\Models\TransaksiPembebananAp;
+use App\Models\TransaksiPembebananApGol2;
 use App\Models\TransaksiPembebananKp;
+use App\Models\TransaksiPembebananKpGol2;
 use App\Models\TransaksiPenyusutanAp;
+use App\Models\TransaksiPenyusutanApGol2;
 use App\Models\TransaksiPenyusutanKp;
+use App\Models\TransaksiPenyusutanKpGol2;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -97,5 +101,61 @@ class JurnalController extends Controller
             $jurnal_pembebanan_ap = TransaksiPembebananAp::all();
         }
         return view('transaksi.jurnal_pembebanan_ap.index', compact('jurnal_pembebanan_ap', 'title'));
+    }
+
+    public function jurnal_penyusutan_kp_gol_2(Request $request)
+    {
+        $title = 'Jurnal Penyusutan KP Gol 2';
+        if (request()->start_date || request()->end_date) {
+            $startDate = $request->start_date;
+            $endDate = $request->end_date;
+
+            $jurnal_penyusutan_kp_gol_2 = TransaksiPenyusutanKpGol2::whereBetween('tanggal_transaksi', [$startDate, $endDate])->get();
+        } else {
+            $jurnal_penyusutan_kp_gol_2 = TransaksiPenyusutanKpGol2::all();
+        }
+        return view('transaksi.jurnal_penyusutan_kp_gol_2.index', compact('jurnal_penyusutan_kp_gol_2', 'title'));
+    }
+
+    public function jurnal_penyusutan_ap_gol_2(Request $request)
+    {
+        $title = 'Jurnal Penyusutan AP Gol 2';
+        if (request()->start_date || request()->end_date) {
+            $startDate = $request->start_date;
+            $endDate = $request->end_date;
+
+            $jurnal_penyusutan_ap_gol_2 = TransaksiPenyusutanApGol2::whereBetween('tanggal_transaksi', [$startDate, $endDate])->get();
+        } else {
+            $jurnal_penyusutan_ap_gol_2 = TransaksiPenyusutanApGol2::all();
+        }
+        return view('transaksi.jurnal_penyusutan_ap_gol_2.index', compact('jurnal_penyusutan_ap_gol_2', 'title'));
+    }
+
+    public function jurnal_pembebanan_kp_gol_2(Request $request)
+    {
+        $title = 'Jurnal Pembebanan KP Gol 2';
+        if (request()->start_date || request()->end_date) {
+            $startDate = $request->start_date;
+            $endDate = $request->end_date;
+
+            $jurnal_pembebanan_kp_gol_2 = TransaksiPembebananKpGol2::whereBetween('tanggal_transaksi', [$startDate, $endDate])->get();
+        } else {
+            $jurnal_pembebanan_kp_gol_2 = TransaksiPembebananKpGol2::all();
+        }
+        return view('transaksi.jurnal_pembebanan_kp_gol_2.index', compact('jurnal_pembebanan_kp_gol_2', 'title'));
+    }
+
+    public function jurnal_pembebanan_ap_gol_2(Request $request)
+    {
+        $title = 'Jurnal Pembebanan AP Gol 2';
+        if (request()->start_date || request()->end_date) {
+            $startDate = $request->start_date;
+            $endDate = $request->end_date;
+
+            $jurnal_pembebanan_ap_gol_2 = TransaksiPembebananApGol2::whereBetween('tanggal_transaksi', [$startDate, $endDate])->get();
+        } else {
+            $jurnal_pembebanan_ap_gol_2 = TransaksiPembebananApGol2::all();
+        }
+        return view('transaksi.jurnal_pembebanan_ap_gol_2.index', compact('jurnal_pembebanan_ap_gol_2', 'title'));
     }
 }

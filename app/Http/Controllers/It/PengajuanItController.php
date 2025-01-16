@@ -76,6 +76,7 @@ class PengajuanItController extends Controller
         $data['code_area'] = auth()->user()->code_area;
         $data['rekening_id'] = $request->rekening_id;
         $data['status_approve'] = 'atasan-it';
+        $data['approval_1'] = auth()->user()->id;
         
         $temp_pengajuan = TempPengajuanDetail::all();
         $pengajuan = Pengajuan::create($data);

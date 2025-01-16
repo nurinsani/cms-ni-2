@@ -23,7 +23,7 @@
 
                     if (response.areas.length > 0) {
                         $('#area').append(`
-                            <option value="">-- Semua Area --</option>
+                            <option hidden="" value="">-- Pilih Area --</option>
                         `);
 
                         $.each(response.areas, function(i, area) {
@@ -33,10 +33,11 @@
                         });
                     } else if (response.branches.length > 0) {
                         $('#kode_branch').append(`
-                            <option value="">-- Semua Cabang --</option>
+                            <option hidden="" value="">-- Pilih Wilayah --</option>
                         `);
 
                         $.each(response.branches, function(i, branches) {
+                            console.log('Index:', i, 'Value:', branches); // Cetak data ke konsol
                             $('#kode_branch').append(`
                                 <option value="${branches}">${branches}</option>
                             `);
@@ -74,18 +75,18 @@
                         var rowPenyusutanPerbulan = parseFloat(row.penyusutan_perbulan ||
                             0);
                         var rowPenyusutanAwal = parseFloat(row.total_penyusutan_awal || 0);
-                        var rowJanuari = parseFloat(row['2024-01'] || 0);
-                        var rowFebruari = parseFloat(row['2024-02'] || 0);
-                        var rowMaret = parseFloat(row['2024-03'] || 0);
-                        var rowApril = parseFloat(row['2024-04'] || 0);
-                        var rowMei = parseFloat(row['2024-05'] || 0);
-                        var rowJuni = parseFloat(row['2024-06'] || 0);
-                        var rowJuli = parseFloat(row['2024-07'] || 0);
-                        var rowAgustus = parseFloat(row['2024-08'] || 0);
-                        var rowSeptember = parseFloat(row['2024-09'] || 0);
-                        var rowOktober = parseFloat(row['2024-10'] || 0);
-                        var rowNovember = parseFloat(row['2024-11'] || 0);
-                        var rowDesember = parseFloat(row['2024-12'] || 0);
+                        var rowJanuari = parseFloat(row['2025-01'] || 0);
+                        var rowFebruari = parseFloat(row['2025-02'] || 0);
+                        var rowMaret = parseFloat(row['2025-03'] || 0);
+                        var rowApril = parseFloat(row['2025-04'] || 0);
+                        var rowMei = parseFloat(row['2025-05'] || 0);
+                        var rowJuni = parseFloat(row['2025-06'] || 0);
+                        var rowJuli = parseFloat(row['2025-07'] || 0);
+                        var rowAgustus = parseFloat(row['2025-08'] || 0);
+                        var rowSeptember = parseFloat(row['2025-09'] || 0);
+                        var rowOktober = parseFloat(row['2025-10'] || 0);
+                        var rowNovember = parseFloat(row['2025-11'] || 0);
+                        var rowDesember = parseFloat(row['2025-12'] || 0);
                         var rowPenyusutanBerjalan = parseFloat(row
                             .total_penyusutan_berjalan || 0);
                         var rowAkumulasiPenyusutan = parseFloat(row.akumulasi_penyusutan ||

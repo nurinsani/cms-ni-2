@@ -143,8 +143,13 @@
                                 <td>
                                     <ul class="p-0" style="list-style: none">
                                         @foreach ($pengajuan->pengajuan_details as $item)
-                                            <a href=""
-                                                onclick="window.open('{{ url('files/moa/' . $item->moa) }}')">{{ $item->moa }}</a>
+                                        <li>
+                                            @if ($item->moa == null)
+                                            (tidak ada berkas)
+                                            @else
+                                            <a href="" onclick="window.open('{{ url('files/moa/'.$item->moa) }}')">{{ $item->moa }}</a>
+                                            @endif
+                                        </li>
                                         @endforeach
                                     </ul>
                                 </td>

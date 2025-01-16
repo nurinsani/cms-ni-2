@@ -49,7 +49,7 @@
                                     @foreach ($temp_pengajuan as $item)
                                     <tr>
                                         <td>{{ $item->jenis_peralatan->nama_jenis }}</td>
-                                        <td>{{ $item->ap->unit ?? $item->area->area}}</td>
+                                        <td>{{ $item->ap->unit ?? $item->area->area ?? '(AP/Area tidak ada)'}}</td>
                                         <td>{{ $item->merk }}</td>
                                         <td>{{ $item->type }}</td>
                                         <td>{{ $item->kuantitas }}</td>

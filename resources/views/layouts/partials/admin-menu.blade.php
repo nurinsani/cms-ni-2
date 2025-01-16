@@ -151,7 +151,7 @@
 
         <li class="nav-item">
             <a href="{{ url('admin/inventaris') }}"
-                class="nav-link {{ request()->is('admin/inventaris*') ? 'active' : '' }}">
+                class="nav-link {{ request()->is('admin/inventaris') ? 'active' : '' }}">
                 <i class="nav-icon far fa-circle nav-icon"></i>
                 <p>
                     Inventaris
@@ -160,6 +160,16 @@
         </li>
 
         <li class="nav-item">
+            <a href="{{ url('admin/inventaris-gol-2') }}"
+                class="nav-link {{ request()->is('admin/inventaris-gol-2') ? 'active' : '' }}">
+                <i class="nav-icon far fa-circle nav-icon"></i>
+                <p>
+                    Inventaris Gol II
+                </p>
+            </a>
+        </li>
+
+        {{-- <li class="nav-item">
             <a href="{{ route('admin.daftar-bdd') }}"
                 class="nav-link {{ request()->is('admin/daftar-bdd*') ? 'active' : '' }}">
                 <i class="nav-icon far fa-circle nav-icon"></i>
@@ -167,7 +177,7 @@
                     BDD
                 </p>
             </a>
-        </li>
+        </li> --}}
     </ul>
 </li>
 
