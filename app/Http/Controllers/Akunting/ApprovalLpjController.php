@@ -51,46 +51,10 @@ class ApprovalLpjController extends Controller
                         'tanggal_perolehan' => now(),
                         'jumlah' => $item->kuantitas,
                         'harga_perolehan' => 0,
-                        'keterangan' => $pengajuan->keterangan
+                        'keterangan' => $item->jenis_peralatan->nama_jenis . ' ' . $item->type
                     ]);
                 } else {
-                    if (($item->harga_pembelian / $item->kuantitas) > 500000) {
-                        if ($item->tanggal_perolehan >= 16 && $item->tanggal_perolehan <= 31) {
-                            if ($item->kode_branch == NULL) {
-                                RencanaPenyusutan::create([
-                                    'user_id' => auth()->user()->id,
-                                    'kode_branch' => $item->kode_area,
-                                    'status_branch' => 'AP',
-                                    'kode_peralatan' => 'INV-NI-'.$pengajuan->nomor,
-                                    'jenis' => $item->jenis_peralatan->nama_jenis,
-                                    'merk' => $item->merk,
-                                    'type' => $item->type,
-                                    'tanggal_perolehan' => $item->tanggal_perolehan,
-                                    'jumlah' => $item->kuantitas,
-                                    'harga_perolehan' => $item->harga_pembelian,
-                                    'umur' => $item->umur,
-                                    'keterangan' => $pengajuan->keterangan,
-                                    'status_penyusutan' => 'pending'
-                                ]);
-                            } else {
-                                RencanaPenyusutan::create([
-                                    'user_id' => auth()->user()->id,
-                                    'kode_branch' => $item->kode_branch,
-                                    'status_branch' => 'AP',
-                                    'kode_peralatan' => 'INV-NI-'.$pengajuan->nomor,
-                                    'jenis' => $item->jenis_peralatan->nama_jenis,
-                                    'merk' => $item->merk,
-                                    'type' => $item->type,
-                                    'tanggal_perolehan' => $item->tanggal_perolehan,
-                                    'jumlah' => $item->kuantitas,
-                                    'harga_perolehan' => $item->harga_pembelian,
-                                    'umur' => $item->umur,
-                                    'keterangan' => $pengajuan->keterangan,
-                                    'status_penyusutan' => 'pending'
-                                ]);
-                            }
-                        }
-
+                    if (($item->harga_pembelian / $item->kuantitas) >= 500000) {
                         if ($item->kode_branch == NULL) {
                             Inventaris::create([
                                 'user_id' => auth()->user()->id,
@@ -104,7 +68,7 @@ class ApprovalLpjController extends Controller
                                 'jumlah' => $item->kuantitas,
                                 'harga_perolehan' => $item->harga_pembelian,
                                 'umur' => $item->umur,
-                                'keterangan' => $pengajuan->keterangan
+                                'keterangan' => $item->jenis_peralatan->nama_jenis . ' ' . $item->type
                             ]);
                         } else {
                             Inventaris::create([
@@ -119,7 +83,7 @@ class ApprovalLpjController extends Controller
                                 'jumlah' => $item->kuantitas,
                                 'harga_perolehan' => $item->harga_pembelian,
                                 'umur' => $item->umur,
-                                'keterangan' => $pengajuan->keterangan
+                                'keterangan' => $item->jenis_peralatan->nama_jenis . ' ' . $item->type
                             ]);
                         }
                     } else {
@@ -135,7 +99,7 @@ class ApprovalLpjController extends Controller
                                 'tanggal_perolehan' => $item->tanggal_perolehan,
                                 'jumlah' => $item->kuantitas,
                                 'harga_perolehan' => $item->harga_pembelian,
-                                'keterangan' => $pengajuan->keterangan
+                                'keterangan' => $item->jenis_peralatan->nama_jenis . ' ' . $item->type
                             ]);
                         } else {
                             Peralatan::create([
@@ -149,7 +113,7 @@ class ApprovalLpjController extends Controller
                                 'tanggal_perolehan' => $item->tanggal_perolehan,
                                 'jumlah' => $item->kuantitas,
                                 'harga_perolehan' => $item->harga_pembelian,
-                                'keterangan' => $pengajuan->keterangan
+                                'keterangan' => $item->jenis_peralatan->nama_jenis . ' ' . $item->type
                             ]);
                         }
                     }

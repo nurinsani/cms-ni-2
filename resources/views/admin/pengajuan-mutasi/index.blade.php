@@ -26,28 +26,29 @@
         <thead>
         <tr>
           <th>No</th>
-          <th>Nama Peralatan</th>
+          <th>No Pengajuan</th>
           <th>Dari AP</th>
           <th>Ke AP</th>
           <th>Bulan Mutasi</th>
+          <th>Jumalah</th>
           <th>Status</th>
           <th>Aksi</th>
         </tr>
         </thead>
         <tbody>
-          @foreach ($penganjuan_mutasi as $item)
+          @foreach ($pengajuan_mutasi as $key => $item)
               <tr>
                 <td>{{ $loop->iteration }}</td>
-                <td>{{ $item->peralatan->jenis }}</td>
-                <td>{{ $item->peralatan->ap->unit }}</td>
+                <td>{{ $item->kode_mutasi }}</td>
+                <td>{{ $item->dari_ap->unit }}</td>
                 <td>{{ $item->branch->unit }}</td>
                 <td>{{ $item->bulan_mutasi }}</td>
+                <td>{{ $item->inventaris->count() }}</td>
                 <td>
                   <span class="badge bg-success">
                     {{ $item->status_approve }}</td>
                   </span>
                 <td>
-                  <a href="{{ route('admin.pengajuan-mutasi.edit', $item->id) }}" class="btn btn-sm btn-primary">Edit</a>
                   @if ($item->status_approve === 'mutasi-admin')
                   <button type="submit" onclick="hapus_data('#delete_form{{ $item->id }}')" class="btn btn-sm btn-danger">Hapus</button>
                   <form class="d-inline" id="delete_form{{ $item->id }}" action="{{ route('admin.pengajuan-mutasi.destroy', $item->id) }}" method="post">
@@ -56,6 +57,9 @@
                   </form>
                       
                   @endif
+                  <a href="{{ route('admin.pengajuan-mutasi.show', $item->id) }}" class="btn btn-info btn-sm">
+                      Lihat Detail
+                  </a>
                 </td>
               </tr>
           @endforeach

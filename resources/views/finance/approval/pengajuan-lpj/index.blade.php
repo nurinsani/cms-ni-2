@@ -39,7 +39,7 @@
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ $data->nomor }}</td>
                                 <td>{{ $data->area->area }}</td>
-                                <td>{{ $data->tanggal_pengajuan->format('d-M-Y'); }}</td>
+                                <td>{{ $data->tanggal_pengajuan->format('d-M-Y') }}</td>
                                 <td>
                                     <ul class="p-0" style="list-style: none">
                                         @foreach ($data->pengajuan_details as $item)
@@ -59,24 +59,12 @@
                                     @endif
 
                                     @if ($data->status_approve == 'lpj-finance')
-                                    @foreach ($data->pengajuan_details as $item)
-                                    
-                                    @endforeach
-                                    @if ($item->jenis_peralatan->group_inventaris == 'tidak')
                                     <button type="submit" onclick="approve('#approve{{ $data->id }}')"
                                         class="btn btn-sm btn-success">Approve</button>
                                     <form class="d-inline" id="approve{{ $data->id }}"
                                         action="{{ url('finance/approval-lpj/approve', $data->id) }}" method="post">
                                         @csrf
                                     </form>
-                                    @else
-                                    <button type="submit" onclick="approve('#approve{{ $data->id }}')"
-                                        class="btn btn-sm btn-success">Approve</button>
-                                    <form class="d-inline" id="approve{{ $data->id }}"
-                                        action="{{ url('finance/approval-lpj/approve-inventaris', $data->id) }}" method="post">
-                                        @csrf
-                                    </form>
-                                    @endif
 
                                     <button type="submit" onclick="tolak('#tolak{{ $data->id }}')"
                                         class="btn btn-sm btn-danger">Tolak</button>

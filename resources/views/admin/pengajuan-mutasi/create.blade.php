@@ -4,116 +4,114 @@
     <div class="row mb-2">
         <div class="col-sm-6">
             <h1 class="m-0">{{ $title }}</h1>
-        </div><!-- /.col -->
+        </div>
         <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
                 <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
                 <li class="breadcrumb-item active">{{ $title }}</li>
             </ol>
-        </div><!-- /.col -->
-    </div><!-- /.row -->
+        </div>
+    </div>
 @endsection
 
 @section('content')
-    <div class="card">
-        <!-- /.card-header -->
-        <div class="card-body">
-            <form action="{{ route('admin.pengajuan-mutasi.store') }}" method="post" class="col-md-6"
-                enctype="multipart/form-data">
-                @csrf
-                <div class="form-group">
-                    <label for="" class="form-label">Pilih AP</label>
-                    <select class="form-control select2bs4 @error('kode_branch') is-invalid @enderror" name="dari_cabang" id="kode_branch">
-                        <option value="" hidden>-- Pilih Nama Ap --</option>
-                        @foreach ($branch as $data)
-                            <option value="{{ $data->kode_branch }}">{{ $data->unit }}</option>
-                        @endforeach
-                    </select>
-                    @error('dari_cabang')
-                        <small class="text-danger">{{ $message }}</small>
-                    @enderror
-                </div>
-                
-                <div class="form-group">
-                    <label for="" class="form-label">Inventaris</label>
-                    <select class="form-control select2bs4 @error('peralatan_id') is-invalid @enderror" name="peralatan_id" id="inventaris">
-                        <option value="" hidden>-- Pilih Inventaris --</option>
-                    </select>
-                    @error('peralatan_id')
-                        <small class="text-danger">{{ $message }}</small>
-                    @enderror
-                </div>
-                
-                <div class="form-group">
-                    <label for="" class="form-label">Mutasi AP</label>
-                    <select class="form-control select2bs4 @error('kode_branch') is-invalid @enderror" name="ke_cabang">
-                        <option value="" hidden>-- Pilih Mutasi Ap --</option>
-                        @foreach ($mutasi_ke as $data)
-                            <option value="{{ $data->kode_branch }}">{{ $data->unit }}</option>
-                        @endforeach
-                    </select>
-                    @error('ke_cabang')
-                        <small class="text-danger">{{ $message }}</small>
-                    @enderror
-                </div>
-                
-                <div class="form-group">
-                    <label for="" class="form-label">Bulan Mutasi</label>
-                    <select class="form-control select2bs4 @error('bulan') is-invalid @enderror" name="bulan_mutasi">
-                        <option value="" hidden>-- Pilih Bulan --</option>
-                        <option value="Januari">Januari</option>
-                        <option value="Februari">Februari</option>
-                        <option value="Maret">Maret</option>
-                        <option value="April">April</option>
-                        <option value="Mei">Mei</option>
-                        <option value="Juni">Juni</option>
-                        <option value="Juli">Juli</option>
-                        <option value="Agustus">Agustus</option>
-                        <option value="September">September</option>
-                        <option value="Oktober">Oktober</option>
-                        <option value="November">November</option>
-                        <option value="Desember">Desember</option>
-                    </select>
-                    @error('bulan')
-                        <small class="text-danger">{{ $message }}</small>
-                    @enderror
-                </div>
 
-                <button type="submit" class="btn btn-primary">Simpan</button>
-            </form>
+<form action="{{ route('admin.pengajuan-mutasi.store') }}" method="post" enctype="multipart/form-data">
+    @csrf
+
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="card-body">
+                    <div class="form-group">
+                        <label>Pilih AP</label>
+                        <select class="form-control select2bs4 @error('kode_branch') is-invalid @enderror" name="dari_cabang" id="kode_branch">
+                            <option value="" hidden>-- Pilih Nama Ap --</option>
+                            @foreach ($pilih_ap as $data)
+                                <option value="{{ $data->kode_branch }}">{{ $data->unit }}</option>
+                            @endforeach
+                        </select>
+                        @error('dari_cabang')
+                            <small class="text-danger">{{ $message }}</small>
+                        @enderror
+                    </div>
+
+                    <div class="form-group">
+                        <label>Mutasi AP</label>
+                        <select class="form-control select2bs4 @error('kode_branch') is-invalid @enderror" name="ke_cabang">
+                            <option value="" hidden>-- Pilih Mutasi Ap --</option>
+                            @foreach ($mutasi_ke as $data)
+                                <option value="{{ $data->kode_branch }}">{{ $data->unit }}</option>
+                            @endforeach
+                        </select>
+                        @error('ke_cabang')
+                            <small class="text-danger">{{ $message }}</small>
+                        @enderror
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Bulan Mutasi</label>
+                        <select class="form-control select2bs4 @error('bulan') is-invalid @enderror" name="bulan_mutasi">
+                            <option value="" hidden>-- Pilih Bulan --</option>
+                            @foreach (["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"] as $bulan)
+                                <option value="{{ $bulan }}">{{ $bulan }}</option>
+                            @endforeach
+                        </select>
+                        @error('bulan')
+                            <small class="text-danger">{{ $message }}</small>
+                        @enderror
+                    </div>
+                    
+                    <div class="">
+                        <button type="submit" class="btn btn-primary">Simpan</button>
+                    </div>
+
+                </div>
+            </div>
         </div>
-        <!-- /.card-body -->
+        <div class="col">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Pilih Inventaris</h3>
+                </div>
+                <div class="card-body">
+                    <div id="inventarisList"></div>
+                </div>
+            </div>
+        </div>
     </div>
-
-    {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> --}}
-    
+</form>
+        
     <script>
         $(document).ready(function() {
             $('#kode_branch').change(function() {
                 var kodeBranch = $(this).val();
-                // console.log(kodeBranch);
                 if (kodeBranch) {
                     $.ajax({
-                        url: '/get-inventaris/' + kodeBranch,
-                        url: "{{ url('get-inventaris') }}" + "/" + kodeBranch,
+                        url: "{{ url('get-inventaris') }}/" + kodeBranch,
                         type: 'GET',
                         dataType: 'json',
                         success: function(data) {
-                            $('#inventaris').empty();
-                            $('#inventaris').append('<option value="" hidden>-- Pilih Inventaris --</option>');
-                            $.each(data, function(key, value) {
-                                $('#inventaris').append('<option value="' + value.id + '">' + value.kode_peralatan + ' - ' + value.jenis + '</option>');
-                            });
+                            if (data.length > 0) {
+                                $('#inventarisCard').removeClass('d-none');
+                                $('#inventarisList').empty();
+                                $.each(data, function(key, value) {
+                                    $('#inventarisList').append(
+                                        '<div class="form-check">' +
+                                        '<input class="form-check-input" type="checkbox" name="peralatan_id[]" value="' + value.id + '">' +
+                                        '<label class="form-check-label">' + value.kode_peralatan + ' - ' + value.jenis + ' - ' + value.keterangan + ' - ' + 'Rp' + value.harga_perolehan + '</label>' +
+                                        '</div>'
+                                    );
+                                });
+                            } else {
+                                $('#inventarisCard').addClass('d-none');
+                            }
                         }
                     });
                 } else {
-                    $('#inventaris').empty();
-                    $('#inventaris').append('<option value="" hidden>-- Pilih Inventaris --</option>');
+                    $('#inventarisCard').addClass('d-none');
                 }
             });
         });
     </script>
-    
-    
-    @endsection
-
+@endsection

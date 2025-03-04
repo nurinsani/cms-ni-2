@@ -26,36 +26,41 @@
                     <thead>
                         <tr>
                             <th>No</th>
-                            <th>Nama Peralatan</th>
+                            <th>No Pengajuan</th>
                             <th>Dari AP</th>
                             <th>Ke AP</th>
                             <th>Bulan Mutasi</th>
+                            <th>Jumalah</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($mutasi as $data)
+                        @foreach ($mutasi as $item)
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
-                                <td>{{ $data->peralatan->jenis }}</td>
-                                <td>{{ $data->peralatan->ap->unit }}</td>
-
-                                <td>{{ $data->branch->unit }}</td>
-                                <td>{{ $data->bulan_mutasi }}</td>
+                                <td>{{ $item->kode_mutasi }}</td>
+                                <td>{{ $item->dari_ap->unit }}</td>
+                                <td>{{ $item->branch->unit }}</td>
+                                <td>{{ $item->bulan_mutasi }}</td>
+                                <td>{{ $item->inventaris->count() }}</td>
                                 <td>    
-                                    <button type="submit" onclick="approve('#approve{{ $data->id }}')"
+                                    <button type="submit" onclick="approve('#approve{{ $item->id }}')"
                                         class="btn btn-sm btn-success">Approve</button>
-                                    <form class="d-inline" id="approve{{ $data->id }}"
-                                        action="{{ url('akunting/approval-mutasi/approve', $data->id) }}" method="post">
+                                    <form class="d-inline" id="approve{{ $item->id }}"
+                                        action="{{ url('akunting/approval-mutasi/approve', $item->id) }}" method="post">
                                         @csrf
                                     </form>
 
-                                    <button type="submit" onclick="tolak('#tolak{{ $data->id }}')"
+                                    <button type="submit" onclick="tolak('#tolak{{ $item->id }}')"
                                         class="btn btn-sm btn-danger">Tolak</button>
-                                    <form class="d-inline" id="tolak{{ $data->id }}"
-                                        action="{{ url('akunting/approval-mutasi/tolak', $data->id) }}" method="post">
+                                    <form class="d-inline" id="tolak{{ $item->id }}"
+                                        action="{{ url('akunting/approval-mutasi/tolak', $item->id) }}" method="post">
                                         @csrf
                                     </form>
+                                    <a href="{{ url('akunting/approval-mutasi/detail', $item->id) }}"
+                                        class="btn btn-info btn-sm">
+                                        Lihat Detail
+                                    </a>
                                 </td>
                             </tr>
                         @endforeach

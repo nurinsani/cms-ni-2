@@ -56,7 +56,7 @@
             <li>Nomor : {{ $pengajuan->nomor }}</li>
             <li>Kepada : Ketua dan Pengurus KSPPS Nur Insani</li>
             <li>Dari : {{ $pengajuan->user->name }}</li>
-            <li>Tanggal : {{ $pengajuan->tanggal_pengajuan }}</li>
+            <li>Tanggal : {{ $pengajuan->tanggal_pengajuan->format('d-M-Y'); }}</li>
         </ul>
 
         <div class="table-responsive">
@@ -81,7 +81,6 @@
                     <tr class="">
                         <td>
                             <ul class="p-0" style="list-style: none">
-                                <br>
                                 @foreach ($pengajuan->pengajuan_details as $item)
                                 <li>{{ $item->ap->unit ?? $item->area->area}}</li>
                                 @endforeach
@@ -89,7 +88,6 @@
                         </td>
                         <td>
                             <ul class="p-0" style="list-style: none">
-                                <br>
                                 @foreach ($pengajuan->pengajuan_details as $item)
                                     <li>{{ $item->jenis_peralatan->param_peralatan->coa }}</li>
                                 @endforeach
@@ -98,8 +96,7 @@
                         <td>
                             <ul class="p-0" style="list-style: none">
                                 @foreach ($pengajuan->pengajuan_details as $item)
-                                    Pembelian
-                                    <li> {{ $item->jenis_peralatan->nama_jenis }} {{ $item->merk }} {{ $item->type }} </li>
+                                    <li> {{ $item->jenis_peralatan->nama_jenis }} </li>
                                 @endforeach
                             </ul>
                         </td>

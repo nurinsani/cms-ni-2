@@ -21,7 +21,10 @@ class PengajuanItController extends Controller
     public function index()
     {
         $data['title'] = 'Pengajuan Pembelian';
-        $data['pengajuan'] = Pengajuan::where('code_area', auth()->user()->code_area)->get();
+        $data['pengajuan'] = Pengajuan::where('code_area', auth()->user()->code_area)
+        ->where('user_id', 2)
+        ->get();
+
         return view('it.pengajuan-peralatan.index', $data);
     }
 
@@ -98,6 +101,7 @@ class PengajuanItController extends Controller
             $pengajuan_detail->status_lpj = $item->status_lpj;
             $pengajuan_detail->moa = $item->moa;
             $pengajuan_detail->group_approval = $item->group_approval;
+            $pengajuan_detail->keterangan = $item->keterangan;
             $pengajuan_detail->save();
         }
         
@@ -115,7 +119,7 @@ class PengajuanItController extends Controller
     {
         $data['title'] = 'Detail Pengajuan';
         $data['pengajuan'] = $pengajuan;
-        return view('admin.pengajuan-peralatan.detail', $data);
+        return view('it.pengajuan-peralatan.detail', $data);
     }
 
     /**

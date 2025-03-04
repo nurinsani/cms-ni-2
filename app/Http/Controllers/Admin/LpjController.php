@@ -227,7 +227,7 @@ class LpjController extends Controller
         
         if (auth()->user()->code_area == 1010) {
             $ajukan_lpj->update([
-                'status_approve' => 'lpj-atasan-akunting',
+                'status_approve' => 'lpj-akunting-it',
             ]);
         } else {
             $ajukan_lpj->update([

@@ -51,9 +51,10 @@ use App\Models\Inventaris;
 // DaftarBdd::jurnal_bdd();
 // Inventaris::penyusutan();
 
-Route::get('/', function () {
-    return view('auth.login');
+Route::get('/.', function () {
+    return redirect('/login');
 });
+
 
 Route::get('/releases', function () {
     $title = 'releases';
@@ -149,6 +150,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('approve_lpj_bdd/{id}', [App\Http\Controllers\Akunting\ApprovalBddController::class, 'approve_lpj_bdd']);
 
         Route::get('approval-mutasi', [App\Http\Controllers\Akunting\ApprovalMutasiController::class, 'index']);
+        Route::get('approval-mutasi/detail/{id}', [App\Http\Controllers\Akunting\ApprovalMutasiController::class, 'show']);
         Route::post('approval-mutasi/approve/{id}', [App\Http\Controllers\Akunting\ApprovalMutasiController::class, 'approve']);
         Route::post('approval-mutasi/tolak/{id}', [App\Http\Controllers\Akunting\ApprovalMutasiController::class, 'tolak']);
 
@@ -164,7 +166,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         Route::get('peralatan', [AkuntingController::class, 'peralatan']);
         Route::get('inventaris', [AkuntingController::class, 'inventaris']);
-        // Route::get('inventaris-gol-2', [AkuntingController::class, 'inventaris_gol_2']);
         Route::get('jurnal-kp', [JurnalController::class, 'jurnal_kp']);
         Route::get('jurnal-ap', [JurnalController::class, 'jurnal_ap']);
         Route::get('jurnal-penyusutan-kp', [JurnalController::class, 'jurnal_penyusutan_kp']);
@@ -206,6 +207,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('pengajuan-bdd/tolak/{id}', [App\Http\Controllers\AdminHead\ApprovalBddController::class, 'tolak']);
 
         Route::get('approval-mutasi', [App\Http\Controllers\AdminHead\ApprovalMutasiController::class, 'index']);
+        Route::get('approval-mutasi/detail/{id}', [App\Http\Controllers\AdminHead\ApprovalMutasiController::class, 'show'])->name('mutasi.details');
         Route::post('approval-mutasi/approve/{id}', [App\Http\Controllers\AdminHead\ApprovalMutasiController::class, 'approve']);
         Route::post('approval-mutasi/tolak/{id}', [App\Http\Controllers\AdminHead\ApprovalBddController::class, 'tolak']);
 
@@ -388,6 +390,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('jurnal-kp', [JurnalController::class, 'jurnal_kp']);
     Route::get('jurnal-ap', [JurnalController::class, 'jurnal_ap']);
+    
     Route::get('jurnal-penyusutan-kp', [JurnalController::class, 'jurnal_penyusutan_kp']);
     Route::get('jurnal-penyusutan-ap', [JurnalController::class, 'jurnal_penyusutan_ap']);
     Route::get('jurnal-pembebanan-kp', [JurnalController::class, 'jurnal_pembebanan_kp']);
@@ -403,20 +406,19 @@ Route::middleware('auth')->group(function () {
     Route::post('/jurnal-penyusutan', [PenyusutanController::class, 'jalankanJurnalPenyusutan'])->name('jalankanJurnalPenyusutan');
     Route::post('/jurnal-pembebanan', [PenyusutanController::class, 'jalankanJurnalPembebanan'])->name('jalankanJurnalPembebanan');
 
-    Route::get('/penyusutan-gol-2', [PenyusutanGol2Controller::class, 'index'])->name('penyusutan.index');
+    Route::get('/penyusutan-gol-2', [PenyusutanGol2Controller::class, 'index'])->name('penyusutanGol2.index');
     Route::post('/penyusutan-gol-2', [PenyusutanGol2Controller::class, 'jalankanPenyusutanGol2'])->name('jalankanPenyusutanGol2');
     Route::post('/jurnal-penyusutan-gol-2', [PenyusutanGol2Controller::class, 'jalankanJurnalPenyusutanGol2'])->name('jalankanJurnalPenyusutanGol2');
-    Route::post('/jurnal-pembebanan-gol-2', [PenyusutanGol2Controller::class, 'jalankanJurnalPembebananGol2'])->name('jalankanJurnalPembebananGol2');
 
     Route::get('/get/area-by-branch/{id}', [MiscController::class, 'areaByBranch']);
     Route::post('/get-branches', [DataUserController::class, 'getBranches']);
-    Route::get('/admin/inventaris', [InventarisController::class, 'index'])->name('inventaris.index');
-    Route::get('/akunting/inventaris', [InventarisController::class, 'index'])->name('inventaris.index');
-    Route::get('/admin-head/inventaris', [InventarisController::class, 'index'])->name('inventaris.index');
+    Route::get('/admin/inventaris', [InventarisController::class, 'index'])->name('inventaris.admin');
+    Route::get('/akunting/inventaris', [InventarisController::class, 'index'])->name('inventaris.akunting');
+    Route::get('/admin-head/inventaris', [InventarisController::class, 'index'])->name('inventaris.adminHead');
 
-    Route::get('/admin/inventaris-gol-2', [InventarisGol2Controller::class, 'index'])->name('inventaris_gol_2.index');
-    Route::get('/akunting/inventaris-gol-2', [InventarisGol2Controller::class, 'index'])->name('inventaris_gol_2.index');
-    Route::get('/admin-head/inventaris-gol-2', [InventarisGol2Controller::class, 'index'])->name('inventaris_gol_2.index');
+    Route::get('/admin/inventaris-gol-2', [InventarisGol2Controller::class, 'index'])->name('inventaris_gol_2.admin');
+    Route::get('/akunting/inventaris-gol-2', [InventarisGol2Controller::class, 'index'])->name('inventaris_gol_2.akunting');
+    Route::get('/admin-head/inventaris-gol-2', [InventarisGol2Controller::class, 'index'])->name('inventaris_gol_2.adminHead');
     Route::get('/inventaris/data', [InventarisGol2Controller::class, 'getData'])->name('inventaris_gol_2.data');
     Route::get('/fetch-data-gol-2', [InventarisGol2Controller::class, 'fetchData'])->name('inventaris_gol_2.fetchData');
 

@@ -230,7 +230,7 @@
 
                                 <div class="form-group">
                                     <label for="" class="form-label">Keterangan</label>
-                                    <textarea name="keterangan" class="form-control" id="keterangan" cols="5" rows="3"></textarea>
+                                    <textarea name="keterangan" class="form-control" id="keterangan" cols="5" rows="3" required></textarea>
                                 </div>
                             </div>
                         </div>
