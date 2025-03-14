@@ -53,7 +53,11 @@ class PengajuanAhController extends Controller
         $data['param_peralatan'] = ParamPeralatan::whereHas('jenis_bdd', function($query) {
             $query->where('group_inventaris', 'ya');
         })->get();
-        $data['branch'] = Branch::where('code_area', auth()->user()->code_area)->get();
+        $data['branch'] = Branch::where('code_region', auth()->user()->code_region)->get();
+        $data['area'] = Branch::where('code_region', auth()->user()->code_region)
+        ->select('area')
+        ->distinct()
+        ->get();
         return view('admin-head.pengajuan.tambah-inventaris', $data);
     }
 
@@ -82,6 +86,8 @@ class PengajuanAhController extends Controller
         $data['code_area'] = auth()->user()->code_area;
         $data['rekening_id'] = $request->rekening_id;
         $data['status_approve'] = 'akunting-it';
+        $data['approval_1'] = auth()->user()->id;
+
         
         $pengajuan = Pengajuan::create($data);
         $temp_pengajuan = TempPengajuanDetail::all();

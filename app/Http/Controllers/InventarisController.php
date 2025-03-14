@@ -30,7 +30,6 @@ class InventarisController extends Controller
             }
         }
 
-
         sort($regions);
         sort($area);
 
@@ -103,22 +102,25 @@ class InventarisController extends Controller
             $monthlyDepreciation = [];
         
             foreach ($item->penyusutans as $penyusutan) {
-                $penyusutanYear = Carbon::parse($penyusutan->tanggal_penyusutan)->year;
-                $month = Carbon::parse($penyusutan->tanggal_penyusutan)->format('Y-m');
-        
+                $penyusutanDate = Carbon::parse($penyusutan->tanggal_penyusutan);
+                $penyusutanYear = $penyusutanDate->year;
+                $month = $penyusutanDate->format('Y-m');
+            
                 // Menjumlahkan penyusutan jika terjadi lebih dari satu kali di bulan yang sama
                 if (!isset($monthlyDepreciation[$month])) {
                     $monthlyDepreciation[$month] = 0;
                 }
                 $monthlyDepreciation[$month] += $penyusutan->penyusutan_per_bulan;
-        
+            
+                // Menambahkan logika untuk tahun sebelumnya
                 if ($penyusutanYear < $currentYear) {
                     $totalPenyusutanTahunSebelumnya += $penyusutan->penyusutan_per_bulan;
                 } elseif ($penyusutanYear == $currentYear) {
+                    // Data penyusutan untuk tahun lalu
                     $penyusutanBerjalan += $penyusutan->penyusutan_per_bulan;
                 }
             }
-        
+            
             $penyusutanKe = count($item->penyusutans) + $item->penyusutan_ke;
             $totalPenyusutanAwal = $totalPenyusutanTahunSebelumnya + $item->total_penyusutan_awal;
             $totalPenyusutanBerjalan = $penyusutanBerjalan;

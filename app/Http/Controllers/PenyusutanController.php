@@ -71,7 +71,7 @@ class PenyusutanController extends Controller
                     
                         $branch = Branch::where('kode_branch', $kode_branch)->first();
                     
-                        if ($tanggal_sekarang == 5) {
+                        if ($tanggal_sekarang == 15) {
                             if ($value->penyusutan_ke + count($value->susut) !== 48) {
                                 // Tambahkan logika untuk penyusutan dua kali jika tanggal perolehan antara 16-31 dan penyusutan awal 0
                                 if (count($value->susut) == 0 && intval(date('d', strtotime($value->tanggal_perolehan))) >= 16) {

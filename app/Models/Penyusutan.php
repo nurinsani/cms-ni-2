@@ -26,4 +26,9 @@ class Penyusutan extends Model
     {
         return $this->belongsTo(Inventaris::class, 'inventaris_id');
     }
+
+    public function inventaris_gol_2()
+    {
+        return $this->belongsTo(InventarisGol2::class, 'inventaris_gol_2_id');
+    }
 }

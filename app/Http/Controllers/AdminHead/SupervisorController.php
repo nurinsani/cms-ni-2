@@ -61,4 +61,37 @@ class SupervisorController extends Controller
 
         return view('admin-head.inventaris.index', $data);
     }
+
+    public function inventarisGol2()
+    {
+
+        $user = auth()->id();
+        $data['title'] = 'Daftar Inventaris';
+        $data['inventaris'] = Inventaris::join('branch', 'branch.kode_branch', 'inventaris.kode_branch')
+            ->select(['inventaris.*', 'branch.area'])
+            ->where('branch.code_region', auth()->user()->code_region)->get();
+        // $data['inventaris'] = Inventaris::where('kode_branch', auth()->user()->code_area)->get();
+
+
+        $data['total_harga_perolehan'] = Inventaris::sum('harga_perolehan');
+        $data['total_peny'] = Inventaris::sum('harga_perolehan') / 48;
+        $data['total_peny_2'] = Inventaris::sum('harga_perolehan') / 48 * 10;
+
+        $branches = DB::table('branch')
+            ->where('code_region', auth()->user()->code_region)
+            ->orderBy('area', 'asc')
+            ->get();
+
+        $area = [];
+
+        foreach ($branches as $branch) {
+            if (!in_array($branch->area, $area)) {
+                $area[] = $branch->area;
+            }
+        }
+
+        $data['area']   = $area;
+
+        return view('admin-head.inventaris.index', $data);
+    }
 }

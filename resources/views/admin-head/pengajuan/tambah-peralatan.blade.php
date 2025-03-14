@@ -49,7 +49,7 @@
                                     @foreach ($temp_pengajuan as $item)
                                     <tr>
                                         <td>{{ $item->jenis_peralatan->nama_jenis }}</td>
-                                        <td>{{ $item->ap->unit ?? $item->area->area}}</td>
+                                        <td>{{ $item->ap->unit ?? $item->area->area ?? '(AP/Area tidak ada)'}}</td>
                                         <td>{{ $item->merk }}</td>
                                         <td>{{ $item->type }}</td>
                                         <td>{{ $item->kuantitas }}</td>
@@ -58,7 +58,7 @@
                                         <td>{{ $item->no_telp }}</td>
                                         <td>{{ $item->pengguna }}</td>
                                         <td>
-                                            <a href="{{ url('admin/temp-pengajuan/'. $item->id) }}" onclick="hapus_data('#delete_form{{ $item->id }}')" class="btn btn-sm btn-danger">
+                                            <a href="{{ url('admin-head/temp-pengajuan/'. $item->id) }}" onclick="hapus_data('#delete_form{{ $item->id }}')" class="btn btn-sm btn-danger">
                                                 <i class="fas fa-trash"></i>
                                             </a>
                                         </td>

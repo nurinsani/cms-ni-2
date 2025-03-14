@@ -46,7 +46,15 @@ class Inventaris extends Model
 
     public function akumulasi_penyusutan()
     {
-        return (intval($this->harga_perolehan) / 48) * $this->susut()->whereYear('tanggal_penyusutan', date('Y'))->count();
+        // Mundur satu bulan dari tanggal saat ini
+        $tanggal_sekarang = \Carbon\Carbon::now();
+        $tanggal_mundur = $tanggal_sekarang->subMonth();
+    
+        // Hitung akumulasi penyusutan
+        return (intval($this->harga_perolehan) / 48) * $this->susut()
+            ->whereYear('tanggal_penyusutan', $tanggal_mundur->year)
+            ->whereMonth('tanggal_penyusutan', $tanggal_mundur->month)
+            ->count();
     }
 
 

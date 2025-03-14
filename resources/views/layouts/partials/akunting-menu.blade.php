@@ -101,10 +101,20 @@
 
         <li class="nav-item">
             <a href="{{ url('akunting/inventaris') }}"
-                class="nav-link {{ request()->is('akunting/inventaris*') ? 'active' : '' }}">
+                class="nav-link {{ request()->is('akunting/inventaris') ? 'active' : '' }}">
                 <i class="nav-icon far fa-circle nav-icon"></i>
                 <p>
                     Inventaris
+                </p>
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a href="{{ url('akunting/inventaris-gol-2') }}"
+                class="nav-link {{ request()->is('akunting/inventaris-gol-2') ? 'active' : '' }}">
+                <i class="nav-icon far fa-circle nav-icon"></i>
+                <p>
+                    Inventaris Gol II
                 </p>
             </a>
         </li>
@@ -124,10 +134,19 @@
     <ul class="nav nav-treeview">
         <li class="nav-item">
             <a href="{{ url('penyusutan') }}"
-                class="nav-link {{ request()->is('penyusutan*') ? 'active' : '' }}">
+                class="nav-link {{ request()->is('penyusutan') ? 'active' : '' }}">
                 <i class="nav-icon far fa-circle nav-icon"></i>
                 <p>
                     Proses Penyusutan
+                </p>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{{ url('penyusutan-gol-2') }}"
+                class="nav-link {{ request()->is('penyusutan-gol-2') ? 'active' : '' }}">
+                <i class="nav-icon far fa-circle nav-icon"></i>
+                <p>
+                    Proses Penyusutan Gol II
                 </p>
             </a>
         </li>

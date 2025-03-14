@@ -58,7 +58,7 @@
                                         <td>{{ $item->no_telp }}</td>
                                         <td>{{ $item->pengguna }}</td>
                                         <td>
-                                            <a href="{{ url('admin/temp-pengajuan/'. $item->id) }}" onclick="hapus_data('#delete_form{{ $item->id }}')" class="btn btn-sm btn-danger">
+                                            <a href="{{ url('admin-head/temp-pengajuan/'. $item->id) }}" onclick="hapus_data('#delete_form{{ $item->id }}')" class="btn btn-sm btn-danger">
                                                 <i class="fas fa-trash"></i>
                                             </a>
                                         </td>
@@ -113,31 +113,50 @@
                                 </div>
     
                                 <div class="form-group">
-                                    <label for="" class="form-label">Nama AP</label>
+                                    <label for="" class="form-label">Pilih AP</label>
                                     <select name="kode_branch" id="kode_branch" class="form-control">
-                                        <option value="">-- Pilih AP --</option>
                                         @foreach ($branch as $item)
+                                            <option value="" hidden>-- Pilih AP --</option>
                                             <option value="{{ $item->kode_branch }}">{{ $item->unit }}</option>
                                         @endforeach
                                     </select>
+                                    <small class="text-danger">* pilih salah satu AP atau Cabang, jangan pilih dua2 nya. <br> 
+                                        jika ingin pengajuan untuk AP pilih ini!
+                                    </small>
                                 </div>
+
+                                <div class="form-group">
+                                    <label for="" class="form-label">Pilih Cabang</label>
+                                    <select name="kode_area" id="kode_area" class="form-control">
+                                        <option value="" hidden>-- Pilih Cabang --</option>
+                                        @foreach ($area as $item)
+                                        <option value="{{ $item->code_area }}">{{ $item->area }}</option>
+                                        @endforeach
+                                    </select>
+                                    <small class="text-danger">* pilih salah satu AP atau Cabang, jangan pilih dua2 nya. <br> 
+                                        jika ingin pengajuan untuk Wilayah pilih ini!
+                                    </small>
+                                </div>
+
     
                                 <div class="form-group">
                                     <label for="" class="form-label">Merk</label>
-                                    <input type="text" name="merk" id="merk" class="form-control" placeholder="Masukan Merk" required>
+                                    <input type="text" name="merk" class="form-control" placeholder="Masukan Merk" required>
                                 </div>
     
                                 <div class="form-group">
                                     <label for="" class="form-label">Type</label>
                                     <input type="text" name="type" id="type" class="form-control" placeholder="Masukan Type" required>
                                 </div>
-    
+
                                 <div class="form-group">
                                     <label for="" class="form-label">Kuantitas</label>
                                     <input type="number" name="kuantitas" id="kuantitas" class="form-control" placeholder="Masukan Kuantitas" required>
                                 </div>
                             </div>
+
                             <div class="col-md-6">
+                
                                 <div class="form-group">
                                     <label for="" class="form-label">Harga</label>
                                     <input type="number" name="harga" id="harga" class="form-control" placeholder="Masukan harga" required>
@@ -159,10 +178,10 @@
                                     <input type="text" name="pengguna" id="pengguna" class="form-control"
                                         placeholder="Masukan Nama Pengguna" required>
                                 </div>
-    
+
                                 <div class="form-group">
                                     <label for="" class="form-label">Upload MOA</label>
-                                    <input type="file" name="moa" id="moa" class="form-control" placeholder="Masukan MOA" required>
+                                    <input type="file" name="moa" id="moa" class="form-control" placeholder="Masukan MOA">
                                 </div>
 
                                 <div class="form-group">
@@ -175,6 +194,12 @@
                                     </select>
                                     <small class="text-red">*isi jika ingin menggunakan rekening lain, jika tidak diisi maka akan menggunakan rekening pembuat</small>
                                 </div>
+
+                                <div class="form-group">
+                                    <label for="" class="form-label">Keterangan</label>
+                                    <textarea name="keterangan" class="form-control" id="keterangan" cols="5" rows="3" required></textarea>
+                                </div>
+
                             </div>
                         </div>
                     </div>
