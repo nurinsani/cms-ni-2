@@ -134,7 +134,6 @@ class klaimController extends Controller
                         $subtotal = $subtotal + $total;
                         // Jurnal LPJ Pembelian Peralatan Cabang
                         $branch = Branch::where('code_area', $cabang->kode_area)
-                        ->where('status_aktif', 'aktif')
                         ->get();
                         $total_branch = $branch->count();
     

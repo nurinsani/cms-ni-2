@@ -34,92 +34,6 @@ class ApprovalMutasiController extends Controller
         try {
             DB::beginTransaction();
             $mutasi = PengajuanMutasi::findOrfail($id);
-<<<<<<< HEAD
-            $mutasi->status_approve = 'mutasi-selesai';
-            $mutasi->atasan_2 = auth()->user()->id;
-            $mutasi->save();
-
-            $inventaris = Inventaris::findOrfail($mutasi->peralatan_id);
-            $inventaris->kode_branch = $mutasi->ke_cabang;
-            $inventaris->update();
-
-            
-            $akumulasiPenyusutan = $inventaris->akumulasi_penyusutan_awal() + $inventaris->akumulasi_penyusutan();
-            $nilaiBuku = $inventaris->harga_perolehan - $akumulasiPenyusutan;
-            
-            // dd($nilaiBuku);
-            // dd($akumulasiPenyusutan);
-            
-            // jurnal berkurang
-            $kode_transaksi = date('m').random_int(100000, 999999);
-            TransaksiAp::create([
-                'kode_branch' => $mutasi->dari_cabang,
-                'kode_transaksi' => 'BU'. '/' . $mutasi->dari_cabang . '/' . $kode_transaksi,
-                'kode_rekening' => '1652000',
-                'tanggal_transaksi' => Carbon::now(),
-                'jenis_transaksi' => 'Bukti SYSTEM',
-                'keterangan' => 'Mutasi' . ' ' . $inventaris->keterangan ?? '-',
-                'debet' => 0,
-                'kredit' => $inventaris->harga_perolehan
-            ]);
-
-            TransaksiAp::create([
-                'kode_branch' => $mutasi->dari_cabang,
-                'kode_transaksi' => 'BU'. '/' . $mutasi->dari_cabang . '/' . $kode_transaksi,
-                'kode_rekening' => '1672000',
-                'tanggal_transaksi' => Carbon::now(),
-                'jenis_transaksi' => 'Bukti SYSTEM',
-                'keterangan' => 'Mutasi' . ' ' . $inventaris->keterangan ?? '-',
-                'debet' => $akumulasiPenyusutan,
-                'kredit' => 0
-            ]);
-
-            TransaksiAp::create([
-                'kode_branch' => $mutasi->dari_cabang,
-                'kode_transaksi' => 'BU'. '/' . $mutasi->dari_cabang . '/' . $kode_transaksi,
-                'kode_rekening' => '2500000',
-                'tanggal_transaksi' => Carbon::now(),
-                'jenis_transaksi' => 'Bukti SYSTEM',
-                'keterangan' => 'Mutasi' . ' ' . $inventaris->keterangan ?? '-',
-                'debet' => $nilaiBuku,
-                'kredit' => 0
-            ]);
-
-            // jurnal bertambah
-            $kode_transaksi = date('m').random_int(100000, 999999);
-            TransaksiAp::create([
-                'kode_branch' => $inventaris->kode_branch,
-                'kode_transaksi' => 'BU'. '/' .$inventaris->kode_branch . '/' . $kode_transaksi,
-                'kode_rekening' => '1652000',
-                'tanggal_transaksi' => Carbon::now(),
-                'jenis_transaksi' => 'Bukti SYSTEM',
-                'keterangan' => 'Mutasi' . ' ' . $inventaris->keterangan ?? '-',
-                'debet' => $inventaris->harga_perolehan,
-                'kredit' => 0
-            ]);
-
-            TransaksiAp::create([
-                'kode_branch' => $inventaris->kode_branch,
-                'kode_transaksi' => 'BU'. '/' .$inventaris->kode_branch . '/' . $kode_transaksi,
-                'kode_rekening' => '1672000',
-                'tanggal_transaksi' => Carbon::now(),
-                'jenis_transaksi' => 'Bukti SYSTEM',
-                'keterangan' => 'Mutasi' . ' ' . $inventaris->keterangan ?? '-',
-                'debet' => 0,
-                'kredit' => $akumulasiPenyusutan
-            ]);
-
-            TransaksiAp::create([
-                'kode_branch' => $inventaris->kode_branch,
-                'kode_transaksi' => 'BU'. '/' .$inventaris->kode_branch . '/' . $kode_transaksi,
-                'kode_rekening' => '2500000',
-                'tanggal_transaksi' => Carbon::now(),
-                'jenis_transaksi' => 'Bukti SYSTEM',
-                'keterangan' => 'Mutasi' . ' ' . $inventaris->keterangan ?? '-',
-                'debet' => 0,
-                'kredit' => $nilaiBuku
-            ]);
-=======
             $mutasi->status_approve = 'selesai';
             $mutasi->atasan_2 = auth()->user()->id;
             $mutasi->save();
@@ -230,7 +144,6 @@ class ApprovalMutasiController extends Controller
                     'kredit' => $nilaiBuku
                 ]);
             }
->>>>>>> 81782da63a18fa6bcaf96177de4d2c4e8fcce747
 
             DB::commit();
 

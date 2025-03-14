@@ -85,7 +85,7 @@
                 <table class="table table-bordered">
                     <thead>
                         <tr>
-                            <th scope="col">Area</th>
+                            <th scope="col">Nama AP</th>
                             <th scope="col">COA</th>
                             <th scope="col">Keperluan</th>
                             <th style="width: 50px" scope="col">Kuantitas</th>

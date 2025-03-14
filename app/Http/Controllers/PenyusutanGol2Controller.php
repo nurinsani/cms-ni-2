@@ -77,13 +77,8 @@ class PenyusutanGol2Controller extends Controller
                     
                         $branch = Branch::where('kode_branch', $kode_branch)->first();
                     
-<<<<<<< HEAD
-                        if ($tanggal_sekarang == 13) {
-                            if ($value->penyusutan_ke + count($value->susut) !== 24) {
-=======
                         if ($tanggal_sekarang == 16) {
                             if (count($value->susut) !== 24) {
->>>>>>> 81782da63a18fa6bcaf96177de4d2c4e8fcce747
                                 // Tambahkan logika untuk penyusutan dua kali jika tanggal perolehan antara 16-31 dan penyusutan awal 0
                                 PenyusutanGol2::create([
                                     'inventaris_gol_2_id' => $value->id,
@@ -425,13 +420,8 @@ class PenyusutanGol2Controller extends Controller
 
                             // $debet = round(($credit / ($isArea)), 2);
 
-<<<<<<< HEAD
-                            if ($status_branch == '8888') {
-                                $otherBranches = Branch::whereIn('code_area', ['2206', '2207', '2208'])
-=======
                             if ($status_branch == '9999') {
                                 $otherBranches = Branch::whereIn('code_region', ['3333', '2222'])
->>>>>>> 81782da63a18fa6bcaf96177de4d2c4e8fcce747
                                     ->where('kode_branch', '<>', $row->kode_branch)
                                     ->where('status_aktif', 'aktif')
                                     ->get();

@@ -83,8 +83,7 @@
                                 @foreach ($lpj->pengajuan_details as $item)
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
-                                        <td>{{ $item->ap->unit ?? $item->area->area ?? $item->region->region }}</td>
-
+                                        <td>{{ $item->ap->unit ?? $item->area->area}}</td>
                                         <td>{{ $item->jenis_peralatan->param_peralatan->coa }}</td>
                                         <td>{{ $item->jenis_peralatan->nama_jenis }}</td>
                                         <td>{{ $item->merk }} {{ $item->type }}</td>

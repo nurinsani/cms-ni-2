@@ -47,7 +47,6 @@
                                         @endforeach
                                     </ul>
                                 </td>
-
                                 <td>
                                     @if ($data->status_approve == 'lpj-finance')
                                     <a href="{{ url('finance/approval-lpj/detail', $data->id) }}"

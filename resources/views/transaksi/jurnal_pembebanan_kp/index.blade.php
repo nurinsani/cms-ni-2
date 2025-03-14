@@ -49,6 +49,24 @@
                         </div>
                     </form>
                 </div>
+                <div class="col-4">
+                    <form action="{{ route('jalankanPenyusutan') }}" method="POST">
+                        @csrf
+                        <button type="submit" class="btn btn-primary">Jalankan Penyusutan</button>
+                    </form>
+                </div>
+                <div class="col-4">
+                    <form action="{{ route('jalankanJurnalPenyusutan') }}" method="POST">
+                        @csrf
+                        <button type="submit" class="btn btn-primary">Jalankan Jurnal Penyusutan</button>
+                    </form>
+                </div>
+                <div class="col-4">
+                    <form action="{{ route('jalankanJurnalPembebanan') }}" method="POST">
+                        @csrf
+                        <button type="submit" class="btn btn-primary">Jalankan Jurnal Pembebanan</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>

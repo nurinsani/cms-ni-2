@@ -55,11 +55,7 @@
                                     </ul>
                                 </td>
                                 <td>Rp. {{ number_format($data->subtotal()) }}</td>
-<<<<<<< HEAD
-                                <td>{{ $data->tanggal_pengajuan->format('d-M-Y') }}</td>
-=======
                                 <td>{{ $data->tanggal_pengajuan->format('d-M-Y'); }}</td>
->>>>>>> 81782da63a18fa6bcaf96177de4d2c4e8fcce747
                                 <td>
                                     <a href="{{ url('atasan-it/approval-peralatan/detail', $data->id) }}"
                                         class="btn btn-sm btn-primary">Detail</a>

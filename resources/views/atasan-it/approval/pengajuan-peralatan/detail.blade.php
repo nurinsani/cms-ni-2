@@ -56,11 +56,7 @@
             <li>Nomor : {{ $pengajuan->nomor }}</li>
             <li>Kepada : Ketua dan Pengurus KSPPS Nur Insani</li>
             <li>Dari : {{ $pengajuan->user->name }}</li>
-<<<<<<< HEAD
-            <li>Tanggal : {{ $pengajuan->tanggal_pengajuan->format('d-M-Y') }}</li>
-=======
             <li>Tanggal : {{ $pengajuan->tanggal_pengajuan->format('d-M-Y'); }}</li>
->>>>>>> 81782da63a18fa6bcaf96177de4d2c4e8fcce747
         </ul>
 
         <div class="table-responsive">
@@ -86,7 +82,7 @@
                         <td>
                             <ul class="p-0" style="list-style: none">
                                 @foreach ($pengajuan->pengajuan_details as $item)
-                                <li>{{ $item->ap->unit ?? $item->area->area ?? $item->region->region }}</li>
+                                <li>{{ $item->ap->unit ?? $item->area->area}}</li>
                                 @endforeach
                             </ul>
                         </td>
@@ -100,11 +96,7 @@
                         <td>
                             <ul class="p-0" style="list-style: none">
                                 @foreach ($pengajuan->pengajuan_details as $item)
-<<<<<<< HEAD
-                                    <li> {{ $item->jenis_peralatan->nama_jenis }} {{ $item->merk }} {{ $item->type }} </li>
-=======
                                     <li> {{ $item->jenis_peralatan->nama_jenis }} </li>
->>>>>>> 81782da63a18fa6bcaf96177de4d2c4e8fcce747
                                 @endforeach
                             </ul>
                         </td>
@@ -133,7 +125,7 @@
                         <td>
                             <ul class="p-0" style="list-style: none">
                                 @foreach ($pengajuan->pengajuan_details as $item)
-                                <a href="" onclick="window.open('{{ url('files/moa/'.$item->moa) }}')">{{ $item->moa }}</a>
+                                <a href="" onclick="window.open('{{ asset('files/moa/'.$item->moa) }}')">{{ $item->moa }}</a>
                                 @endforeach
                             </ul>
                         </td>

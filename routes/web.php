@@ -166,7 +166,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         Route::get('peralatan', [AkuntingController::class, 'peralatan']);
         Route::get('inventaris', [AkuntingController::class, 'inventaris']);
-        // Route::get('inventaris-gol-2', [AkuntingController::class, 'inventaris_gol_2']);
         Route::get('jurnal-kp', [JurnalController::class, 'jurnal_kp']);
         Route::get('jurnal-ap', [JurnalController::class, 'jurnal_ap']);
         Route::get('jurnal-penyusutan-kp', [JurnalController::class, 'jurnal_penyusutan_kp']);
@@ -407,21 +406,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/jurnal-penyusutan', [PenyusutanController::class, 'jalankanJurnalPenyusutan'])->name('jalankanJurnalPenyusutan');
     Route::post('/jurnal-pembebanan', [PenyusutanController::class, 'jalankanJurnalPembebanan'])->name('jalankanJurnalPembebanan');
 
-<<<<<<< HEAD
-    Route::get('/penyusutan-gol-2', [PenyusutanGol2Controller::class, 'index'])->name('penyusutan.index');
-    Route::post('/penyusutan-gol-2', [PenyusutanGol2Controller::class, 'jalankanPenyusutanGol2'])->name('jalankanPenyusutanGol2');
-    Route::post('/jurnal-penyusutan-gol-2', [PenyusutanGol2Controller::class, 'jalankanJurnalPenyusutanGol2'])->name('jalankanJurnalPenyusutanGol2');
-    Route::post('/jurnal-pembebanan-gol-2', [PenyusutanGol2Controller::class, 'jalankanJurnalPembebananGol2'])->name('jalankanJurnalPembebananGol2');
-
-    Route::get('jurnal-penyusutan-kp-gol-2', [JurnalController::class, 'jurnal_penyusutan_kp_gol_2']);
-    Route::get('jurnal-penyusutan-ap-gol-2', [JurnalController::class, 'jurnal_penyusutan_ap_gol_2']);
-    Route::get('jurnal-pembebanan-kp-gol-2', [JurnalController::class, 'jurnal_pembebanan_kp_gol_2']);
-    Route::get('jurnal-pembebanan-ap-gol-2', [JurnalController::class, 'jurnal_pembebanan_ap_gol_2']);
-=======
     Route::get('/penyusutan-gol-2', [PenyusutanGol2Controller::class, 'index'])->name('penyusutanGol2.index');
     Route::post('/penyusutan-gol-2', [PenyusutanGol2Controller::class, 'jalankanPenyusutanGol2'])->name('jalankanPenyusutanGol2');
     Route::post('/jurnal-penyusutan-gol-2', [PenyusutanGol2Controller::class, 'jalankanJurnalPenyusutanGol2'])->name('jalankanJurnalPenyusutanGol2');
->>>>>>> 81782da63a18fa6bcaf96177de4d2c4e8fcce747
 
     Route::get('/get/area-by-branch/{id}', [MiscController::class, 'areaByBranch']);
     Route::post('/get-branches', [DataUserController::class, 'getBranches']);
@@ -432,12 +419,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/admin/inventaris-gol-2', [InventarisGol2Controller::class, 'index'])->name('inventaris_gol_2.admin');
     Route::get('/akunting/inventaris-gol-2', [InventarisGol2Controller::class, 'index'])->name('inventaris_gol_2.akunting');
     Route::get('/admin-head/inventaris-gol-2', [InventarisGol2Controller::class, 'index'])->name('inventaris_gol_2.adminHead');
-    Route::get('/inventaris/data', [InventarisGol2Controller::class, 'getData'])->name('inventaris_gol_2.data');
-    Route::get('/fetch-data-gol-2', [InventarisGol2Controller::class, 'fetchData'])->name('inventaris_gol_2.fetchData');
-
-    Route::get('/admin/inventaris-gol-2', [InventarisGol2Controller::class, 'index'])->name('inventaris_gol_2.index');
-    Route::get('/akunting/inventaris-gol-2', [InventarisGol2Controller::class, 'index'])->name('inventaris_gol_2.index');
-    Route::get('/admin-head/inventaris-gol-2', [InventarisGol2Controller::class, 'index'])->name('inventaris_gol_2.index');
     Route::get('/inventaris/data', [InventarisGol2Controller::class, 'getData'])->name('inventaris_gol_2.data');
     Route::get('/fetch-data-gol-2', [InventarisGol2Controller::class, 'fetchData'])->name('inventaris_gol_2.fetchData');
 
