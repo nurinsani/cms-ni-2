@@ -51,7 +51,7 @@ use App\Models\Inventaris;
 // DaftarBdd::jurnal_bdd();
 // Inventaris::penyusutan();
 
-Route::get('/.', function () {
+Route::get('/', function () {
     return redirect('/login');
 });
 

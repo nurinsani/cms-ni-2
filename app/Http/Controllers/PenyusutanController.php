@@ -71,7 +71,7 @@ class PenyusutanController extends Controller
                     
                         $branch = Branch::where('kode_branch', $kode_branch)->first();
                     
-                        if ($tanggal_sekarang == 20) {
+                        if ($tanggal_sekarang == 13) {
                             if ($value->penyusutan_ke + count($value->susut) !== 48) {
                                 // Tambahkan logika untuk penyusutan dua kali jika tanggal perolehan antara 16-31 dan penyusutan awal 0
                                 if (count($value->susut) == 0 && intval(date('d', strtotime($value->tanggal_perolehan))) >= 16) {
@@ -430,6 +430,14 @@ class PenyusutanController extends Controller
 
                                 // $debet = round(($credit / count($otherBranches)));
                                 $debet = round(($credit / (count($otherBranches) + 1)));
+                            } elseif ($status_branch == '8888') {
+                                $otherBranches = Branch::whereIn('code_area', ['2206', '2207', '2208'])
+                                    ->where('kode_branch', '<>', $row->kode_branch)
+                                    ->where('status_aktif', 'aktif')
+                                    ->get();
+
+                                $debet = round(($credit / (count($otherBranches) + 1)));
+                                
                             } else {
                                 if ($isArea != 0) {
                                     $debet = round(($credit / $isArea));
