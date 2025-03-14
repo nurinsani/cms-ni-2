@@ -56,7 +56,7 @@ class PengajuanController extends Controller
 
     public function pengajuan_inventaris()
     {
-        $data['title'] = 'Pengajuan';
+        $data['title'] = 'Pengajuan Inventaris';
         $data['temp_pengajuan'] = TempPengajuanDetail::all();
         $data['jenis_peralatan'] = JenisPeralatan::all();
         $data['rekening'] = Rekening::all();

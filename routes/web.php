@@ -45,8 +45,6 @@ use App\Http\Controllers\JurnalController;
 use App\Http\Controllers\MiscController;
 use App\Http\Controllers\PenyusutanController;
 use App\Http\Controllers\PenyusutanGol2Controller;
-use App\Models\Admin\Peralatan;
-use App\Models\Inventaris;
 
 // DaftarBdd::jurnal_bdd();
 // Inventaris::penyusutan();

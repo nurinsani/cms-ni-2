@@ -43,16 +43,6 @@
     <div class="row row-cols-1">
         <div class="col">
             <div class="card">
-                <div class="card-header mt-5 d-print-flex justify-content-between d-none">
-                    <img src="https://picsum.photos/200" width="150px" alt="">
-                    <div class="text-center">
-                        <h4>LAPORAN PERTANGGUNGJAWABAN PEMBELIAN</h4>
-                        <h4>WILAYAH JATUT</h4>
-                        <h4>PERIODE AGUSTUS 2023</h4>
-                        <h4>TANGGAL 25-8-2023</h4>
-                    </div>
-                    <div class=""></div>
-                </div>
                 <div class="card-body">
                     <a href="{{ url()->previous() }}" class="btn btn-sm btn-primary mb-3"><i class="fas fa-arrow-left"></i> Kembali</a>
                     <ul class="p-0" style="list-style: none">
@@ -62,38 +52,37 @@
                         <li>Tanggal : {{ $lpj->tanggal_pengajuan->format('d-M-Y') }}</li>
                     </ul>
 
-                    <div class="table-responsive">
-                        <a href="{{ route('admin.ajukan_lpj', $lpj->id) }}" class="btn btn-sm btn-success my-3">Ajukan
-                            LPJ</a>
-                            
-                        <a href="#" onclick="bukti_pengembalian({{ $lpj->id }} )"
-                            class="btn btn-sm btn-primary">Upload Bukti Pengembalian
-                        </a>
+                    <a href="{{ route('admin.ajukan_lpj', $lpj->id) }}" class="btn btn-sm btn-success my-3">AJUKAN LPJ</a>
 
-                        <div>
-                            @if ($lpj->nominal_pengembalian == true)
-                                <div class="text-danger">*Bukti Pengembalian sudah di upload.</div>
-                            @endif
-                        </div>
-                        
+                    <a href="#" onclick="bukti_pengembalian({{ $lpj->id }} )"
+                        class="btn btn-sm btn-primary">UNGGAH BUKTI PENGEMBALIAN
+                    </a>
+
+                    <div>
+                        @if ($lpj->nominal_pengembalian == true)
+                            <div class="text-danger">*Bukti Pengembalian sudah di upload.</div>
+                        @endif
+                    </div>
+                    
+                    <div class="table-responsive">
                         <table class="table table-bordered">
                             <thead>
                                 <tr>
-                                    <th scope="col">No</th>
+                                    <th scope="col">NO</th>
                                     <th scope="col">AP</th>
                                     <th scope="col">COA</th>
-                                    <th scope="col">Nama jenis Peralatan</th>
-                                    <th scope="col">Merk/Type</th>
-                                    <th scope="col">Pengajuan</th>
-                                    <th scope="col">Harga Pembelian</th>
-                                    <th scope="col">Aksi</th>
+                                    <th scope="col">NAMA JENIS PERALATAN</th>
+                                    <th scope="col">MERK</th>
+                                    <th scope="col">TOTAL PENGAJUAN</th>
+                                    <th scope="col">HARGA BELI</th>
+                                    <th scope="col">AKSI</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach ($lpj->pengajuan_details as $item)
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
-                                        <td>{{ $item->ap->unit ?? $item->area->area}}</td>
+                                        <td>{{ $item->ap->unit ?? $item->area->area }}</td>
                                         <td>{{ $item->jenis_peralatan->param_peralatan->coa }}</td>
                                         <td>{{ $item->jenis_peralatan->nama_jenis }}</td>
                                         <td>{{ $item->merk }}</td>
@@ -142,7 +131,7 @@
                                     </td>
                                     <td></td>
                                 </tr>
-                                
+
                                 {{ number_format($lpj->subtotal() - $lpj->total_pembelian()) }}</strong>
                             </tfoot>
                         </table>
@@ -224,120 +213,55 @@
                                     </button>
                                 </div>
                                 <div class="modal-body">
-                                    @if ($lpj->nominal_pengembalian == false)
-                                        <form action="{{ url('admin/lpj/upload-bukti-pengembalian', $lpj->id) }}"
-                                            method="post" enctype="multipart/form-data">
-                                            @method('PUT')
-                                            @csrf
-                                            <div class="mb-3">
-                                                <label for="" class="form-label">Nominal Pengembalian</label>
-                                                <input type="number"
-                                                    class="form-control @error('nominal_pengembalian') is-invalid @enderror"
-                                                    name="nominal_pengembalian" value="{{ old('nominal_pengembalian') }}"
-                                                    placeholder="">
-                                                @error('nominal_pengembalian')
-                                                    <small class="text-danger">{{ $message }}</small>
-                                                @enderror
-                                            </div>
+                                    <form action="{{ url('admin/lpj/upload-bukti-pengembalian', $lpj->id) }}"
+                                        method="post" enctype="multipart/form-data">
+                                        @method('PUT')
+                                        @csrf
+                                        <div class="mb-3">
+                                            <label for="" class="form-label">Nominal Pengembalian</label>
+                                            <input type="number"
+                                                class="form-control @error('nominal_pengembalian') is-invalid @enderror"
+                                                name="nominal_pengembalian" value="{{ old('nominal_pengembalian') }}"
+                                                placeholder="">
+                                            @error('nominal_pengembalian')
+                                                <small class="text-danger">{{ $message }}</small>
+                                            @enderror
+                                        </div>
 
-                                            <div class="mb-3">
-                                                <label for="" class="form-label">Bukti Pengembalian</label>
-                                                <input type="file"
-                                                    class="form-control @error('bukti_pengembalian') is-invalid @enderror"
-                                                    name="bukti_pengembalian" value="{{ old('bukti_pengembalian') }}"
-                                                    placeholder="">
-                                                @error('bukti_pengembalian')
-                                                    <small class="text-danger">{{ $message }}</small>
-                                                @enderror
-                                            </div>
+                                        <div class="mb-3">
+                                            <label for="" class="form-label">Bukti Pengembalian</label>
+                                            <input type="file"
+                                                class="form-control @error('bukti_pengembalian') is-invalid @enderror"
+                                                name="bukti_pengembalian" value="{{ old('bukti_pengembalian') }}"
+                                                placeholder="">
+                                            @error('bukti_pengembalian')
+                                                <small class="text-danger">{{ $message }}</small>
+                                            @enderror
+                                        </div>
 
-                                            <div class="mb-3">
-                                                <label for="" class="form-label">Keterangan</label>
-                                                <input type="text"
-                                                    class="form-control @error('keterangan_lpj') is-invalid @enderror"
-                                                    name="keterangan_lpj" value="{{ old('keterangan_lpj') }}" placeholder="">
-                                                @error('keterangan_lpj')
-                                                    <small class="text-danger">{{ $message }}</small>
-                                                @enderror
-                                            </div>
+                                        <div class="mb-3">
+                                            <label for="" class="form-label">Keterangan</label>
+                                            <input type="text"
+                                                class="form-control @error('keterangan_lpj') is-invalid @enderror"
+                                                name="keterangan_lpj" value="{{ old('keterangan_lpj') }}"
+                                                placeholder="">
+                                            @error('keterangan_lpj')
+                                                <small class="text-danger">{{ $message }}</small>
+                                            @enderror
+                                        </div>
 
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary"
-                                                    data-dismiss="modal">Tutup</button>
-                                                <button type="submit" class="btn btn-primary">Simpan</button>
-                                            </div>
-                                        </form>
-                                    @else
-                                        <h4>*Bukti Pengembalian Sudah di Upload!</h4>
-                                    @endif
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary"
+                                                data-dismiss="modal">Tutup</button>
+                                            <button type="submit" class="btn btn-primary">Simpan</button>
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
                         </div>
                     </div>
                     {{-- end modal pengembalian --}}
 
-                    {{-- modal pembelian kurang --}}
-                    <div class="modal fade" id="bukti_kurang">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <span class="modal-title">Upload Bukti Pembelian Kurang</span>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div class="modal-body">
-                                    @if ($lpj->nominal_pengembalian == false)
-                                        <form action="{{ url('admin/lpj/upload-bukti-kurang', $lpj->id) }}"
-                                            method="post" enctype="multipart/form-data">
-                                            @method('PUT')
-                                            @csrf
-                                            <div class="mb-3">
-                                                <label for="" class="form-label">Nominal Kurang</label>
-                                                <input type="number"
-                                                    class="form-control @error('nominal_kurang') is-invalid @enderror"
-                                                    name="nominal_kurang" value="{{ old('nominal_kurang') }}"
-                                                    placeholder="">
-                                                @error('nominal_kurang')
-                                                    <small class="text-danger">{{ $message }}</small>
-                                                @enderror
-                                            </div>
-
-                                            <div class="mb-3">
-                                                <label for="" class="form-label">Bukti Kekurangan</label>
-                                                <input type="file"
-                                                    class="form-control @error('bukti_kurang') is-invalid @enderror"
-                                                    name="bukti_kurang" value="{{ old('bukti_kurang') }}"
-                                                    placeholder="">
-                                                @error('bukti_kurang')
-                                                    <small class="text-danger">{{ $message }}</small>
-                                                @enderror
-                                            </div>
-
-                                            <div class="mb-3">
-                                                <label for="" class="form-label">Keterangan</label>
-                                                <input type="text"
-                                                    class="form-control @error('keterangan_lpj') is-invalid @enderror"
-                                                    name="keterangan_lpj" value="{{ old('keterangan_lpj') }}" placeholder="">
-                                                @error('keterangan_lpj')
-                                                    <small class="text-danger">{{ $message }}</small>
-                                                @enderror
-                                            </div>
-
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary"
-                                                    data-dismiss="modal">Tutup</button>
-                                                <button type="submit" class="btn btn-primary">Simpan</button>
-                                            </div>
-                                        </form>
-                                    @else
-                                        <h4>*Bukti Pengembalian Sudah di Upload!</h4>
-                                    @endif
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    {{-- end modal pembelian kurang --}}
                 </div>
             </div>
         </div>
@@ -357,10 +281,4 @@
             let modal = $('#bukti_pengembalian').modal('show')
         }
     </script>
-
-<script>
-    function bukti_kurang() {
-        let modal = $('#bukti_kurang').modal('show')
-    }
-</script>
 @endpush

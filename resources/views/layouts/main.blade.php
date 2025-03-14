@@ -201,12 +201,6 @@
     <!-- AdminLTE -->
     <script src="{{ asset('/AdminLTE/dist/js/adminlte.js') }}"></script>
 
-    <!-- OPTIONAL SCRIPTS -->
-    <script src="{{ asset('/AdminLTE/plugins/chart.js/Chart.min.js') }}"></script>
-
-    <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
-    <script src="{{ asset('/AdminLTE/dist/js/pages/dashboard3.js') }}"></script>
-
     <!-- DataTables  & Plugins -->
     <script src="{{ asset('/AdminLTE/plugins/datatables/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('/AdminLTE/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js') }}"></script>

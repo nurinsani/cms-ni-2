@@ -84,7 +84,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title">Tambah Peralatan</h4>
+                    <h4 class="modal-title">Tambah Inventaris</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -118,7 +118,6 @@
                                         <option value="" hidden>-- Pilih Branch --</option>
                                         <option value="ap">Unit</option>
                                         <option value="cabang">Area</option>
-                                        <option value="region">Region</option>
                                     </select>
                                 </div>
                                 
@@ -156,11 +155,19 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="" class="form-label">Pilih User</label>
+                                    <label for="" class="form-label">Pilih Pengguna</label>
                                     <select name="kode_user" id="kode_area" class="form-control">
-                                        <option value="">-- Pilih User --</option>
+                                        <option value="">-- Pilih Pengguna --</option>
                                             <option value="9999">Business Head</option>
                                             <option value="9999">QA</option>
+                                            <option value="8888">AM Area 2</option>
+                                            <option value="1101">AL Jabar 1</option>
+                                            <option value="1102">AL Jabar 2</option>
+                                            <option value="2200">AL Jateng 1</option>
+                                            <option value="2205">AL Jateng 2</option>
+                                            <option value="2203">AL Jateng 3</option>
+                                            <option value="2204">AL Jateng 4</option>
+
                                     </select>
                                 </div>
     
@@ -186,15 +193,6 @@
                             </div>
 
                             <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="" class="form-label">Umur</label>
-                                    <select name="umur" id="" class="form-control">
-                                        <option value="" hidden>-- Pilih Umur --</option>
-                                        <option value="24">24 Bulan</option>
-                                        <option value="48">48 Bulan</option>
-                                    </select>
-                                </div>
-
                                 <div class="form-group">
                                     <label for="" class="form-label">Nama Toko</label>
                                     <input type="text" name="nama_toko" id="nama_toko" class="form-control" placeholder="Masukan Nama Toko" required>

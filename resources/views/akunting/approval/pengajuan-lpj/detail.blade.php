@@ -76,7 +76,6 @@
                                     <th scope="col">Harga Pembelian</th>
                                     <th>Struk pembelian</th>
                                     <th>Bukti Pengembalian</th>
-                                    {{-- <th scope="col">Aksi</th> --}}
                                 </tr>
                             </thead>
                             <tbody>
@@ -102,17 +101,17 @@
                                 </tr>
                                 <tr>
                                     <td colspan="6"><strong>Total Pembelian</strong></td>
-                                    <td colspan="2"><strong>Rp. {{ number_format($lpj->total_pembelian()) }}</strong></td> 
+                                    <td colspan="3"><strong>Rp. {{ number_format($lpj->total_pembelian()) }}</strong></td> 
                                 </tr>
                                 @if ($lpj->total_pembelian() > $lpj->subtotal())
                                     <tr>
                                         <td colspan="6"><strong>Kekurangan</strong></td>
-                                        <td colspan="2"><strong>Rp. {{ number_format($lpj->total_pembelian() - $lpj->subtotal())}}</strong></td> 
+                                        <td colspan="3"><strong>Rp. {{ number_format($lpj->total_pembelian() - $lpj->subtotal())}}</strong></td> 
                                     </tr>
                                 @else
                                     <tr>
                                         <td colspan="6"><strong>Sisa/Pengembalian</strong></td>
-                                        <td colspan="2"><strong>Rp. {{ number_format($lpj->subtotal() - $lpj->total_pembelian())}}</strong></td> 
+                                        <td colspan="3"><strong>Rp. {{ number_format($lpj->subtotal() - $lpj->total_pembelian())}}</strong></td> 
                                     </tr>
                                 @endif
                             </tfoot>
