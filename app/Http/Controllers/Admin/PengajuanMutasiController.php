@@ -8,6 +8,7 @@ use App\Models\PengajuanMutasi;
 use App\Http\Controllers\Controller;
 use App\Models\Admin\Peralatan;
 use App\Models\Inventaris;
+use Illuminate\Support\Facades\Auth;
 
 class PengajuanMutasiController extends Controller
 {
@@ -19,7 +20,7 @@ class PengajuanMutasiController extends Controller
     public function index()
     {
         $data['title'] = 'Pengajuan Mutasi';
-        $data['penganjuan_mutasi'] = PengajuanMutasi::all();
+        $data['pengajuan_mutasi'] = PengajuanMutasi::with('inventaris')->get();
         return view('admin.pengajuan-mutasi.index', $data);
     }
 
@@ -33,6 +34,7 @@ class PengajuanMutasiController extends Controller
         $data['title'] = 'Tambah Pengajuan Mutasi';
         $data['inventaris'] = Inventaris::all();
         $data['mutasi_ke'] = Branch::all();
+        $data['pilih_ap'] = Branch::all();
         $data['branch'] = Branch::where('code_area', auth()->user()->code_area)
         // ->select('unit')
         ->distinct()
@@ -50,22 +52,21 @@ class PengajuanMutasiController extends Controller
     {
 
         // dd($request);
-        // $request->validate([
-        //     'peralatan_id' => 'required',
-        //     'ke_cabang' => 'required',
-        //     'bulan_mutasi' => 'required',
-        // ]);
 
-        // $peralatan = Peralatan::where('peralatan_id', $request->peralatan_id);
+        $kode = date('m').random_int(100000, 999999);
 
-        $mutasi = New PengajuanMutasi;
-        $mutasi->peralatan_id = $request->peralatan_id;
-        $mutasi->dari_cabang = $request->dari_cabang;
-        $mutasi->ke_cabang = $request->ke_cabang;
-        $mutasi->bulan_mutasi = $request->bulan_mutasi;
-        $mutasi->status_approve = 'mutasi-admin-head';
-        $mutasi->user_id = auth()->user()->id;
-        $mutasi->save();
+        // Simpan Pengajuan
+        $pengajuan = PengajuanMutasi::create([
+            'kode_mutasi' => 'MT/' . $request->dari_cabang . '/'. $kode,
+            'user_id' => Auth::user()->id,
+            'dari_cabang' => $request->dari_cabang,
+            'ke_cabang' => $request->ke_cabang,
+            'bulan_mutasi' => $request->bulan_mutasi,
+            'status_approve' => 'admin-head'
+        ]);
+
+        // Simpan Peralatan yang dipilih ke tabel pivot `pengajuan_mutasi_detail`
+        $pengajuan->peralatans()->attach($request->peralatan_id);
         
         return redirect()->route('admin.pengajuan-mutasi.index')->with('success', 'Data berhasil dibuat');
     }
@@ -76,9 +77,11 @@ class PengajuanMutasiController extends Controller
      * @param  \App\Models\PengajuanMutasi  $pengajuanMutasi
      * @return \Illuminate\Http\Response
      */
-    public function show(PengajuanMutasi $pengajuanMutasi)
+    public function show($id)
     {
-        //
+        $title = 'Detail Mutasi';
+        $pengajuan = PengajuanMutasi::with('inventaris')->findOrFail($id);
+        return view('admin.pengajuan-mutasi.show', compact('pengajuan', 'title'));
     }
 
     /**

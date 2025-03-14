@@ -50,12 +50,16 @@
                                 <td>
                                     <ul class="p-0" style="list-style: none">
                                         @foreach ($data->pengajuan_details as $item)
-                                            <li> {{ $item->jenis_peralatan->nama_jenis }} {{ $item->merk }} {{ $item->type }} </li>
+                                            <li> {{ $item->jenis_peralatan->nama_jenis }} </li>
                                         @endforeach
                                     </ul>
                                 </td>
                                 <td>Rp. {{ number_format($data->subtotal()) }}</td>
+<<<<<<< HEAD
                                 <td>{{ $data->tanggal_pengajuan->format('d-M-Y') }}</td>
+=======
+                                <td>{{ $data->tanggal_pengajuan->format('d-M-Y'); }}</td>
+>>>>>>> 81782da63a18fa6bcaf96177de4d2c4e8fcce747
                                 <td>
                                     <a href="{{ url('atasan-it/approval-peralatan/detail', $data->id) }}"
                                         class="btn btn-sm btn-primary">Detail</a>

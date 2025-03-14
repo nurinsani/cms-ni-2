@@ -84,7 +84,7 @@ class ApprovalLpjController extends Controller
     public function approve(Request $request, $id)
     {
         $pengajuan = Pengajuan::findOrfail($id);
-        $pengajuan->status_approve = 'selesai';
+        $pengajuan->status_approve = 'lpj-finance';
         $pengajuan->save();
         
         foreach ($pengajuan->pengajuan_details as $key => $cabang) {
@@ -268,7 +268,11 @@ class ApprovalLpjController extends Controller
                         'kode_rekening' => '1010-1312000',
                         'tanggal_transaksi' => Carbon::now(),
                         'jenis_transaksi' => 'Bukti SYSTEM',
+<<<<<<< HEAD
                         'keterangan' => 'PPBL-Giro Bank BSI Ex BNI Syariah - 8080887729�-�8080887730',
+=======
+                        'keterangan' => 'PPBL-Giro Bank BSI Ex BNI Syariah - 8080887729 - 8080887730',
+>>>>>>> 81782da63a18fa6bcaf96177de4d2c4e8fcce747
                         'debet' => 0,
                         'kredit' => $cabang->harga_pembelian - $pengajuan->subtotal()
                     ]);
@@ -364,7 +368,11 @@ class ApprovalLpjController extends Controller
                         'kode_rekening' => '1010-1312000',
                         'tanggal_transaksi' => Carbon::now(),
                         'jenis_transaksi' => 'Bukti SYSTEM',
+<<<<<<< HEAD
                         'keterangan' => 'PPBL-Giro Bank BSI Ex BNI Syariah - 8080887729�-�8080887730',
+=======
+                        'keterangan' => 'PPBL-Giro Bank BSI Ex BNI Syariah - 8080887729 - 8080887730',
+>>>>>>> 81782da63a18fa6bcaf96177de4d2c4e8fcce747
                         'debet' => 0,
                         'kredit' => $item->harga_pembelian - $pengajuan->subtotal()
                     ]);
@@ -539,6 +547,11 @@ class ApprovalLpjController extends Controller
 
             }
             // end jurnal LPJ pembelian lebih kecil dari total pengajuan
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> 81782da63a18fa6bcaf96177de4d2c4e8fcce747
 
         try {
             DB::beginTransaction();

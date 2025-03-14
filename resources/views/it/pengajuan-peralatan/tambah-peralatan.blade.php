@@ -179,6 +179,11 @@
                                     <small class="text-red">*isi jika ingin menggunakan rekening lain, jika tidak diisi maka akan menggunakan rekening pembuat</small>
                                 </div>
 
+                                <div class="form-group">
+                                    <label for="" class="form-label">Keterangan</label>
+                                    <textarea name="keterangan" class="form-control" id="keterangan" cols="5" rows="3" required></textarea>
+                                </div>
+
                             </div>
                         </div>
                     </div>

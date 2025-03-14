@@ -24,6 +24,10 @@ class PengajuanItController extends Controller
         $data['pengajuan'] = Pengajuan::where('code_area', auth()->user()->code_area)
         ->where('user_id', 2)
         ->get();
+<<<<<<< HEAD
+=======
+
+>>>>>>> 81782da63a18fa6bcaf96177de4d2c4e8fcce747
         return view('it.pengajuan-peralatan.index', $data);
     }
 

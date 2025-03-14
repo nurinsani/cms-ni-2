@@ -99,7 +99,7 @@ class ApprovalPeralatanController extends Controller
                 'kode_rekening' => '1010-1929000',
                 'tanggal_transaksi' => Carbon::now(),
                 'jenis_transaksi' => 'Bukti SYSTEM',
-                'keterangan' => $item->keterangan ?? 'Pembelian',
+                'keterangan' => $item->keterangan ?? 'Pengajuan Pembelian',
                 'debet' => $pengajuan->subtotal(),
                 'kredit' => 0
             ]);
@@ -110,7 +110,7 @@ class ApprovalPeralatanController extends Controller
                 'kode_rekening' => '1010-1312000',
                 'tanggal_transaksi' => Carbon::now(),
                 'jenis_transaksi' => 'Bukti SYSTEM',
-                'keterangan' => $item->keterangan ?? 'Pembelian',
+                'keterangan' => $item->keterangan ?? 'Pengajuan Pembelian',
                 'debet' => 0,
                 'kredit' => $pengajuan->subtotal(),
             ]);

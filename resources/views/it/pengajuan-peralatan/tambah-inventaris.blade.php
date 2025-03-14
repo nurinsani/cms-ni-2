@@ -140,7 +140,11 @@
                                     <input type="number" name="harga" id="harga" class="form-control" placeholder="Masukan harga" required>
                                 </div>
                             </div>
+<<<<<<< HEAD
                             
+=======
+
+>>>>>>> 81782da63a18fa6bcaf96177de4d2c4e8fcce747
                             <div class="col-md-6">
     
                                 <div class="form-group">

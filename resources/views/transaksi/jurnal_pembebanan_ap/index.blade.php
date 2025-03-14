@@ -19,7 +19,7 @@
         <div class="card-body">
             <div class="row">
                 <div class="col-md-6">
-                    <form action="{{ url('jurnal-pembebanan-ap') }}" method="GET">
+                    <form action="{{ url('jurnal-pembebanan-ap-gol-2') }}" method="GET">
                         @csrf
                         <div class="row">
                             <div class="col-4 mb-3">Pilih Tanggal Awal</div>

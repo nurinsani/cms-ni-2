@@ -67,7 +67,11 @@ class ApprovalLpjController extends Controller
                                 'tanggal_perolehan' => $item->tanggal_perolehan,
                                 'jumlah' => $item->kuantitas,
                                 'harga_perolehan' => $item->harga_pembelian,
+<<<<<<< HEAD
                                 'umur' => 48,
+=======
+                                'umur' => $item->umur,
+>>>>>>> 81782da63a18fa6bcaf96177de4d2c4e8fcce747
                                 'keterangan' => $item->jenis_peralatan->nama_jenis . ' ' . $item->type
                             ]);
                         } else {
@@ -82,7 +86,11 @@ class ApprovalLpjController extends Controller
                                 'tanggal_perolehan' => $item->tanggal_perolehan,
                                 'jumlah' => $item->kuantitas,
                                 'harga_perolehan' => $item->harga_pembelian,
+<<<<<<< HEAD
                                 'umur' => 48,
+=======
+                                'umur' => $item->umur,
+>>>>>>> 81782da63a18fa6bcaf96177de4d2c4e8fcce747
                                 'keterangan' => $item->jenis_peralatan->nama_jenis . ' ' . $item->type
                             ]);
                         }
