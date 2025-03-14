@@ -84,7 +84,7 @@ class ApprovalLpjController extends Controller
     public function approve(Request $request, $id)
     {
         $pengajuan = Pengajuan::findOrfail($id);
-        $pengajuan->status_approve = 'lpj-finance';
+        $pengajuan->status_approve = 'selesai';
         $pengajuan->save();
         
         foreach ($pengajuan->pengajuan_details as $key => $cabang) {
