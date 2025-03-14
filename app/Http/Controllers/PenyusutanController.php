@@ -71,7 +71,7 @@ class PenyusutanController extends Controller
                     
                         $branch = Branch::where('kode_branch', $kode_branch)->first();
                     
-                        if ($tanggal_sekarang == 15) {
+                        if ($tanggal_sekarang == 13) {
                             if ($value->penyusutan_ke + count($value->susut) !== 48) {
                                 // Tambahkan logika untuk penyusutan dua kali jika tanggal perolehan antara 16-31 dan penyusutan awal 0
                                 if (count($value->susut) == 0 && intval(date('d', strtotime($value->tanggal_perolehan))) >= 16) {
@@ -297,6 +297,10 @@ class PenyusutanController extends Controller
 
                         $isRegion   = Branch::where('code_region', $status_branch)
                             ->where('status_aktif', 'aktif')
+                            ->where(function ($query) {
+                                $query->whereNull('status_pembebanan') // Jika null, tetap eksekusi
+                                      ->orWhere('status_pembebanan', '!=', 'no'); // Jika bukan 'no', tetap eksekusi
+                            })
                             ->count();
 
                         $credit = round($row->penyusutan_per_bulan);
@@ -322,6 +326,10 @@ class PenyusutanController extends Controller
                                 $otherBranches = Branch::where('code_region', $status_branch)
                                     ->where('kode_branch', '<>', $row->kode_branch)
                                     ->where('status_aktif', 'aktif')
+                                    ->where(function ($query) {
+                                        $query->whereNull('status_pembebanan') // Jika null, tetap eksekusi
+                                              ->orWhere('status_pembebanan', '!=', 'no'); // Jika bukan 'no', tetap eksekusi
+                                    })
                                     ->get();
                             }
 
@@ -422,6 +430,14 @@ class PenyusutanController extends Controller
 
                                 // $debet = round(($credit / count($otherBranches)));
                                 $debet = round(($credit / (count($otherBranches) + 1)));
+                            } elseif ($status_branch == '8888') {
+                                $otherBranches = Branch::whereIn('code_area', ['2206', '2207', '2208'])
+                                    ->where('kode_branch', '<>', $row->kode_branch)
+                                    ->where('status_aktif', 'aktif')
+                                    ->get();
+
+                                $debet = round(($credit / (count($otherBranches) + 1)));
+                                
                             } else {
                                 if ($isArea != 0) {
                                     $debet = round(($credit / $isArea));

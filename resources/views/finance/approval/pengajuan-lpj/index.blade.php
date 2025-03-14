@@ -47,6 +47,7 @@
                                         @endforeach
                                     </ul>
                                 </td>
+
                                 <td>
                                     @if ($data->status_approve == 'lpj-finance')
                                     <a href="{{ url('finance/approval-lpj/detail', $data->id) }}"
@@ -59,24 +60,12 @@
                                     @endif
 
                                     @if ($data->status_approve == 'lpj-finance')
-                                    @foreach ($data->pengajuan_details as $item)
-                                    
-                                    @endforeach
-                                    @if ($item->jenis_peralatan->group_inventaris == 'tidak')
                                     <button type="submit" onclick="approve('#approve{{ $data->id }}')"
                                         class="btn btn-sm btn-success">Approve</button>
                                     <form class="d-inline" id="approve{{ $data->id }}"
                                         action="{{ url('finance/approval-lpj/approve', $data->id) }}" method="post">
                                         @csrf
                                     </form>
-                                    @else
-                                    <button type="submit" onclick="approve('#approve{{ $data->id }}')"
-                                        class="btn btn-sm btn-success">Approve</button>
-                                    <form class="d-inline" id="approve{{ $data->id }}"
-                                        action="{{ url('finance/approval-lpj/approve-inventaris', $data->id) }}" method="post">
-                                        @csrf
-                                    </form>
-                                    @endif
 
                                     <button type="submit" onclick="tolak('#tolak{{ $data->id }}')"
                                         class="btn btn-sm btn-danger">Tolak</button>

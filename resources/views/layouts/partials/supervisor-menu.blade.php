@@ -236,8 +236,8 @@
         </li>
 
         <li class="nav-item">
-            <a href="{{ url('akunting/jurnal-penyusutan-kp') }}"
-                class="nav-link {{ request()->is('akunting/jurnal-penyusutan-kp*') ? 'active' : '' }}">
+            <a href="{{ url('admin-head/jurnal-penyusutan-kp') }}"
+                class="nav-link {{ request()->is('admin-head/jurnal-penyusutan-kp*') ? 'active' : '' }}">
                 <i class="nav-icon far fa-circle nav-icon"></i>
                 <p>
                     Jurnal Penyusutan KP
@@ -246,8 +246,8 @@
         </li>
 
         <li class="nav-item">
-            <a href="{{ url('akunting/jurnal-penyusutan-ap') }}"
-                class="nav-link {{ request()->is('akunting/jurnal-penyusutan-ap*') ? 'active' : '' }}">
+            <a href="{{ url('admin-head/jurnal-penyusutan-ap') }}"
+                class="nav-link {{ request()->is('admin-head/jurnal-penyusutan-ap*') ? 'active' : '' }}">
                 <i class="nav-icon far fa-circle nav-icon"></i>
                 <p>
                     Jurnal Penyusutan AP
@@ -256,8 +256,8 @@
         </li>
 
         <li class="nav-item">
-            <a href="{{ url('akunting/jurnal-pembebanan-kp') }}"
-                class="nav-link {{ request()->is('akunting/jurnal-pembebanan-kp*') ? 'active' : '' }}">
+            <a href="{{ url('admin-head/jurnal-pembebanan-kp') }}"
+                class="nav-link {{ request()->is('admin-head/jurnal-pembebanan-kp*') ? 'active' : '' }}">
                 <i class="nav-icon far fa-circle nav-icon"></i>
                 <p>
                     Jurnal Pembebanan KP
@@ -266,8 +266,8 @@
         </li>
 
         <li class="nav-item">
-            <a href="{{ url('akunting/jurnal-pembebanan-ap') }}"
-                class="nav-link {{ request()->is('akunting/jurnal-pembebanan-ap*') ? 'active' : '' }}">
+            <a href="{{ url('admin-head/jurnal-pembebanan-ap') }}"
+                class="nav-link {{ request()->is('admin-head/jurnal-pembebanan-ap*') ? 'active' : '' }}">
                 <i class="nav-icon far fa-circle nav-icon"></i>
                 <p>
                     Jurnal Pembebanan Ap

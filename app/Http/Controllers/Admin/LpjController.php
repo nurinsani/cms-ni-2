@@ -30,7 +30,9 @@ class LpjController extends Controller
     public function index()
     {
         $data['title'] = 'LPJ';
-        $data['pengajuan'] = Pengajuan::where('status_approve', 'lpj-admin')->get();
+        $data['pengajuan'] = Pengajuan::where('status_approve', 'lpj-admin')
+        ->where('code_area', auth()->user()->code_area)
+        ->get();
         return view('admin.lpj.index', $data);
     }
 
@@ -227,7 +229,7 @@ class LpjController extends Controller
         
         if (auth()->user()->code_area == 1010) {
             $ajukan_lpj->update([
-                'status_approve' => 'lpj-atasan-akunting',
+                'status_approve' => 'lpj-akunting-it',
             ]);
         } else {
             $ajukan_lpj->update([

@@ -49,7 +49,7 @@
                                     @foreach ($temp_pengajuan as $item)
                                     <tr>
                                         <td>{{ $item->jenis_peralatan->nama_jenis }}</td>
-                                        <td>{{ $item->ap->unit ?? $item->area->area ?? '(AP/Area tidak ada)'}}</td>
+                                        <td>{{ $item->ap->unit ?? $item->area->area}}</td>
                                         <td>{{ $item->merk }}</td>
                                         <td>{{ $item->type }}</td>
                                         <td>{{ $item->kuantitas }}</td>
@@ -230,7 +230,7 @@
 
                                 <div class="form-group">
                                     <label for="" class="form-label">Keterangan</label>
-                                    <textarea name="keterangan" class="form-control" id="keterangan" cols="5" rows="3"></textarea>
+                                    <textarea name="keterangan" class="form-control" id="keterangan" cols="5" rows="3" required></textarea>
                                 </div>
                             </div>
                         </div>

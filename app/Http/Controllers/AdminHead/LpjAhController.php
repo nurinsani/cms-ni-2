@@ -24,7 +24,7 @@ class LpjAhController extends Controller
     public function index()
     {
         $data['title'] = 'LPJ';
-        $data['pengajuan'] = Pengajuan::where('status_approve', 'lpj-admin-head')->get();
+        $data['pengajuan'] = Pengajuan::where('status_approve', 'lpj-admin')->where('code_area', auth()->user()->code_area)->get();
         return view('admin-head.lpj.index', $data);
     }
 

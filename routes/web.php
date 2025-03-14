@@ -393,6 +393,11 @@ Route::middleware('auth')->group(function () {
     Route::post('/jurnal-penyusutan-gol-2', [PenyusutanGol2Controller::class, 'jalankanJurnalPenyusutanGol2'])->name('jalankanJurnalPenyusutanGol2');
     Route::post('/jurnal-pembebanan-gol-2', [PenyusutanGol2Controller::class, 'jalankanJurnalPembebananGol2'])->name('jalankanJurnalPembebananGol2');
 
+    Route::get('jurnal-penyusutan-kp-gol-2', [JurnalController::class, 'jurnal_penyusutan_kp_gol_2']);
+    Route::get('jurnal-penyusutan-ap-gol-2', [JurnalController::class, 'jurnal_penyusutan_ap_gol_2']);
+    Route::get('jurnal-pembebanan-kp-gol-2', [JurnalController::class, 'jurnal_pembebanan_kp_gol_2']);
+    Route::get('jurnal-pembebanan-ap-gol-2', [JurnalController::class, 'jurnal_pembebanan_ap_gol_2']);
+
     Route::get('/get/area-by-branch/{id}', [MiscController::class, 'areaByBranch']);
     Route::post('/get-branches', [DataUserController::class, 'getBranches']);
     Route::get('/admin/inventaris', [InventarisController::class, 'index'])->name('inventaris.index');

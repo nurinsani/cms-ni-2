@@ -8,9 +8,13 @@ use App\Models\InventarisGol2;
 use App\Models\Penyusutan;
 use App\Models\PenyusutanGol2;
 use App\Models\TransaksiPembebananAp;
+use App\Models\TransaksiPembebananApGol2;
 use App\Models\TransaksiPembebananKp;
+use App\Models\TransaksiPembebananKpGol2;
 use App\Models\TransaksiPenyusutanAp;
+use App\Models\TransaksiPenyusutanApGol2;
 use App\Models\TransaksiPenyusutanKp;
+use App\Models\TransaksiPenyusutanKpGol2;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -73,8 +77,8 @@ class PenyusutanGol2Controller extends Controller
                     
                         $branch = Branch::where('kode_branch', $kode_branch)->first();
                     
-                        if ($tanggal_sekarang == 15) {
-                            if (count($value->susut) !== 24) {
+                        if ($tanggal_sekarang == 13) {
+                            if ($value->penyusutan_ke + count($value->susut) !== 24) {
                                 // Tambahkan logika untuk penyusutan dua kali jika tanggal perolehan antara 16-31 dan penyusutan awal 0
                                 PenyusutanGol2::create([
                                     'inventaris_gol_2_id' => $value->id,
@@ -159,13 +163,13 @@ class PenyusutanGol2Controller extends Controller
                             ->sum('penyusutan_per_bulan');
     
                         if ($branch->kode_branch == '1010') {
-                            $transaksiKpDebet = TransaksiPenyusutanKp::where('kode_branch', $branch->kode_branch)
+                            $transaksiKpDebet = TransaksiPenyusutanKpGol2::where('kode_branch', $branch->kode_branch)
                                 ->whereMonth('tanggal_transaksi', date('m'))
                                 ->whereYear('tanggal_transaksi', date('Y'))
                                 ->where('debet', '>', 0)
                                 ->first();
     
-                            $transaksiKpKredit = TransaksiPenyusutanKp::where('kode_branch', $branch->kode_branch)
+                            $transaksiKpKredit = TransaksiPenyusutanKpGol2::where('kode_branch', $branch->kode_branch)
                                 ->whereMonth('tanggal_transaksi', date('m'))
                                 ->whereYear('tanggal_transaksi', date('Y'))
                                 ->where('kredit', '>', 0)
@@ -173,15 +177,15 @@ class PenyusutanGol2Controller extends Controller
     
                             $kode_transaksi = date('m') . random_int(100000, 999999);
                             if ($transaksiKpDebet && $transaksiKpKredit) {
-                                TransaksiPenyusutanKp::where('id', $transaksiKpDebet->id)->update([
+                                TransaksiPenyusutanKpGol2::where('id', $transaksiKpDebet->id)->update([
                                     'debet' => $penyusutan_per_bulan,
                                 ]);
     
-                                TransaksiPenyusutanKp::where('id', $transaksiKpKredit->id)->update([
+                                TransaksiPenyusutanKpGol2::where('id', $transaksiKpKredit->id)->update([
                                     'kredit' => $penyusutan_per_bulan,
                                 ]);
                             } else {
-                                TransaksiPenyusutanKp::create([
+                                TransaksiPenyusutanKpGol2::create([
                                     'kode_branch' => $branch->kode_branch,
                                     'kode_transaksi' => 'BU' . '/' . $branch->kode_branch . '/' . $kode_transaksi,
                                     'kode_rekening' => '1010-52913',
@@ -192,7 +196,7 @@ class PenyusutanGol2Controller extends Controller
                                     'kredit' => 0,
                                 ]);
     
-                                TransaksiPenyusutanKp::create([
+                                TransaksiPenyusutanKpGol2::create([
                                     'kode_branch' => $branch->kode_branch,
                                     'kode_transaksi' => 'BU' . '/' . $branch->kode_branch . '/' . $kode_transaksi,
                                     'kode_rekening' => '1010-1674000',
@@ -204,13 +208,13 @@ class PenyusutanGol2Controller extends Controller
                                 ]);
                             }
                         } else {
-                            $transaksiApKredit = TransaksiPenyusutanAp::where('kode_branch', $branch->kode_branch)
+                            $transaksiApKredit = TransaksiPenyusutanApGol2::where('kode_branch', $branch->kode_branch)
                                 ->whereMonth('tanggal_transaksi', date('m'))
                                 ->whereYear('tanggal_transaksi', date('Y'))
                                 ->where('kredit', '>', 0)
                                 ->first();
     
-                            $transaksiApDebet = TransaksiPenyusutanAp::where('kode_branch', $branch->kode_branch)
+                            $transaksiApDebet = TransaksiPenyusutanApGol2::where('kode_branch', $branch->kode_branch)
                                 ->whereMonth('tanggal_transaksi', date('m'))
                                 ->whereYear('tanggal_transaksi', date('Y'))
                                 ->where('debet', '>', 0)
@@ -218,14 +222,14 @@ class PenyusutanGol2Controller extends Controller
     
                             $kode_transaksi = date('m') . random_int(100000, 999999);
                             if ($transaksiApKredit && $transaksiApDebet) {
-                                TransaksiPenyusutanAp::where('id', $transaksiApDebet->id)->update([
+                                TransaksiPenyusutanApGol2::where('id', $transaksiApDebet->id)->update([
                                     'debet' => $penyusutan_per_bulan,
                                 ]);
                                 TransaksiPenyusutanAp::where('id', $transaksiApKredit->id)->update([
                                     'kredit' => $penyusutan_per_bulan,
                                 ]);
                             } else {
-                                TransaksiPenyusutanAp::create([
+                                TransaksiPenyusutanApGol2::create([
                                     'kode_branch' => $branch->kode_branch,
                                     'kode_transaksi' => 'BU' . '/' . $branch->kode_branch . '/' . $kode_transaksi,
                                     'kode_rekening' => '52913',
@@ -236,7 +240,7 @@ class PenyusutanGol2Controller extends Controller
                                     'kredit' => 0,
                                 ]);
     
-                                TransaksiPenyusutanAp::create([
+                                TransaksiPenyusutanApGol2::create([
                                     'kode_branch' => $branch->kode_branch,
                                     'kode_transaksi' => 'BU' . '/' . $branch->kode_branch . '/' . $kode_transaksi,
                                     'kode_rekening' => '1674000',
@@ -337,7 +341,7 @@ class PenyusutanGol2Controller extends Controller
                             $kode_transaksi_kp = date('m') . random_int(100000, 999999);
 
                             for ($j = 0; $j < count($ids); $j++) {
-                                TransaksiPembebananKp::create([
+                                TransaksiPembebananKpGol2::create([
                                     'kode_branch' => 1010,
                                     'kode_transaksi' => 'BU' . '/' . 1010 . '/' . $kode_transaksi_kp,
                                     'kode_rekening' => '1010-' . $gl[$j],
@@ -349,7 +353,7 @@ class PenyusutanGol2Controller extends Controller
                                 ]);
 
                                 $kode_transaksi_ap = date('m') . random_int(100000, 999999);
-                                TransaksiPembebananAp::create([
+                                TransaksiPembebananApGol2::create([
                                     'kode_branch' => $ids[$j],
                                     'kode_transaksi' => 'BU' . '/' . $ids[$j] . '/' . $kode_transaksi_ap,
                                     'kode_rekening' => '58312',
@@ -360,7 +364,7 @@ class PenyusutanGol2Controller extends Controller
                                     'kredit' => 0,
                                 ]);
 
-                                TransaksiPembebananAp::create([
+                                TransaksiPembebananApGol2::create([
                                     'kode_branch' => $ids[$j],
                                     'kode_transaksi' => 'BU' . '/' . $ids[$j] . '/' . $kode_transaksi_ap,
                                     'kode_rekening' => '2500000',
@@ -372,7 +376,7 @@ class PenyusutanGol2Controller extends Controller
                                 ]);
                             }
 
-                            TransaksiPembebananAp::create([
+                            TransaksiPembebananApGol2::create([
                                 'kode_branch' => $row->kode_branch,
                                 'kode_transaksi' => 'BU' . '/' . $row->kode_branch . '/' . $kode_transaksi_ap,
                                 'kode_rekening' => '57202',
@@ -383,7 +387,7 @@ class PenyusutanGol2Controller extends Controller
                                 'kredit' => $credit,
                             ]);
 
-                            TransaksiPembebananAp::create([
+                            TransaksiPembebananApGol2::create([
                                 'kode_branch' => $row->kode_branch,
                                 'kode_transaksi' => 'BU' . '/' . $row->kode_branch . '/' . $kode_transaksi_ap,
                                 'kode_rekening' => '2500000',
@@ -394,7 +398,7 @@ class PenyusutanGol2Controller extends Controller
                                 'kredit' => 0,
                             ]);
 
-                            TransaksiPembebananKp::create([
+                            TransaksiPembebananKpGol2::create([
                                 'kode_branch' => 1010,
                                 'kode_transaksi' => 'BU' . '/' . 1010 . '/' . $kode_transaksi_kp,
                                 'kode_rekening' => '1010-' . $row->gl,
@@ -416,8 +420,8 @@ class PenyusutanGol2Controller extends Controller
 
                             // $debet = round(($credit / ($isArea)), 2);
 
-                            if ($status_branch == '9999') {
-                                $otherBranches = Branch::whereIn('code_region', ['3333', '2222'])
+                            if ($status_branch == '8888') {
+                                $otherBranches = Branch::whereIn('code_area', ['2206', '2207', '2208'])
                                     ->where('kode_branch', '<>', $row->kode_branch)
                                     ->where('status_aktif', 'aktif')
                                     ->get();
@@ -447,7 +451,7 @@ class PenyusutanGol2Controller extends Controller
                             $kode_transaksi_kp = date('m') . random_int(100000, 999999);
 
                             for ($j = 0; $j < count($ids); $j++) {
-                                TransaksiPembebananKp::create([
+                                TransaksiPembebananKpGol2::create([
                                     'kode_branch' => 1010,
                                     'kode_transaksi' => 'BU' . '/' . 1010 . '/' . $kode_transaksi_kp,
                                     'kode_rekening' => '1010-' .  $gl[$j],
@@ -459,7 +463,7 @@ class PenyusutanGol2Controller extends Controller
                                 ]);
 
                                 $kode_transaksi_ap = date('m') . random_int(100000, 999999);
-                                TransaksiPembebananAp::create([
+                                TransaksiPembebananApGol2::create([
                                     'kode_branch' => $ids[$j],
                                     'kode_transaksi' => 'BU' . '/' . $ids[$j] . '/' . $kode_transaksi_ap,
                                     'kode_rekening' => '58312',
@@ -470,7 +474,7 @@ class PenyusutanGol2Controller extends Controller
                                     'kredit' => 0,
                                 ]);
 
-                                TransaksiPembebananAp::create([
+                                TransaksiPembebananApGol2::create([
                                     'kode_branch' => $ids[$j],
                                     'kode_transaksi' => 'BU' . '/' . $ids[$j] . '/' . $kode_transaksi_ap,
                                     'kode_rekening' => '2500000',
@@ -482,7 +486,7 @@ class PenyusutanGol2Controller extends Controller
                                 ]);
                             }
 
-                            TransaksiPembebananAp::create([
+                            TransaksiPembebananApGol2::create([
                                 'kode_branch' => $row->kode_branch,
                                 'kode_transaksi' => 'BU' . '/' . $row->kode_branch . '/' . $kode_transaksi_ap,
                                 'kode_rekening' => '57202',
@@ -493,7 +497,7 @@ class PenyusutanGol2Controller extends Controller
                                 'kredit' => $credit
                             ]);
 
-                            TransaksiPembebananAp::create([
+                            TransaksiPembebananApGol2::create([
                                 'kode_branch' => $row->kode_branch,
                                 'kode_transaksi' => 'BU' . '/' . $row->kode_branch . '/' . $kode_transaksi_ap,
                                 'kode_rekening' => '2500000',
@@ -504,7 +508,7 @@ class PenyusutanGol2Controller extends Controller
                                 'kredit' => 0,
                             ]);
 
-                            TransaksiPembebananKp::create([
+                            TransaksiPembebananKpGol2::create([
                                 'kode_branch' => 1010,
                                 'kode_transaksi' => 'BU' . '/' . 1010 . '/' . $kode_transaksi_kp,
                                 'kode_rekening' => '1010-' . $row->gl,

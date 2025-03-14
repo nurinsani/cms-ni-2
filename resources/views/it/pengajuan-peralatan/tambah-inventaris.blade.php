@@ -134,12 +134,14 @@
                                     <label for="" class="form-label">Kuantitas</label>
                                     <input type="number" name="kuantitas" id="kuantitas" class="form-control" placeholder="Masukan Kuantitas" required>
                                 </div>
-                            </div>
-                            <div class="col-md-6">
+
                                 <div class="form-group">
                                     <label for="" class="form-label">Harga</label>
                                     <input type="number" name="harga" id="harga" class="form-control" placeholder="Masukan harga" required>
                                 </div>
+                            </div>
+                            
+                            <div class="col-md-6">
     
                                 <div class="form-group">
                                     <label for="" class="form-label">Nama Toko</label>
@@ -172,6 +174,11 @@
                                         @endforeach
                                     </select>
                                     <small class="text-red">*isi jika ingin menggunakan rekening lain, jika tidak diisi maka akan menggunakan rekening pembuat</small>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="" class="form-label">Keterangan</label>
+                                    <textarea name="keterangan" class="form-control" id="keterangan" cols="5" rows="3" placeholder="Tulis keterangan! misal : pembelian laptop IT" required></textarea>
                                 </div>
                             </div>
                         </div>

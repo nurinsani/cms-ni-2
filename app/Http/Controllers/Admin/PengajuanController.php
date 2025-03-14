@@ -98,7 +98,7 @@ class PengajuanController extends Controller
         $data['code_area'] = auth()->user()->code_area;
         $data['rekening_id'] = $request->rekening_id;
         if (auth()->user()->code_area == 1010) {
-            $data['status_approve'] = 'atasan-akunting';
+            $data['status_approve'] = 'akunting-it';
         } else {
             $data['status_approve'] = 'admin-head';
         }

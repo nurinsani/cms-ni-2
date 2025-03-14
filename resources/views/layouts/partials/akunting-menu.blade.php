@@ -172,7 +172,7 @@
 
         <li class="nav-item">
             <a href="{{ url('jurnal-penyusutan-kp') }}"
-                class="nav-link {{ request()->is('jurnal-penyusutan-kp*') ? 'active' : '' }}">
+                class="nav-link {{ request()->is('jurnal-penyusutan-kp') ? 'active' : '' }}">
                 <i class="nav-icon far fa-circle nav-icon"></i>
                 <p>
                     Jurnal Penyusutan KP
@@ -182,7 +182,7 @@
 
         <li class="nav-item">
             <a href="{{ url('jurnal-penyusutan-ap') }}"
-                class="nav-link {{ request()->is('jurnal-penyusutan-ap*') ? 'active' : '' }}">
+                class="nav-link {{ request()->is('jurnal-penyusutan-ap') ? 'active' : '' }}">
                 <i class="nav-icon far fa-circle nav-icon"></i>
                 <p>
                     Jurnal Penyusutan AP
@@ -191,8 +191,28 @@
         </li>
 
         <li class="nav-item">
+            <a href="{{ url('jurnal-penyusutan-kp-gol-2') }}"
+                class="nav-link {{ request()->is('jurnal-penyusutan-kp-gol-2') ? 'active' : '' }}">
+                <i class="nav-icon far fa-circle nav-icon"></i>
+                <p>
+                    Jurnal Pnysutan KP Gol 2
+                </p>
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a href="{{ url('jurnal-penyusutan-ap-gol-2') }}"
+                class="nav-link {{ request()->is('jurnal-penyusutan-ap-gol-2') ? 'active' : '' }}">
+                <i class="nav-icon far fa-circle nav-icon"></i>
+                <p>
+                    Jurnal Pnysutan AP Gol 2
+                </p>
+            </a>
+        </li>
+
+        <li class="nav-item">
             <a href="{{ url('jurnal-pembebanan-kp') }}"
-                class="nav-link {{ request()->is('jurnal-pembebanan-kp*') ? 'active' : '' }}">
+                class="nav-link {{ request()->is('jurnal-pembebanan-kp') ? 'active' : '' }}">
                 <i class="nav-icon far fa-circle nav-icon"></i>
                 <p>
                     Jurnal Pembebanan KP
@@ -202,10 +222,30 @@
 
         <li class="nav-item">
             <a href="{{ url('jurnal-pembebanan-ap') }}"
-                class="nav-link {{ request()->is('jurnal-pembebanan-ap*') ? 'active' : '' }}">
+                class="nav-link {{ request()->is('jurnal-pembebanan-ap') ? 'active' : '' }}">
                 <i class="nav-icon far fa-circle nav-icon"></i>
                 <p>
                     Jurnal Pembebanan AP
+                </p>
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a href="{{ url('jurnal-pembebanan-kp-gol-2') }}"
+                class="nav-link {{ request()->is('jurnal-pembebanan-kp-gol-2') ? 'active' : '' }}">
+                <i class="nav-icon far fa-circle nav-icon"></i>
+                <p>
+                    Jurnal Pmbbnn KP Gol 2
+                </p>
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a href="{{ url('jurnal-pembebanan-ap-gol-2') }}"
+                class="nav-link {{ request()->is('jurnal-pembebanan-ap-gol-2') ? 'active' : '' }}">
+                <i class="nav-icon far fa-circle nav-icon"></i>
+                <p>
+                    Jurnal Pmbbnn AP Gol 2
                 </p>
             </a>
         </li>

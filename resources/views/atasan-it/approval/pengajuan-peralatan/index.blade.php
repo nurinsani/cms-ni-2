@@ -49,14 +49,13 @@
                                 </td>
                                 <td>
                                     <ul class="p-0" style="list-style: none">
-                                        Pembelian
                                         @foreach ($data->pengajuan_details as $item)
                                             <li> {{ $item->jenis_peralatan->nama_jenis }} {{ $item->merk }} {{ $item->type }} </li>
                                         @endforeach
                                     </ul>
                                 </td>
                                 <td>Rp. {{ number_format($data->subtotal()) }}</td>
-                                <td>{{ $data->tanggal_pengajuan }}</td>
+                                <td>{{ $data->tanggal_pengajuan->format('d-M-Y') }}</td>
                                 <td>
                                     <a href="{{ url('atasan-it/approval-peralatan/detail', $data->id) }}"
                                         class="btn btn-sm btn-primary">Detail</a>

@@ -54,7 +54,7 @@
                 @endforeach
               </ul>
             </td>
-            <td>{{ $data->tanggal_pengajuan }}</td>
+            <td>{{ $data->tanggal_pengajuan->format('d-M-Y'); }}</td>
             <td>
               @if ($data->status_approve == 'lpj-admin')
                 <span class="badge bg-success">Disetujui</span>
@@ -69,7 +69,7 @@
               @elseif($data->status_approve == 'admin-head')
                 <span class="badge bg-warning">AH</span>
               @elseif($data->status_approve == 'akunting-it')
-                <span class="badge bg-warning">IT/Akunting</span>
+                <span class="badge bg-warning">Akunting</span>
               @elseif($data->status_approve == 'pengurus')
                 <span class="badge bg-warning">Pengurus</span>
               @elseif($data->status_approve == 'finance')
@@ -80,6 +80,10 @@
                 <span class="badge bg-danger">Ditolak</span>
               @elseif($data->status_approve == 'selesai')
               <span class="badge bg-success">Selesai</span>
+              @elseif($data->status_approve == 'klaim-selesai')
+              <span class="badge bg-success">Klaim Selesai</span>
+              @elseif($data->status_approve == 'atasan-it')
+              <span class="badge bg-warning">Atasan IT</span>
               @endif
             </td>
             <td>

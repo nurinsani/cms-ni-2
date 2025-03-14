@@ -40,6 +40,11 @@ class PengajuanDetail extends Model
         return $this->belongsTo(Branch::class, 'kode_area', 'code_area');
     }
 
+    public function region()
+    {
+        return $this->belongsTo(Branch::class, 'kode_user', 'code_region');
+    }
+
     public function subtotal()
     {
         $subtotal = 0;

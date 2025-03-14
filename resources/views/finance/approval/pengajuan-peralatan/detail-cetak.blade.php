@@ -85,7 +85,7 @@
                 <table class="table table-bordered">
                     <thead>
                         <tr>
-                            <th scope="col">Nama AP</th>
+                            <th scope="col">Area</th>
                             <th scope="col">COA</th>
                             <th scope="col">Keperluan</th>
                             <th style="width: 50px" scope="col">Kuantitas</th>
@@ -100,7 +100,7 @@
                             <td>
                                 <ul class="p-0" style="list-style: none">
                                     @foreach ($pengajuan->pengajuan_details as $item)
-                                        <li>{{ $item->ap->unit ?? $item->area->area }}</li>
+                                        <li>{{ $item->ap->unit ?? $item->area->area ?? $item->region->region }}</li>
                                     @endforeach
                                 </ul>
                             </td>
