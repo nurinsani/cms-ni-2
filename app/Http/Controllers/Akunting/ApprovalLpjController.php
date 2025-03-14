@@ -8,12 +8,7 @@ use App\Models\Admin\Peralatan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
-use App\Models\Admin\PengajuanDetail;
-use App\Models\Akunting\Transaksi;
-use App\Models\Branch;
 use App\Models\Inventaris;
-use App\Models\RencanaPenyusutan;
-use Carbon\Carbon;
 
 class ApprovalLpjController extends Controller
 {
@@ -127,6 +122,24 @@ class ApprovalLpjController extends Controller
             DB::rollback();
             Log::error($th->getMessage());
             return redirect()->back()->with('error', 'Data gagal diapprove');
+        }
+
+    }
+
+    public function tolak(Request $request, $id)
+    {
+        try {
+            DB::beginTransaction();
+            $pengajuan = Pengajuan::findOrfail($id);
+            $pengajuan->status_approve = 'lpj-admin';
+            $pengajuan->approval_2 = auth()->user()->id;
+            $pengajuan->save();
+            DB::commit();
+            return redirect()->back()->with('success', 'Data berhasil ditolak');
+        } catch (\Throwable $th) {
+            DB::rollback();
+            Log::error($th->getMessage());
+            return redirect()->back()->with('error', 'Data gagal ditolak');
         }
     }
 }
