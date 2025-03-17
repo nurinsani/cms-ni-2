@@ -91,6 +91,14 @@ class ApprovalPeralatanController extends Controller
             foreach ($pengajuan->pengajuan_details as $item) {
                 
             }
+
+            if ($item->kode_area == true) {
+                $keterangan = strtoupper('UM PEMBELIAN' . ' ' . $item->jenis_peralatan->nama_jenis . ' ' . 'WILAYAH' . ' ' . $item->area->area);
+            } elseif ($item->kode_branch == '1010') {
+                $keterangan = strtoupper('UM PEMBELIAN' . ' ' . $item->jenis_peralatan->nama_jenis . ' ' . 'KANTOR PUSAT');
+            } else {
+                $keterangan = strtoupper('UM PEMBELIAN' . ' ' . $item->jenis_peralatan->nama_jenis . ' ' . 'AP' . ' ' .  $item->ap->unit);
+            }
             
             $kode_transaksi = date('m').random_int(100000, 999999);
             TransaksiKp::create([
@@ -99,7 +107,7 @@ class ApprovalPeralatanController extends Controller
                 'kode_rekening' => '1010-1929000',
                 'tanggal_transaksi' => Carbon::now(),
                 'jenis_transaksi' => 'Bukti SYSTEM',
-                'keterangan' => strtoupper('BU' . ' ' . ($item->keterangan ?? 'Keterangan Tidak Ada')),
+                'keterangan' => $keterangan,
                 'debet' => $pengajuan->subtotal(),
                 'kredit' => 0
             ]);
@@ -110,7 +118,7 @@ class ApprovalPeralatanController extends Controller
                 'kode_rekening' => '1010-1312000',
                 'tanggal_transaksi' => Carbon::now(),
                 'jenis_transaksi' => 'Bukti SYSTEM',
-                'keterangan' => strtoupper('BU' . ' ' . ($item->keterangan ?? 'Keterangan Tidak Ada')),
+                'keterangan' => $keterangan,
                 'debet' => 0,
                 'kredit' => $pengajuan->subtotal(),
             ]);
