@@ -33,16 +33,16 @@
                             <table class="table table-hover table-bordered">
                                 <thead>
                                     <tr>
-                                        <th scope="col">Nama Jenis</th>
+                                        <th scope="col">NAMA JENIS</th>
                                         <th scope="col">AP</th>
-                                        <th scope="col">Merk</th>
-                                        <th scope="col">Type</th>
-                                        <th scope="col">Kuantitas</th>
-                                        <th scope="col">Harga</th>
-                                        <th scope="col">Nama Toko</th>
-                                        <th scope="col">No Telp</th>
-                                        <th scope="col">Pengguna</th>
-                                        <th scope="col">Aksi</th>
+                                        <th scope="col">MERK</th>
+                                        <th scope="col">TYPE</th>
+                                        <th scope="col">QTY</th>
+                                        <th scope="col">HARGA</th>
+                                        {{-- <th scope="col">Nama Toko</th> --}}
+                                        {{-- <th scope="col">No Telp</th> --}}
+                                        <th scope="col">PENGGUNA</th>
+                                        <th scope="col">AKSI</th>
                                     </tr>
                                 </thead>
                                 <tbody id="base_peralatan">
@@ -54,8 +54,8 @@
                                         <td>{{ $item->type }}</td>
                                         <td>{{ $item->kuantitas }}</td>
                                         <td>Rp. {{ number_format($item->harga) }}</td>
-                                        <td>{{ $item->nama_toko }}</td>
-                                        <td>{{ $item->no_telp }}</td>
+                                        {{-- <td>{{ $item->nama_toko }}</td> --}}
+                                        {{-- <td>{{ $item->no_telp }}</td> --}}
                                         <td>{{ $item->pengguna }}</td>
                                         <td>
                                             <a href="{{ url('admin/temp-pengajuan/'. $item->id) }}" onclick="hapus_data('#delete_form{{ $item->id }}')" class="btn btn-sm btn-danger">
@@ -244,22 +244,6 @@
     </div>
 
     @push('js')
-
-    {{-- <script>
-        // Format input dengan pemisah ribuan
-        document.getElementById('harga').addEventListener('keyup', function (e) {
-            let harga = this.value.replace(/\D/g, ''); // Menghapus karakter selain angka
-            harga = new Intl.NumberFormat('id-ID').format(harga); // Format angka dengan titik sebagai pemisah ribuan
-            this.value = harga;
-        });
-
-        // Menghapus titik sebelum mengirim data
-        document.querySelector('form').addEventListener('submit', function (e) {
-            let hargaInput = document.getElementById('harga');
-            // Menghapus titik dari nilai input sebelum mengirim
-            hargaInput.value = hargaInput.value.replace(/\./g, '');
-        });
-    </script> --}}
 
     <script>
         document.getElementById('select-option').addEventListener('change', function() {

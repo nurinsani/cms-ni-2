@@ -268,7 +268,7 @@ class ApprovalLpjController extends Controller
                         'kode_rekening' => '1010-1312000',
                         'tanggal_transaksi' => Carbon::now(),
                         'jenis_transaksi' => 'Bukti SYSTEM',
-                        'keterangan' => 'PPBL-Giro Bank BSI Ex BNI Syariah - 8080887729 - 8080887730',
+                        'keterangan' => 'PPBL-Giro Bank BSI Ex BNI Syariah - 8080887729 - 8080887730',
                         'debet' => 0,
                         'kredit' => $cabang->harga_pembelian - $pengajuan->subtotal()
                     ]);
@@ -364,7 +364,7 @@ class ApprovalLpjController extends Controller
                         'kode_rekening' => '1010-1312000',
                         'tanggal_transaksi' => Carbon::now(),
                         'jenis_transaksi' => 'Bukti SYSTEM',
-                        'keterangan' => 'PPBL-Giro Bank BSI Ex BNI Syariah - 8080887729 - 8080887730',
+                        'keterangan' => 'PPBL-Giro Bank BSI Ex BNI Syariah - 8080887729 - 8080887730',
                         'debet' => 0,
                         'kredit' => $item->harga_pembelian - $pengajuan->subtotal()
                     ]);
@@ -372,157 +372,175 @@ class ApprovalLpjController extends Controller
             }
             // end jurnal LPJ pengajuan lebih besar dari pembelian
 
-            // jurnal LPJ pembelian lebih kecil dari pengajuan
-
-
-
+            // jurnal LPJ pembelian lebih kecil dari total pengajuan
             if ($pengajuan->subtotal() > $pengajuan->total_pembelian()) {
-                foreach ($pengajuan->pengajuan_details as $item) {
-                    // Jika keduanya NULL, jalankan ini bro...
-                    if (is_null($item->kode_branch) && is_null($item->kode_area)) {
-                        $branch = Branch::where('code_area', $item->kode_area)
-                            ->where('status_aktif', 'aktif')
-                            ->get();
-            
-                        $totalBranch = $branch->count();
-                        $kode_transaksi = date('m') . random_int(100000, 999999);
-            
-                        foreach ($branch as $data) {
-                            TransaksiKp::create([
-                                'kode_branch' => 1010,
-                                'kode_transaksi' => 'BU' . '/1010/' . $kode_transaksi,
-                                'kode_rekening' => '1010-' . $data->GL,
-                                'tanggal_transaksi' => Carbon::now(),
-                                'jenis_transaksi' => 'Bukti SYSTEM',
-                                'keterangan' => $item->keterangan,
-                                'debet' => $item->harga_pembelian / $totalBranch,
-                                'kredit' => 0
-                            ]);
-                        }
-            
+
+                // jurnal untuk KP
+                foreach ($pengajuan->pengajuan_details as $row) {
+                    
+                    $kode_transaksi_kp = date('m').random_int(100000, 999999);
+
+                    // jika pembelian ada di KP
+                    if ($row->kode_branch == '1010') {
                         TransaksiKp::create([
                             'kode_branch' => 1010,
-                            'kode_transaksi' => 'BU' . '/1010/' . $kode_transaksi,
+                            'kode_transaksi' => 'BU'.'/'.'1010'.'/'.$kode_transaksi_kp,
+                            'kode_rekening' => '1010-'.$row->jenis_peralatan->param_peralatan->coa,
+                            'tanggal_transaksi' => Carbon::now(),
+                            'jenis_transaksi' => 'Bukti SYSTEM',
+                            'keterangan' => strtoupper($row->keterangan),
+                            'debet' => $row->harga_pembelian,
+                            'kredit' => 0
+                        ]);
+
+                        TransaksiKp::create([
+                            'kode_branch' => 1010,
+                            'kode_transaksi' => 'BU'.'/'.'1010'.'/'.$kode_transaksi_kp,
                             'kode_rekening' => '1010-1311000',
                             'tanggal_transaksi' => Carbon::now(),
                             'jenis_transaksi' => 'Bukti SYSTEM',
-                            'keterangan' => $item->keterangan,
+                            'keterangan' => strtoupper($row->keterangan),
                             'debet' => $pengajuan->nominal_pengembalian,
                             'kredit' => 0
                         ]);
-            
+
                         TransaksiKp::create([
                             'kode_branch' => 1010,
-                            'kode_transaksi' => 'BU' . '/1010/' . $kode_transaksi,
+                            'kode_transaksi' => 'BU'.'/'.'1010'.'/'.$kode_transaksi_kp,
                             'kode_rekening' => '1010-1929000',
                             'tanggal_transaksi' => Carbon::now(),
                             'jenis_transaksi' => 'Bukti SYSTEM',
-                            'keterangan' => $item->keterangan,
+                            'keterangan' => strtoupper($row->keterangan),
                             'debet' => 0,
                             'kredit' => $pengajuan->subtotal()
                         ]);
-
-                        TransaksiKp::create([
-                            'kode_branch' => 1010,
-                            'kode_transaksi' => 'BU' . '/1010/' . $kode_transaksi,
-                            'kode_rekening' => '1010-' . $data->GL,
-                            'tanggal_transaksi' => Carbon::now(),
-                            'jenis_transaksi' => 'Bukti SYSTEM',
-                            'keterangan' => $item->keterangan,
-                            'debet' => $item->harga_pembelian,
-                            'kredit' => 0
-                        ]);
-                    } else {
-                        // jurnal KP
-                        if (!is_null($item->kode_area)) { // Cek apakah kode_area tidak NULL
-                            
-                            $branch = Branch::where('code_area', $item->kode_area)
-                                ->where('status_aktif', 'aktif')
-                                ->get();
-                
-                            $totalBranch = $branch->count();
-                            $kode_transaksi = date('m') . random_int(100000, 999999);
-                
-                            foreach ($branch as $data) {
+                    }
+                        
+                    $area = Branch::where('code_area', $row->kode_area)
+                        ->where('status_aktif', 'aktif')
+                        ->get();
+                    $total_branch = $area->count();
+                    
+                    if ($row->kode_branch !== '1010') {
+                        if ($row->kode_branch == null) {
+                            foreach ($area as $key => $value) {
                                 TransaksiKp::create([
                                     'kode_branch' => 1010,
-                                    'kode_transaksi' => 'BU' . '/1010/' . $kode_transaksi,
-                                    'kode_rekening' => '1010-' . $data->GL,
+                                    'kode_transaksi' => 'BU'.'/'.'1010'.'/'.$kode_transaksi_kp,
+                                    'kode_rekening' => '1010-'.$value->GL,
                                     'tanggal_transaksi' => Carbon::now(),
                                     'jenis_transaksi' => 'Bukti SYSTEM',
-                                    'keterangan' => $item->keterangan,
-                                    'debet' => $item->harga_pembelian / $totalBranch,
-                                    'kredit' => 0
+                                    'keterangan' => strtoupper($row->keterangan),
+                                    'debet' => $row->harga_pembelian / $total_branch,
+                                    'kredit' => 0 
                                 ]);
                             }
-                
-                            TransaksiKp::create([
-                                'kode_branch' => 1010,
-                                'kode_transaksi' => 'BU' . '/1010/' . $kode_transaksi,
-                                'kode_rekening' => '1010-1311000',
-                                'tanggal_transaksi' => Carbon::now(),
-                                'jenis_transaksi' => 'Bukti SYSTEM',
-                                'keterangan' => $item->keterangan,
-                                'debet' => $pengajuan->nominal_pengembalian,
-                                'kredit' => 0
-                            ]);
-                
-                            TransaksiKp::create([
-                                'kode_branch' => 1010,
-                                'kode_transaksi' => 'BU' . '/1010/' . $kode_transaksi,
-                                'kode_rekening' => '1010-1929000',
-                                'tanggal_transaksi' => Carbon::now(),
-                                'jenis_transaksi' => 'Bukti SYSTEM',
-                                'keterangan' => $item->keterangan,
-                                'debet' => 0,
-                                'kredit' => $pengajuan->subtotal()
-                            ]);
-    
                         } else {
-                            // elseif ($item->kode_area == NULL) {
-                            // Proses untuk kode_area NULL
-                            $kode_transaksi = date('m') . random_int(100000, 999999);
-    
                             TransaksiKp::create([
                                 'kode_branch' => 1010,
-                                'kode_transaksi' => 'BU' . '/1010/' . $kode_transaksi,
-                                'kode_rekening' => '1010-' . $item->ap->GL,
+                                'kode_transaksi' => 'BU'.'/'.'1010'.'/'.$kode_transaksi_kp,
+                                'kode_rekening' => '1010-'.$row->ap->GL,
                                 'tanggal_transaksi' => Carbon::now(),
                                 'jenis_transaksi' => 'Bukti SYSTEM',
-                                'keterangan' => $item->keterangan,
-                                'debet' => $item->harga_pembelian,
+                                'keterangan' => strtoupper($row->keterangan),
+                                'debet' => $row->harga_pembelian,
                                 'kredit' => 0
-                            ]);
-    
-                            TransaksiKp::create([
-                                'kode_branch' => 1010,
-                                'kode_transaksi' => 'BUs' . '/1010/' . $kode_transaksi,
-                                'kode_rekening' => '1010-1311000',
-                                'tanggal_transaksi' => Carbon::now(),
-                                'jenis_transaksi' => 'Bukti SYSTEM',
-                                'keterangan' => $item->keterangan,
-                                'debet' => $pengajuan->nominal_pengembalian,
-                                'kredit' => 0
-                            ]);
-                
-                            TransaksiKp::create([
-                                'kode_branch' => 1010,
-                                'kode_transaksi' => 'BUs' . '/1010/' . $kode_transaksi,
-                                'kode_rekening' => '1010-1929000',
-                                'tanggal_transaksi' => Carbon::now(),
-                                'jenis_transaksi' => 'Bukti SYSTEM',
-                                'keterangan' => $item->keterangan,
-                                'debet' => 0,
-                                'kredit' => $pengajuan->subtotal()
                             ]);
                         }
-                        // end jurnal KP
                     }
                 }
-            }
-            
 
-                     
+                if ($row->kode_branch !== '1010') {
+                    TransaksiKp::create([
+                        'kode_branch' => 1010,
+                        'kode_transaksi' => 'BU'.'/'.'1010'.'/'.$kode_transaksi_kp,
+                        'kode_rekening' => '1010-1311000',
+                        'tanggal_transaksi' => Carbon::now(),
+                        'jenis_transaksi' => 'Bukti SYSTEM',
+                        'keterangan' => strtoupper($row->keterangan),
+                        'debet' => $pengajuan->nominal_pengembalian,
+                        'kredit' => 0
+                    ]);
+        
+                    TransaksiKp::create([
+                        'kode_branch' => 1010,
+                        'kode_transaksi' => 'BU'.'/'.'1010'.'/'.$kode_transaksi_kp,
+                        'kode_rekening' => '1010-1929000',
+                        'tanggal_transaksi' => Carbon::now(),
+                        'jenis_transaksi' => 'Bukti SYSTEM',
+                        'keterangan' => strtoupper($row->keterangan),
+                        'debet' => 0,
+                        'kredit' => $pengajuan->subtotal()
+                    ]);
+                }
+
+                // jurnal untuk AP
+                foreach ($pengajuan->pengajuan_details as $row) {
+                    $kode_transaksi_kp = date('m').random_int(100000, 999999);
+                        
+                    $area = Branch::where('code_area', $row->kode_area)
+                        ->where('status_aktif', 'aktif')
+                        ->get();
+                    $total_branch = $area->count();
+                    
+                    if ($row->kode_branch !== '1010') {
+                        if ($row->kode_branch == null) {
+
+                            foreach ($area as $key => $value) {
+                                TransaksiAp::create([
+                                    'kode_branch' => $value->kode_branch,
+                                    'kode_transaksi' => 'BU'.'/'. $value->kode_branch .'/'.$kode_transaksi_kp,
+                                    'kode_rekening' => $row->jenis_peralatan->param_peralatan->coa,
+                                    'tanggal_transaksi' => Carbon::now(),
+                                    'jenis_transaksi' => 'Bukti SYSTEM',
+                                    'keterangan' => $row->keterangan,
+                                    'debet' => $row->harga_pembelian / $total_branch,
+                                    'kredit' => 0 
+                                ]);
+    
+                                TransaksiAp::create([
+                                    'kode_branch' => $value->kode_branch,
+                                    'kode_transaksi' => 'BU'.'/'. $value->kode_branch .'/'.$kode_transaksi_kp,
+                                    'kode_rekening' => '2500000',
+                                    'tanggal_transaksi' => Carbon::now(),
+                                    'jenis_transaksi' => 'Bukti SYSTEM',
+                                    'keterangan' => $row->keterangan,
+                                    'debet' => 0,
+                                    'kredit' => $row->harga_pembelian / $total_branch 
+                                ]);
+                            }
+    
+                        } else {
+    
+                            TransaksiAp::create([
+                                'kode_branch' => $row->ap->kode_branch,
+                                'kode_transaksi' => 'BU'.'/'. $row->ap->kode_branch .'/'.$kode_transaksi_kp,
+                                'kode_rekening' => $row->jenis_peralatan->param_peralatan->coa,
+                                'tanggal_transaksi' => Carbon::now(),
+                                'jenis_transaksi' => 'Bukti SYSTEM',
+                                'keterangan' => $row->keterangan,
+                                'debet' => $row->harga_pembelian,
+                                'kredit' => 0
+                            ]);
+    
+                            TransaksiAp::create([
+                                'kode_branch' => $row->ap->kode_branch,
+                                'kode_transaksi' => 'BU'.'/'. $row->ap->kode_branch .'/'.$kode_transaksi_kp,
+                                'kode_rekening' => '2500000',
+                                'tanggal_transaksi' => Carbon::now(),
+                                'jenis_transaksi' => 'Bukti SYSTEM',
+                                'keterangan' => $row->keterangan,
+                                'debet' => 0,
+                                'kredit' => $row->harga_pembelian
+                            ]);
+                        }
+                    }
+                }
+
+            }
+            // end jurnal LPJ pembelian lebih kecil dari total pengajuan
+
+
 
         try {
             DB::beginTransaction();
@@ -538,361 +556,13 @@ class ApprovalLpjController extends Controller
 
     }
 
-    public function approve_inventaris(Request $request, $id)
-    {
-        DB::beginTransaction();
-        $pengajuan = Pengajuan::findOrfail($id);
-        $pengajuan->status_approve = 'selesai';
-        $pengajuan->save();
-
-        foreach ($pengajuan->pengajuan_details as $key => $cabang) {
-        
-        }
-
-        // jurnal normal
-        if ($pengajuan->subtotal() == $pengajuan->total_pembelian()) {
-            // jurnal LPJ pembelian inventaris di kp
-            $kode_transaksi = date('m').random_int(100000, 999999);
-            foreach ($pengajuan->pengajuan_details as $item) {
-                if ($item->kode_branch == '1010') {
-                    TransaksiKp::create([
-                        'kode_branch' => 1010,
-                        'kode_transaksi' => 'BU'.'/'.'1010'.'/'.$kode_transaksi,
-                        'kode_rekening' => '1010-'.$item->jenis_peralatan->param_peralatan->coa,
-                        'tanggal_transaksi' => Carbon::now(),
-                        'jenis_transaksi' => 'Bukti SYSTEM',
-                        'keterangan' => $item->keterangan_lpj,
-                        'debet' => $item->harga_pembelian,
-                        'kredit' => 0
-                    ]);
-                } else {
-                    TransaksiKp::create([
-                        'kode_branch' => 1010,
-                        'kode_transaksi' => 'BU'.'/'.'1010'.'/'.$kode_transaksi,
-                        'kode_rekening' => '1010-'.$item->ap->GL,
-                        'tanggal_transaksi' => Carbon::now(),
-                        'jenis_transaksi' => 'Bukti SYSTEM',
-                        'keterangan' => $item->keterangan_lpj,
-                        'debet' => $item->harga_pembelian,
-                        'kredit' => 0
-                    ]);
-                }
-            }
-
-            TransaksiKp::create([
-                'kode_branch' => 1010,
-                'kode_transaksi' => 'BU'.'/'.'1010'.'/'.$kode_transaksi,
-                'kode_rekening' => '1010-1929000',
-                'tanggal_transaksi' => Carbon::now(),
-                'jenis_transaksi' => 'Bukti SYSTEM',
-                'keterangan' => $item->keterangan_lpj,
-                'debet' => 0,
-                'kredit' => $pengajuan->subtotal()
-            ]);
-            // end jurnal LPJ pembelian inventaris di kp
-
-            $kode_transaksi = date('m').random_int(100000, 999999);
-            if ($item->kode_branch !== '1010') {
-                // jurnal LPJ pembelian inventaris di ap
-                foreach ($pengajuan->pengajuan_details as $item) {
-                    TransaksiAp::create([
-                        'kode_branch' => $item->ap->kode_branch,
-                        'kode_transaksi' => 'BU'.'/'.$item->ap->kode_branch.'/'.$kode_transaksi,
-                        'kode_rekening' => $item->jenis_peralatan->param_peralatan->coa,
-                        'tanggal_transaksi' => Carbon::now(),
-                        'jenis_transaksi' => 'Bukti SYSTEM',
-                        'keterangan' => $item->keterangan,
-                        'debet' => $item->harga_pembelian,
-                        'kredit' => 0
-                    ]);
-    
-                    TransaksiAp::create([
-                        'kode_branch' => $item->ap->kode_branch,
-                        'kode_transaksi' => 'BU'.'/'.$item->ap->kode_branch.'/'.$kode_transaksi,
-                        'kode_rekening' => '2500000',
-                        'tanggal_transaksi' => Carbon::now(),
-                        'jenis_transaksi' => 'Bukti SYSTEM',
-                        'keterangan' => $item->keterangan,
-                        'debet' => 0,
-                        'kredit' => $item->harga_pembelian,
-                    ]);
-                }
-                // end jurnal LPJ pembelian inventaris di ap
-            }
-
-        }
-        // end jurnal normal
-
-        // jika pembelian lebih kecil dari pengajuan
-        if ($pengajuan->subtotal() > $pengajuan->total_pembelian()) {
-            if ($cabang->kode_branch == NULL) {
-                // Jurnal Pembelian Peralatan Cabang
-                foreach ($pengajuan->pengajuan_details as $key => $cabang) {
-                    $subtotal = 0;
-                    $total = $cabang->harga * $cabang->kuantitas;
-                    $subtotal = $subtotal + $total;
-                }
-
-                $branch = Branch::where('code_area', $cabang->kode_area)
-                ->where('status_aktif', 'aktif')
-                ->get();
-                $total = $branch->count();
-                // jurnal pembelian untuk cabang KP
-                $kode_transaksi = date('m').random_int(100000, 999999);
-                foreach ($branch as $key => $data) {
-                    TransaksiKp::create([
-                        'kode_branch' => 1010,
-                        'kode_transaksi' => 'BU'.'/'.'1010'.'/'.$kode_transaksi,
-                        'kode_rekening' => '1010'.'-'.$data->GL,
-                        'tanggal_transaksi' => Carbon::now(),
-                        'jenis_transaksi' => 'Bukti SYSTEM',
-                        'keterangan' => $cabang->keterangan,
-                        'debet' => $cabang->harga_pembelian / $total,
-                        'kredit' => 0
-                    ]);
-                }
-                
-                TransaksiKp::create([
-                    'kode_branch' => 1010,
-                    'kode_transaksi' => 'BU'.'/'.'1010'.'/'.$kode_transaksi,
-                    'kode_rekening' => '1010-1311000',
-                    'tanggal_transaksi' => Carbon::now(),
-                    'jenis_transaksi' => 'Bukti SYSTEM',
-                    'keterangan' => 'LPJ ' . $cabang->keterangan,
-                    'debet' => $pengajuan->nominal_pengembalian,
-                    'kredit' => 0
-                ]);
-
-                TransaksiKp::create([
-                    'kode_branch' => 1010,
-                    'kode_transaksi' => 'BU'.'/'.'1010'.'/'.$kode_transaksi,
-                    'kode_rekening' => '1010-1929000',
-                    'tanggal_transaksi' => Carbon::now(),
-                    'jenis_transaksi' => 'Bukti SYSTEM',
-                    'keterangan' => $cabang->keterangan,
-                    'debet' => 0,
-                    'kredit' => $pengajuan->subtotal()
-                ]);
-                // end jurnal pembelian untuk cabang KP
-                
-                // jurnal pembelian untuk cabang AP
-                $kode_transaksi = date('m').random_int(100000, 999999);
-                foreach ($branch as $key => $data) {
-                    TransaksiAp::create([
-                        'kode_branch' => $data->kode_branch,
-                        'kode_transaksi' => 'BU'.'/'.$data->kode_branch.'/'.$kode_transaksi,
-                        'kode_rekening' => $cabang->jenis_peralatan->param_peralatan->coa,
-                        'tanggal_transaksi' => Carbon::now(),
-                        'jenis_transaksi' => 'Bukti SYSTEM',
-                        'keterangan' => $cabang->keterangan,
-                        'debet' => $cabang->harga_pembelian / $total,
-                        'kredit' => 0
-                    ]);
-
-                    TransaksiAp::create([
-                        'kode_branch' => $data->kode_branch,
-                        'kode_transaksi' => 'BU'.'/'.$data->kode_branch.'/'.$kode_transaksi,
-                        'kode_rekening' => '2500000',
-                        'tanggal_transaksi' => Carbon::now(),
-                        'jenis_transaksi' => 'Bukti SYSTEM',
-                        'keterangan' => $cabang->keterangan,
-                        'debet' => 0,
-                        'kredit' => $cabang->harga_pembelian / $total
-                    ]);
-                }
-                // end pembelian untuk cabang AP
-            } else {
-                // jurnal LPJ pembelian peralatan di KP
-                $kode_transaksi = date('m').random_int(100000, 999999);
-                foreach ($pengajuan->pengajuan_details as $item) {
-                    if ($item->kode_branch == '1010') {
-                        TransaksiKp::create([
-                            'kode_branch' => 1010,
-                            'kode_transaksi' => 'BU'.'/'.'1010'.'/'.$kode_transaksi,
-                            'kode_rekening' => '1010-'.$item->jenis_peralatan->param_peralatan->coa,
-                            'tanggal_transaksi' => Carbon::now(),
-                            'jenis_transaksi' => 'Bukti SYSTEM',
-                            'keterangan' => $item->keterangan,
-                            'debet' => $item->harga_pembelian,
-                            'kredit' => 0
-                        ]);
-                    } else {
-                        TransaksiKp::create([
-                            'kode_branch' => 1010,
-                            'kode_transaksi' => 'BU'.'/'.'1010'.'/'.$kode_transaksi,
-                            'kode_rekening' => '1010-'.$item->ap->GL,
-                            'tanggal_transaksi' => Carbon::now(),
-                            'jenis_transaksi' => 'Bukti SYSTEM',
-                            'keterangan' => $item->keterangan,
-                            'debet' => $item->harga_pembelian,
-                            'kredit' => 0
-                        ]);
-                    }
-                }
-    
-                $kode_transaksi = date('m').random_int(100000, 999999);
-                if ($item->kode_branch == '1010') {
-                    TransaksiKp::create([
-                        'kode_branch' => 1010,
-                        'kode_transaksi' => 'BU'.'/'.'1010'.'/'.$kode_transaksi,
-                        'kode_rekening' => '1010-1311000',
-                        'tanggal_transaksi' => Carbon::now(),
-                        'jenis_transaksi' => 'Bukti SYSTEM',
-                        'keterangan' => $item->keterangan,
-                        'debet' => $pengajuan->nominal_pengembalian,
-                        'kredit' => 0
-                    ]);
-        
-                    TransaksiKp::create([
-                        'kode_branch' => 1010,
-                        'kode_transaksi' => 'BU'.'/'.'1010'.'/'.$kode_transaksi,
-                        'kode_rekening' => '1010-1929000',
-                        'tanggal_transaksi' => Carbon::now(),
-                        'jenis_transaksi' => 'Bukti SYSTEM',
-                        'keterangan' => $item->keterangan,
-                        'debet' => 0,
-                        'kredit' => $pengajuan->subtotal()
-                    ]);
-                } else {
-                    TransaksiKp::create([
-                        'kode_branch' => 1010,
-                        'kode_transaksi' => 'BU'.'/'.'1010'.'/'.$kode_transaksi,
-                        'kode_rekening' => '1010-1311000',
-                        'tanggal_transaksi' => Carbon::now(),
-                        'jenis_transaksi' => 'Bukti SYSTEM',
-                        'keterangan' => $item->keterangan,
-                        'debet' => $pengajuan->nominal_pengembalian,
-                        'kredit' => 0
-                    ]);
-        
-                    TransaksiKp::create([
-                        'kode_branch' => 1010,
-                        'kode_transaksi' => 'BU'.'/'.'1010'.'/'.$kode_transaksi,
-                        'kode_rekening' => '1010-1929000',
-                        'tanggal_transaksi' => Carbon::now(),
-                        'jenis_transaksi' => 'Bukti SYSTEM',
-                        'keterangan' => $item->keterangan,
-                        'debet' => 0,
-                        'kredit' => $pengajuan->subtotal()
-                    ]);
-                } // end LPJ pembelian peralatan di KP
-
-                // jurnal LPJ pembelian peralatan di AP
-                foreach ($pengajuan->pengajuan_details as $item) {
-                    $kode_transaksi = date('m').random_int(100000, 999999);
-                    if ($item->kode_branch != '1010') {
-                        TransaksiAp::create([
-                            'kode_branch' => $item->ap->kode_branch,
-                            'kode_transaksi' => 'BU'.'/'.$item->ap->kode_branch.'/'.$kode_transaksi,
-                            'kode_rekening' => $item->jenis_peralatan->param_peralatan->coa,
-                            'tanggal_transaksi' => Carbon::now(),
-                            'jenis_transaksi' => 'Bukti SYSTEM',
-                            'keterangan' => $item->keterangan,
-                            'debet' => $item->harga_pembelian,
-                            'kredit' => 0
-                        ]);
-        
-                        TransaksiAp::create([
-                            'kode_branch' => $item->ap->kode_branch,
-                            'kode_transaksi' => 'BU'.'/'.$item->ap->kode_branch.'/'.$kode_transaksi,
-                            'kode_rekening' => '2500000',
-                            'tanggal_transaksi' => Carbon::now(),
-                            'jenis_transaksi' => 'Bukti SYSTEM',
-                            'keterangan' => $item->keterangan,
-                            'debet' => 0,
-                            'kredit' => $item->harga_pembelian,
-                        ]);
-                    }
-                } // end jurnal LPJ pembelian peralatan di AP
-            }
-
-        }
-
-        // jika pembelian lebih besar dari pengajuan
-        if ($pengajuan->subtotal() < $pengajuan->total_pembelian()) {
-            foreach ($pengajuan->pengajuan_details as $item) {
-                // jurnal LPJ pembelian inventaris di kp
-                $kode_transaksi = date('m').random_int(100000, 999999);
-                if ($item->kode_branch == '1010') {
-                    TransaksiKp::create([
-                        'kode_branch' => 1010,
-                        'kode_transaksi' => 'BU'.'/'.'1010'.'/'.$kode_transaksi,
-                        'kode_rekening' => '1010-'.$item->jenis_peralatan->param_peralatan->coa,
-                        'tanggal_transaksi' => Carbon::now(),
-                        'jenis_transaksi' => 'Bukti SYSTEM',
-                        'keterangan' => $item->jenis_peralatan->param_peralatan->nama,
-                        'debet' => $item->harga_pembelian,
-                        'kredit' => 0
-                    ]);
-                } else {
-                    TransaksiKp::create([
-                        'kode_branch' => $item->ap->kode_branch,
-                        'kode_transaksi' => 'BU'.'/'.$item->ap->kode_branch.'/'.$kode_transaksi,
-                        'kode_rekening' => $item->ap->GL,
-                        'tanggal_transaksi' => Carbon::now(),
-                        'jenis_transaksi' => 'Bukti SYSTEM',
-                        'keterangan' => 'RAK Aktiva - Unit'.' '.ucfirst($item->ap->unit),
-                        'debet' => $item->harga_pembelian,
-                        'kredit' => 0
-                    ]);
-                } 
-            }
-
-            foreach ($pengajuan->pengajuan_details as $item) {
-                // jurnal di KP
-                TransaksiKp::create([
-                    'kode_branch' => 1010,
-                    'kode_transaksi' => 'BU'.'/'.'1010'.'/'.$kode_transaksi,
-                    'kode_rekening' => $item->ap->GL,
-                    'tanggal_transaksi' => $item->tanggal_pembelian,
-                    'jenis_transaksi' => 'Bukti SYSTEM',
-                    'keterangan' => 'RAK Aktiva - Unit'.' '.ucfirst($item->ap->unit),
-                    'debet' => $item->harga_pembelian,
-                    'kredit' => 0
-                ]);
-            }
-
-            TransaksiKp::create([
-                'kode_branch' => 1010,
-                'kode_transaksi' => 'BU'.'/'.'1010'.'/'.$kode_transaksi,
-                'kode_rekening' => '1010-1312000',
-                'tanggal_transaksi' => Carbon::now(),
-                'jenis_transaksi' => 'Bukti SYSTEM',
-                'keterangan' => 'PPBL-Giro Bank BSI Ex BNI Syariah - 8080887729 - 8080887730',
-                'debet' => 0,
-                'kredit' => $item->harga_pembelian - $pengajuan->subtotal()
-            ]); 
-
-            TransaksiKp::create([
-                'kode_branch' => 1010,
-                'kode_transaksi' => 'BU'.'/'.'1010'.'/'.$kode_transaksi,
-                'kode_rekening' => '1010-1929000',
-                'tanggal_transaksi' => Carbon::now(),
-                'jenis_transaksi' => 'Bukti SYSTEM',
-                'keterangan' => 'UM Lainnya',
-                'debet' => 0,
-                'kredit' => $pengajuan->subtotal()
-            ]); 
-        }
-        try {
-
-            DB::commit();
-            return redirect()->back()->with('success', 'Data berhasil  Approve');
-        } catch (\Throwable $th) {
-            DB::rollback();
-            Log::error($th->getMessage());
-            return redirect()->back()->with('error', 'Data gagal diapprove');
-        }
-
-    }
-
     public function tolak(Request $request, $id)
     {
         // dd($request->all());
         try {
             DB::beginTransaction();
             $pengajuan = Pengajuan::findOrfail($id);
-            $pengajuan->status_approve = 'lpj-admin';
+            $pengajuan->status_approve = 'lpj-akunting-it';
             $pengajuan->save();
             DB::commit();
             return redirect()->back()->with('success', 'Data berhasil Tolak');
