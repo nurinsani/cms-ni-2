@@ -96,11 +96,11 @@ class ApprovalLpjController extends Controller
                 foreach ($pengajuan->pengajuan_details as $row) {
 
                     if ($row->kode_area == true) {
-                        $keterangan = strtoupper('UM PEMBELIAN' . ' ' . $item->jenis_peralatan->nama_jenis . ' ' . 'WILAYAH' . ' ' . $item->area->area);
-                    } elseif ($item->kode_branch == '1010') {
-                        $keterangan = strtoupper('UM PEMBELIAN' . ' ' . $item->jenis_peralatan->nama_jenis . ' ' . 'KANTOR PUSAT');
+                        $keterangan = strtoupper('LPJ PEMBELIAN' . ' ' . $row->jenis_peralatan->nama_jenis . ' ' . 'WILAYAH' . ' ' . $row->area->area);
+                    } elseif ($row->kode_branch == '1010') {
+                        $keterangan = strtoupper('LPJ PEMBELIAN' . ' ' . $row->jenis_peralatan->nama_jenis . ' ' . 'KANTOR PUSAT');
                     } else {
-                        $keterangan = strtoupper('UM PEMBELIAN' . ' ' . $item->jenis_peralatan->nama_jenis . ' ' . 'AP' . ' ' .  $item->ap->unit);
+                        $keterangan = strtoupper('LPJ PEMBELIAN' . ' ' . $row->jenis_peralatan->nama_jenis . ' ' . 'AP' . ' ' .  $row->ap->unit);
                     }
                     
                     $kode_transaksi_kp = date('m').random_int(100000, 999999);
