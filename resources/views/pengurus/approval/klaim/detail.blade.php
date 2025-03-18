@@ -86,7 +86,6 @@
                         <td>
                             <ul class="p-0" style="list-style: none">
                                 @foreach ($pengajuan->pengajuan_details as $item)
-                                    Pembelian
                                     <li> {{ $item->jenis_peralatan->nama_jenis }} {{ $item->merk }} {{ $item->type }} </li>
                                 @endforeach
                             </ul>
