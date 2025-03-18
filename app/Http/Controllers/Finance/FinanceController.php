@@ -20,9 +20,8 @@ class FinanceController extends Controller
     public function dashboard()
     {
         $data['title'] = 'Finance Dashboard';
-        $data['belum_approve'] = Pengajuan::where('status_approve', 'finance');
-        $data['belum_approve_bdd'] = PengajuanBdd::where('status_proses', 'finance');
-        // $data['pengajuan'] = Pengajuan::where('status_proses', 'lpj_finance')->where('code_area', auth()->user()->code_area)->get();
+        $data['approval_um'] = Pengajuan::where('status_approve', 'finance');
+        $data['approval_lpj'] = Pengajuan::where('status_approve', 'lpj-finance');
         return view('finance.dashboard', $data);
     }
 

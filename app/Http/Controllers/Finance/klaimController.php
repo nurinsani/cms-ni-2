@@ -34,7 +34,6 @@ class klaimController extends Controller
 
     public function approve_klaim()
     {   
-        // TODO belum hilang saat approve
         $data['title'] = 'Cetak Klaim';
         $data['pengajuan'] = Pengajuan::where('status_approve', 'klaim-selesai')->orWhere('status_approve', 'lpj-atasan-akunting')->get();
         return view('finance.approval.pengajuan-peralatan.index', $data);
@@ -103,6 +102,14 @@ class klaimController extends Controller
 
             } // jurnal klaim untuk cabang
 
+            if ($item->kode_area == true) {
+                $keterangan = strtoupper('KLAIM PEMBELIAN' . ' ' . $item->jenis_peralatan->nama_jenis . ' ' . 'WILAYAH' . ' ' . $item->area->area);
+            } elseif ($item->kode_branch == '1010') {
+                $keterangan = strtoupper('KLAIM PEMBELIAN' . ' ' . $item->jenis_peralatan->nama_jenis . ' ' . 'KANTOR PUSAT');
+            } else {
+                $keterangan = strtoupper('KLAIM PEMBELIAN' . ' ' . $item->jenis_peralatan->nama_jenis . ' ' . 'AP' . ' ' .  $item->ap->unit);
+            }
+
             if ($item->kode_branch == '1010') {
                 $kode_transaksi = date('m').random_int(100000, 999999);
                 TransaksiKp::create([
@@ -111,7 +118,7 @@ class klaimController extends Controller
                     'kode_rekening' => '1010-'.$item->jenis_peralatan->param_peralatan->coa,
                     'tanggal_transaksi' => Carbon::now(),
                     'jenis_transaksi' => 'Bukti SYSTEM',
-                    'keterangan' => 'Klaim ' . $item->keterangan,
+                    'keterangan' => $keterangan,
                     'debet' => $item->harga_pembelian,
                     'kredit' => 0
                 ]);
@@ -122,7 +129,7 @@ class klaimController extends Controller
                     'kode_rekening' => '1010-1312000',
                     'tanggal_transaksi' => Carbon::now(),
                     'jenis_transaksi' => 'Bukti SYSTEM',
-                    'keterangan' => 'Klaim'.' '.$item->keterangan,
+                    'keterangan' => $keterangan,
                     'debet' => 0,
                     'kredit' => $item->harga_pembelian
                 ]);
@@ -146,7 +153,7 @@ class klaimController extends Controller
                                 'kode_rekening' => '1010'.'-'.$data->GL,
                                 'tanggal_transaksi' => Carbon::now(),
                                 'jenis_transaksi' => 'Bukti SYSTEM',
-                                'keterangan' => 'Klaim'.' '.$item->keterangan,
+                                'keterangan' => $keterangan,
                                 'debet' => ($cabang->harga_pembelian * $cabang->kuantitas) / $total_branch,
                                 'kredit' => 0
                             ]);
@@ -158,7 +165,7 @@ class klaimController extends Controller
                             'kode_rekening' => '1010-1312000',
                             'tanggal_transaksi' => Carbon::now(),
                             'jenis_transaksi' => 'Bukti SYSTEM',
-                            'keterangan' => 'PPBL-Giro Bank BSI Ex BNI Syariah - 8080887729 - 8080887730',
+                            'keterangan' => $keterangan,
                             'debet' => 0,
                             'kredit' => $cabang->harga_pembelian * $cabang->kuantitas
                         ]);
@@ -173,7 +180,7 @@ class klaimController extends Controller
                                 'kode_rekening' => $cabang->jenis_peralatan->param_peralatan->coa,
                                 'tanggal_transaksi' => Carbon::now(),
                                 'jenis_transaksi' => 'Bukti SYSTEM',
-                                'keterangan' => 'Klaim' . ' ' . $cabang->keterangan,
+                                'keterangan' => $keterangan,
                                 'debet' => ($cabang->harga_pembelian * $cabang->kuantitas) / $total_branch,
                                 'kredit' => 0
                             ]);
@@ -184,7 +191,7 @@ class klaimController extends Controller
                                 'kode_rekening' => '2500000',
                                 'tanggal_transaksi' => Carbon::now(),
                                 'jenis_transaksi' => 'Bukti SYSTEM',
-                                'keterangan' => 'Klaim' . ' ' . $cabang->keterangan,
+                                'keterangan' => $keterangan,
                                 'debet' => 0,
                                 'kredit' => ($cabang->harga_pembelian * $cabang->kuantitas) / $total_branch
                             ]);
@@ -199,7 +206,7 @@ class klaimController extends Controller
                             'kode_rekening' => $item->jenis_peralatan->param_peralatan->coa,
                             'tanggal_transaksi' => Carbon::now(),
                             'jenis_transaksi' => 'Bukti SYSTEM',
-                            'keterangan' => 'Klaim ' . $item->keterangan,
+                            'keterangan' => $keterangan,
                             'debet' => $item->harga_pembelian * $item->kuantitas,
                             'kredit' => 0
                         ]);
@@ -210,7 +217,7 @@ class klaimController extends Controller
                             'kode_rekening' => '2500000',
                             'tanggal_transaksi' => Carbon::now(),
                             'jenis_transaksi' => 'Bukti SYSTEM',
-                            'keterangan' => 'Klaim'.' '.$item->keterangan,
+                            'keterangan' => $keterangan,
                             'debet' => 0,
                             'kredit' => $item->harga_pembelian * $item->kuantitas,
                         ]);
@@ -222,7 +229,7 @@ class klaimController extends Controller
                             'kode_rekening' => '1010'.'-'.$item->ap->GL,
                             'tanggal_transaksi' => Carbon::now(),
                             'jenis_transaksi' => 'Bukti SYSTEM',
-                            'keterangan' => 'Klaim ' . $item->keterangan,
+                            'keterangan' => $keterangan,
                             'debet' => $item->harga_pembelian * $item->kuantitas,
                             'kredit' => 0
                         ]);
@@ -233,7 +240,7 @@ class klaimController extends Controller
                             'kode_rekening' => '1010-1312000',
                             'tanggal_transaksi' => Carbon::now(),
                             'jenis_transaksi' => 'Bukti SYSTEM',
-                            'keterangan' => 'Klaim'.' '.$item->keterangan,
+                            'keterangan' => $keterangan,
                             'debet' => 0,
                             'kredit' => $item->harga_pembelian * $item->kuantitas
                         ]);

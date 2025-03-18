@@ -7,18 +7,10 @@
         </p>
     </a>
 </li>
-<li class="nav-item">
-    <a href="{{ url('/update-password') }}" class="nav-link {{ request()->is('/update-password') ? 'active' : '' }}">
-        <i class="fas fa-fingerprint"></i>
-        <p>
-            Ganti Password
-        </p>
-    </a>
-</li>
 
 <li class="nav-item">
     <a href="#" class="nav-link">
-        <i class="nav-icon fas fa-check-double"></i>
+        <i class="nav-icon far fa-check-square"></i>
         <p>
             Approval
             <i class="fas fa-angle-left right"></i>
@@ -66,3 +58,13 @@
         </li>
 
     </ul>
+</li>
+
+    <li class="nav-item">
+        <a href="{{ url('/update-password') }}" class="nav-link {{ request()->is('/update-password') ? 'active' : '' }}">
+            <i class="nav-icon fas fa-key"></i>
+            <p>
+                Ganti Password
+            </p>
+        </a>
+    </li>

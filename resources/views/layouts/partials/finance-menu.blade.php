@@ -1,17 +1,8 @@
 <li class="nav-item menu-open">
-<li class="nav-item menu-open">
     <a href="{{ route('finance.dashboard') }}" class="nav-link {{ request()->is('finance/dashboard*') ? 'active' : '' }}">
         <i class="nav-icon fas fa-tachometer-alt"></i>
         <p>
             Dashboard
-        </p>
-    </a>
-</li>
-<li class="nav-item">
-    <a href="{{ url('/update-password') }}" class="nav-link {{ request()->is('/update-password') ? 'active' : '' }}">
-        <i class="fas fa-fingerprint"></i>
-        <p>
-            Ganti Password
         </p>
     </a>
 </li>
@@ -103,4 +94,13 @@
             </a>
         </li>
     </ul>
+</li>
+
+<li class="nav-item">
+    <a href="{{ url('/update-password') }}" class="nav-link {{ request()->is('/update-password*') ? 'active' : '' }}">
+        <i class="nav-icon fas fa-key"></i>
+        <p>
+            Ganti Password
+        </p>
+    </a>
 </li>

@@ -13,10 +13,9 @@ class PengurusController extends Controller
 {
     public function dashboard()
     {
-        $data['title'] = 'Supervisor Dashboard';
-        $data['belum_approve'] = Pengajuan::where('status_approve', 'pengurus');
-        // $data['belum_approve_bdd'] = PengajuanBdd::where('status_proses', 'pengurus');
-        $data['pengajuan'] = Pengajuan::where('status_approve', 'pengurus')->where('code_area', auth()->user()->code_area)->get();
+        $data['title'] = 'Pengurus Dashboard';
+        $data['approval_um'] = Pengajuan::where('status_approve', 'pengurus');
+        $data['approval_lpj'] = Pengajuan::where('status_approve', 'lpj-pengurus');
         return view('pengurus.dashboard', $data);
     }
 }
