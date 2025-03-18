@@ -69,7 +69,6 @@
                     <tr class="">
                         <td>
                             <ul class="p-0" style="list-style: none">
-                                <br>
                                 @foreach ($pengajuan->pengajuan_details as $item)
                                 <li>{{ $item->ap->unit ?? $item->area->area }}</li>
                                 @endforeach
@@ -77,7 +76,6 @@
                         </td>
                         <td>
                             <ul class="p-0" style="list-style: none">
-                                <br>
                                 @foreach ($pengajuan->pengajuan_details as $item)
                                     <li>{{ $item->jenis_peralatan->param_peralatan->coa }}</li>
                                 @endforeach
