@@ -19,6 +19,8 @@ use App\Models\Admin\TempPengajuanDetail;
 use App\Models\Rekening;
 // use Barryvdh\DomPDF\PDF;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Http;
+
 class PengajuanController extends Controller
 {
     public $validator = [
@@ -141,8 +143,7 @@ class PengajuanController extends Controller
 
     // private function sendWhatsAppNotification($pengajuan)
     // {
-    //     // Format pesan notifikasi
-    //     $message = "DARI CMS NURINSANI:\n";
+    //     $message = "DARI CMS\n";
     //     $message .= "Nomor Pengajuan: " . $pengajuan->nomor . "\n";
     //     $message .= "Tanggal Pengajuan: " . $pengajuan->tanggal_pengajuan . "\n";
     //     $message .= "Diajukan oleh: " . auth()->user()->name . "\n";
@@ -151,37 +152,20 @@ class PengajuanController extends Controller
 
     //     $data = [
     //         'id' => '120363399892113718@g.us', // ID grup WhatsApp
-    //         'name' => 'Approve CMS',
+    //         'name' => 'APPROVAL CMS',
     //         'message' => $message,
     //     ];
-
-    //     $curl = curl_init();
-
-    //     curl_setopt_array($curl, array(
-    //         CURLOPT_URL => "192.168.88.151:3000/send-group-message",
-    //         CURLOPT_RETURNTRANSFER => true,
-    //         CURLOPT_ENCODING => "",
-    //         CURLOPT_MAXREDIRS => 10,
-    //         CURLOPT_TIMEOUT => 30000,
-    //         CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-    //         CURLOPT_CUSTOMREQUEST => "POST",
-    //         CURLOPT_POSTFIELDS => json_encode($data),
-    //         CURLOPT_HTTPHEADER => array(
-    //             "accept: /",
-    //             "accept-language: en-US,en;q=0.8",
-    //             "content-type: application/json",
-    //         ),
-    //     ));
-
-    //     $response = curl_exec($curl);
-    //     $err = curl_error($curl);
-
-    //     curl_close($curl);
-
-    //     if ($err) {
-    //         Log::error('Gagal mengirim notifikasi WhatsApp: ' . $err);
-    //     } else {
-    //         Log::info('Notifikasi WhatsApp berhasil dikirim: ' . $response);
+    
+    //     try {
+    //         $response = Http::post('http://192.168.88.151:3000/send-group-message', $data);
+            
+    //         if ($response->successful()) {
+    //             \Log::info('Notifikasi WhatsApp berhasil dikirim: ' . $response->body());
+    //         } else {
+    //             \Log::error('Gagal mengirim notifikasi WhatsApp: ' . $response->body());
+    //         }
+    //     } catch (\Exception $e) {
+    //         \Log::error('Gagal mengirim notifikasi WhatsApp: ' . $e->getMessage());
     //     }
     // }
 

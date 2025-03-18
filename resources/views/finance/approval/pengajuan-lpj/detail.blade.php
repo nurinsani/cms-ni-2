@@ -51,14 +51,15 @@
                 <div class="card-body">
                     <div class="text-right">
                         @if ($lpj->status_approve == 'selesai')
-                        <button type="button" onclick="window.print()" class="btn btn-primary d-print-none">Print</button>
+                        <button type="button" onclick="window.print()" class="btn btn-danger d-print-none">
+                            <i class="fas fa-print"></i> Print</button>
                         @endif
 
                         @if ($lpj->status_approve == 'klaim-selesai')
-                        <button type="button" onclick="window.print()" class="btn btn-primary d-print-none">Print</button>
+                        <button type="button" onclick="window.print()" class="btn btn-danger d-print-none">Print</button>
                         @endif
                     </div>
-                    <a href="{{ url('finance/approval-lpj') }}" class="btn btn-sm btn-primary mb-3 d-print-none">
+                    <a href="{{ url('finance/approval-lpj/approve') }}" class="btn btn-sm btn-primary mb-3 d-print-none">
                         <i class="fas fa-arrow-left"></i> Kembali
                     </a>
 
