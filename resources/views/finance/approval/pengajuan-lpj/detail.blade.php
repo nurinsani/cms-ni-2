@@ -159,8 +159,9 @@
                             @if (!empty($kode_approve1))
                                 <div class="col text-center">
                                     <p>Diketahui Oleh,</p>
-                                    {!! DNS2D::getBarcodeSVG($kode_approve1, 'QRCODE', 2, 2) !!}
-                                    <div class="py-4"></div>
+                                    <div class="py-4">
+                                        {!! DNS2D::getBarcodeSVG($kode_approve1, 'QRCODE', 2, 2) !!}
+                                    </div>
                                     <span class="border-bottom pb-1">{{ $lpj->approval1->name ?? '' }}</span>
                                     <br>
                                     <b class="mt-1 d-block">Admin Head</b>
@@ -170,8 +171,9 @@
                             @if (!empty($kode_approve3))
                                 <div class="col text-center">
                                     <p>Disetujui Oleh,</p>
-                                    {!! DNS2D::getBarcodeSVG($kode_approve3, 'QRCODE', 2, 2) !!}
-                                    <div class="py-4"></div>
+                                    <div class="py-4">
+                                        {!! DNS2D::getBarcodeSVG($kode_approve3, 'QRCODE', 2, 2) !!}
+                                    </div>
                                     <span class="border-bottom pb-1">{{ $lpj->approval3->name ?? '' }}</span>
                                     <br>
                                     <b class="mt-1 d-block">Pengurus</b>
@@ -191,8 +193,9 @@
                                     <tr>
                                         @if (!empty($kode_approve2))
                                             <td class="w-50 p-5 text-center">
-                                                {!! DNS2D::getBarcodeSVG("$kode_approve2", 'QRCODE', 2, 2) !!}
-                                                <div class="py-4"></div>
+                                                <div class="py-4">
+                                                    {!! DNS2D::getBarcodeSVG("$kode_approve2", 'QRCODE', 2, 2) !!}
+                                                </div>
                                                 {{ $lpj->approval2->name ?? '' }}
                                                 <hr>
                                                 <strong>Akunting</strong>
@@ -201,8 +204,9 @@
 
                                         @if (!empty($kode_approve4))
                                             <td class="w-50 p-5 text-center">
-                                                {!! DNS2D::getBarcodeSVG("$kode_approve4", 'QRCODE', 2, 2) !!}
-                                                <div class="py-4"></div>
+                                                <div class="py-4">
+                                                    {!! DNS2D::getBarcodeSVG("$kode_approve4", 'QRCODE', 2, 2) !!}
+                                                </div>
                                                 {{ $lpj->approval4->name ?? '' }}
                                                 <hr>
                                                 <strong>Finance</strong>
