@@ -258,17 +258,32 @@ class PengajuanController extends Controller
     {
         try {
             DB::beginTransaction();
+
             $pengajuan = Pengajuan::findOrFail($id);
+
+            if ($pengajuan->pengajuan_details->isNotEmpty()) {
+                foreach ($pengajuan->pengajuan_details as $detail) {
+                    if (!empty($detail->moa)) {
+                        $path = base_path('files/moa/' . $detail->moa);
+                        if (file_exists($path)) {
+                            unlink($path);
+                        }
+                    }
+                }
+            }
+
             $pengajuan->delete();
+
             DB::commit();
 
-            return redirect()->route('admin.pengajuan.index')->with('success', 'Data berhasil dihapus');
+            return redirect()->route('admin.pengajuan.index')->with('success', 'Data dan file berhasil dihapus');
         } catch (\Throwable $th) {
-            DB::rollback();
+            DB::rollBack();
             Log::error($th->getMessage());
             return redirect()->back()->with('error', 'Data gagal dihapus');
         }
     }
+
 
     public function daftar_peralatan()
     {

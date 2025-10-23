@@ -130,13 +130,17 @@
                                 </ul>
                             </td>
                             <td>
-                                @if ($item->rekening_id == NULL)
+                                    @foreach ($pengajuan->pengajuan_details as $item)
+
+                                @if ($item->rekening_id == null)
                                 Transfer ke <br>{{ $item->pengajuan->user->nama_bank }} {{ $item->pengajuan->user->no_rek }}
                                 A/N {{ $item->pengajuan->user->atas_nama }}
                                 @else
                                 Transfer ke <br><strong>{{ $item->rekening->no_rek }} {{ $item->rekening->nama_bank }}
                                 A/N {{ $item->rekening->atas_nama }}</strong>
                                 @endif
+
+                                @endforeach
                             </td>
                         </tr>
                     </tbody>
