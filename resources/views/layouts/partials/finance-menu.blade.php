@@ -70,7 +70,7 @@
             <a href="{{ url('finance/approval-peralatan/approve') }}" class="nav-link">
                 <i class="nav-icon far fa-circle"></i>
                 <p>
-                    Cetak FPD
+                    FPD
                 </p>
             </a>
         </li>
@@ -80,7 +80,7 @@
                 <i class="nav-icon far fa-circle"></i>
 
                 <p>
-                    Cetak LPJ
+                    LPJ
                 </p>
             </a>
         </li>
@@ -89,7 +89,7 @@
             <a href="{{ url('finance/approval-klaim/approve') }}" class="nav-link">
                 <i class="nav-icon far fa-circle"></i>
                 <p>
-                    Cetak Klaim
+                    Klaim
                 </p>
             </a>
         </li>

@@ -16,9 +16,6 @@
 
 @section('content')
     <div class="card">
-        <div class="card-header">
-            Pembelian Peralatan
-        </div>
         <!-- /.card-header -->
         <div class="card-body">
             <div class="table-responsive">
@@ -26,7 +23,7 @@
                     <thead>
                         <tr>
                             <th>No</th>
-                            <th>Nomor</th>
+                            <th>No. Pengajuan</th>
                             <th>Area</th>
                             <th>Tanggal Pembelian</th>
                             <th>Nama Peralatan</th>

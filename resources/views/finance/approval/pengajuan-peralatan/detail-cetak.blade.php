@@ -43,13 +43,10 @@
                 width="150px" alt="">
             <div class="text-center">
                 @if ($pengajuan->status_approve == 'klaim-selesai')
-                <h4>KLAIM</h4>
+                <h4>CETAK KLAIM</h4>
                 @else
                 <h4>FPD PEMBELIAN</h4>
                 @endif
-                {{-- <h4>WILAYAH JATUT</h4>
-            <h4>PERIODE AGUSTUS 2023</h4>
-            <h4>TANGGAL 25-8-2023</h4> --}}
             </div>
             <div class="">
 
@@ -310,8 +307,9 @@
                 @else
                 <div class="col text-center">
                     <p>Diketahui Oleh,</p>
-                    {!! DNS2D::getBarcodeSVG($kode_approve1, 'QRCODE', 2, 2) !!}
-                    <div class="py-4"></div>
+                    <div class="py-4">
+                        {!! DNS2D::getBarcodeSVG($kode_approve1, 'QRCODE', 2, 2) !!}
+                    </div>
                     <span class="border-bottom pb-1">{{ $pengajuan->approval1->name ?? '' }}</span>
                     <br>
                     <b class="mt-1 d-block">Admin Head</b>
@@ -319,8 +317,9 @@
                 @endif
                 <div class="col text-center">
                     <p>Disetujui Oleh,</p>
-                    {!! DNS2D::getBarcodeSVG($kode_approve3, 'QRCODE', 2, 2) !!}
-                    <div class="py-4"></div>
+                    <div class="py-4">
+                        {!! DNS2D::getBarcodeSVG($kode_approve3, 'QRCODE', 2, 2) !!}
+                    </div>
                     <span class="border-bottom pb-1">{{ $pengajuan->approval3->name ?? '' }}</span>
                     <br>
                     <b class="mt-1 d-block">Pengurus</b>
@@ -337,15 +336,17 @@
                     <tbody>
                         <tr>
                             <td class="w-50 p-5 text-center">
-                                {!! DNS2D::getBarcodeSVG("$kode_approve2", 'QRCODE', 2, 2) !!}
-                                <div class="py-4"></div>
+                                <div class="py-4">
+                                    {!! DNS2D::getBarcodeSVG("$kode_approve2", 'QRCODE', 2, 2) !!}
+                                </div>
                                 {{ $pengajuan->approval2->name ?? '' }}
                                 <hr>
                                 <strong>Akunting</strong>
                             </td>
                             <td class="w-50 p-5 text-center">
-                                {!! DNS2D::getBarcodeSVG("$kode_approve4", 'QRCODE', 2, 2) !!}
-                                <div class="py-4"></div>
+                                <div class="py-4">
+                                    {!! DNS2D::getBarcodeSVG("$kode_approve4", 'QRCODE', 2, 2) !!}
+                                </div>
                                 {{ $pengajuan->approval4->name ?? '' }}
                                 <hr>
                                 <strong>Finance</strong>
