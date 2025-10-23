@@ -12,6 +12,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class klaimController extends Controller
@@ -27,7 +28,7 @@ class klaimController extends Controller
     public function detail($id)
     {
         $title = 'Detail Klaim';
-        $pengajuan = Pengajuan::findOrFail($id);
+        $pengajuan = Pengajuan::findOrFail($id);~
         $branch = Branch::where('code_area', 'kode_area')->get();
         return view('finance.approval.klaim.detail', compact('title', 'pengajuan'));
     }
@@ -110,20 +111,56 @@ class klaimController extends Controller
                 $keterangan = strtoupper('KLAIM PEMBELIAN' . ' ' . $item->jenis_peralatan->nama_jenis . ' ' . 'AP' . ' ' .  $item->ap->unit);
             }
 
+            $url_api = 'http://192.168.1.11:8080/api/transaksi'; // URL API lokal
+            // $url_api = 'http://36.64.7.130:7117/nurinsani/api/transaksi_cms.php?function=insert_transaksi'; // URL API test
+            // $url_api = 'http://192.168.88.4/nurinsani/api/transaksi_cms.php?function=insert_transaksi';// URL API production
+
+
+            // TODO buat foreach pada kp juga
             if ($item->kode_branch == '1010') {
                 $kode_transaksi = date('m').random_int(100000, 999999);
-                TransaksiKp::create([
+                $transaksiKp = TransaksiKp::create([
                     'kode_branch' => 1010,
                     'kode_transaksi' => 'BU'.'/'.'1010'.'/'.$kode_transaksi,
                     'kode_rekening' => '1010-'.$item->jenis_peralatan->param_peralatan->coa,
                     'tanggal_transaksi' => Carbon::now(),
                     'jenis_transaksi' => 'Bukti SYSTEM',
                     'keterangan' => $keterangan,
-                    'debet' => $item->harga_pembelian,
+                    'debet' => $item->harga_pembelian * $item->kuantitas,
                     'kredit' => 0
                 ]);
 
-                TransaksiKp::create([
+                $transaksiApi = [
+                    'unit' => $transaksiKp->kode_branch,
+                    'kode_transaksi' => $transaksiKp->kode_transaksi,
+                    'kode_rekening' => $transaksiKp->kode_rekening,
+                    'tanggal_transaksi' => $transaksiKp->tanggal_transaksi->toDateString(),
+                    'jenis_transaksi' => $transaksiKp->jenis_transaksi,
+                    'keterangan_transaksi' => $transaksiKp->keterangan,
+                    'debet' => $transaksiKp->debet,
+                    'kredit' => $transaksiKp->kredit,
+                    'tanggal_posting' => now()->toDateString(),
+                    'keterangan_posting' => 'Post',
+                    'id_admin' => auth()->id() ?? 1,
+                ];
+
+                $response = Http::timeout(30)
+                ->asForm()
+                ->withHeaders([
+                    'Accept' => 'application/json',
+                ])
+                ->post($url_api, $transaksiApi);
+
+                if ($response->successful()) {
+                    Log::info("Transaksi berhasil", $response->json());
+                } else {
+                    Log::error("Error API", [
+                        'status' => $response->status(),
+                        'response' => $response->json()
+                    ]);
+                }
+
+                $transaksiKp = TransaksiKp::create([
                     'kode_branch' => 1010,
                     'kode_transaksi' => 'BU'.'/'.'1010'.'/'.$kode_transaksi,
                     'kode_rekening' => '1010-1312000',
@@ -131,8 +168,38 @@ class klaimController extends Controller
                     'jenis_transaksi' => 'Bukti SYSTEM',
                     'keterangan' => $keterangan,
                     'debet' => 0,
-                    'kredit' => $item->harga_pembelian
+                    'kredit' => $item->harga_pembelian * $item->kuantitas,
                 ]);
+
+                $transaksiApi = [
+                    'unit' => $transaksiKp->kode_branch,
+                    'kode_transaksi' => $transaksiKp->kode_transaksi,
+                    'kode_rekening' => $transaksiKp->kode_rekening,
+                    'tanggal_transaksi' => $transaksiKp->tanggal_transaksi->toDateString(),
+                    'jenis_transaksi' => $transaksiKp->jenis_transaksi,
+                    'keterangan_transaksi' => $transaksiKp->keterangan,
+                    'debet' => $transaksiKp->debet,
+                    'kredit' => $transaksiKp->kredit,
+                    'tanggal_posting' => now()->toDateString(),
+                    'keterangan_posting' => 'Post',
+                    'id_admin' => auth()->id() ?? 1,
+                ];
+
+                $response = Http::timeout(30)
+                ->asForm()
+                ->withHeaders([
+                    'Accept' => 'application/json',
+                ])
+                ->post($url_api, $transaksiApi);
+
+                if ($response->successful()) {
+                    Log::info("Transaksi berhasil", $response->json());
+                } else {
+                    Log::error("Error API", [
+                        'status' => $response->status(),
+                        'response' => $response->json()
+                    ]);
+                }
             } else {
                 if ($item->kode_branch == NULL) {
                     foreach ($pengajuan->pengajuan_details as $key => $cabang) {
@@ -141,13 +208,14 @@ class klaimController extends Controller
                         $subtotal = $subtotal + $total;
                         // Jurnal LPJ Pembelian Peralatan Cabang
                         $branch = Branch::where('code_area', $cabang->kode_area)
+                        ->where('status_aktif', 'aktif')
                         ->get();
                         $total_branch = $branch->count();
     
                         // jurnal LPJ pembelian untuk cabang di KP
                         $kode_transaksi = date('m').random_int(100000, 999999);
                         foreach ($branch as $key => $data) {
-                            TransaksiKp::create([
+                            $transaksiKp = TransaksiKp::create([
                                 'kode_branch' => 1010,
                                 'kode_transaksi' => 'BU'.'/'.'1010'.'/'.$kode_transaksi,
                                 'kode_rekening' => '1010'.'-'.$data->GL,
@@ -157,9 +225,39 @@ class klaimController extends Controller
                                 'debet' => ($cabang->harga_pembelian * $cabang->kuantitas) / $total_branch,
                                 'kredit' => 0
                             ]);
+
+                            $transaksiApi = [
+                                'unit' => $transaksiKp->kode_branch,
+                                'kode_transaksi' => $transaksiKp->kode_transaksi,
+                                'kode_rekening' => $transaksiKp->kode_rekening,
+                                'tanggal_transaksi' => $transaksiKp->tanggal_transaksi->toDateString(),
+                                'jenis_transaksi' => $transaksiKp->jenis_transaksi,
+                                'keterangan_transaksi' => $transaksiKp->keterangan,
+                                'debet' => $transaksiKp->debet,
+                                'kredit' => $transaksiKp->kredit,
+                                'tanggal_posting' => now()->toDateString(),
+                                'keterangan_posting' => 'Post',
+                                'id_admin' => auth()->id() ?? 1,
+                            ];
+
+                            $response = Http::timeout(30)
+                            ->asForm()
+                            ->withHeaders([
+                                'Accept' => 'application/json',
+                            ])
+                            ->post($url_api, $transaksiApi);
+
+                            if ($response->successful()) {
+                                Log::info("Transaksi berhasil", $response->json());
+                            } else {
+                                Log::error("Error API", [
+                                    'status' => $response->status(),
+                                    'response' => $response->json()
+                                ]);
+                            }
                         }
             
-                        TransaksiKp::create([
+                        $transaksiKp = TransaksiKp::create([
                             'kode_branch' => 1010,
                             'kode_transaksi' => 'BU'.'/'.'1010'.'/'.$kode_transaksi,
                             'kode_rekening' => '1010-1312000',
@@ -169,12 +267,42 @@ class klaimController extends Controller
                             'debet' => 0,
                             'kredit' => $cabang->harga_pembelian * $cabang->kuantitas
                         ]);
+
+                        $transaksiApi = [
+                            'unit' => $transaksiKp->kode_branch,
+                            'kode_transaksi' => $transaksiKp->kode_transaksi,
+                            'kode_rekening' => $transaksiKp->kode_rekening,
+                            'tanggal_transaksi' => $transaksiKp->tanggal_transaksi->toDateString(),
+                            'jenis_transaksi' => $transaksiKp->jenis_transaksi,
+                            'keterangan_transaksi' => $transaksiKp->keterangan,
+                            'debet' => $transaksiKp->debet,
+                            'kredit' => $transaksiKp->kredit,
+                            'tanggal_posting' => now()->toDateString(),
+                            'keterangan_posting' => 'Post',
+                            'id_admin' => auth()->id() ?? 1,
+                        ];
+
+                        $response = Http::timeout(30)
+                        ->asForm()
+                        ->withHeaders([
+                            'Accept' => 'application/json',
+                        ])
+                        ->post($url_api, $transaksiApi);
+
+                        if ($response->successful()) {
+                            Log::info("Transaksi berhasil", $response->json());
+                        } else {
+                            Log::error("Error API", [
+                                'status' => $response->status(),
+                                'response' => $response->json()
+                            ]);
+                        }
                         // end jurnal LPJ pembelian untuk cabang di KP
     
                         // jurnal LPJ   pembelian untuk cabang di AP
                         $kode_transaksi = date('m').random_int(100000, 999999);
                         foreach ($branch as $key => $data) {
-                            TransaksiAp::create([
+                            $transaksiAp = TransaksiAp::create([
                                 'kode_branch' => $data->kode_branch,
                                 'kode_transaksi' => 'BU'.'/'.$data->kode_branch.'/'.$kode_transaksi,
                                 'kode_rekening' => $cabang->jenis_peralatan->param_peralatan->coa,
@@ -184,8 +312,38 @@ class klaimController extends Controller
                                 'debet' => ($cabang->harga_pembelian * $cabang->kuantitas) / $total_branch,
                                 'kredit' => 0
                             ]);
+
+                            $transaksiApi = [
+                                'unit' => $transaksiAp->kode_branch,
+                                'kode_transaksi' => $transaksiAp->kode_transaksi,
+                                'kode_rekening' => $transaksiAp->kode_rekening,
+                                'tanggal_transaksi' => $transaksiAp->tanggal_transaksi->toDateString(),
+                                'jenis_transaksi' => $transaksiAp->jenis_transaksi,
+                                'keterangan_transaksi' => $transaksiAp->keterangan,
+                                'debet' => $transaksiAp->debet,
+                                'kredit' => $transaksiAp->kredit,
+                                'tanggal_posting' => now()->toDateString(),
+                                'keterangan_posting' => 'Post',
+                                'id_admin' => auth()->id() ?? 1,
+                            ];
+
+                            $response = Http::timeout(30)
+                            ->asForm()
+                            ->withHeaders([
+                                'Accept' => 'application/json',
+                            ])
+                            ->post($url_api, $transaksiApi);
+
+                            if ($response->successful()) {
+                                Log::info("Transaksi berhasil", $response->json());
+                            } else {
+                                Log::error("Error API", [
+                                    'status' => $response->status(),
+                                    'response' => $response->json()
+                                ]);
+                            }
     
-                            TransaksiAp::create([
+                            $transaksiAp = TransaksiAp::create([
                                 'kode_branch' => $data->kode_branch,
                                 'kode_transaksi' => 'BU'.'/'.$data->kode_branch.'/'.$kode_transaksi,
                                 'kode_rekening' => '2500000',
@@ -200,7 +358,7 @@ class klaimController extends Controller
                 } else {
                     foreach ($pengajuan->pengajuan_details as $item) {
                         $kode_transaksi = date('m').random_int(100000, 999999);
-                        TransaksiAp::create([
+                        $transaksiAp = TransaksiAp::create([
                             'kode_branch' => $item->kode_branch,
                             'kode_transaksi' => 'BU'.'/'.$item->kode_branch.'/'.$kode_transaksi,
                             'kode_rekening' => $item->jenis_peralatan->param_peralatan->coa,
@@ -210,8 +368,38 @@ class klaimController extends Controller
                             'debet' => $item->harga_pembelian * $item->kuantitas,
                             'kredit' => 0
                         ]);
+
+                        $transaksiApi = [
+                            'unit' => $transaksiAp->kode_branch,
+                            'kode_transaksi' => $transaksiAp->kode_transaksi,
+                            'kode_rekening' => $transaksiAp->kode_rekening,
+                            'tanggal_transaksi' => $transaksiAp->tanggal_transaksi->toDateString(),
+                            'jenis_transaksi' => $transaksiAp->jenis_transaksi,
+                            'keterangan_transaksi' => $transaksiAp->keterangan,
+                            'debet' => $transaksiAp->debet,
+                            'kredit' => $transaksiAp->kredit,
+                            'tanggal_posting' => now()->toDateString(),
+                            'keterangan_posting' => 'Post',
+                            'id_admin' => auth()->id() ?? 1,
+                        ];
+
+                        $response = Http::timeout(30)
+                            ->asForm()
+                            ->withHeaders([
+                                'Accept' => 'application/json',
+                            ])
+                            ->post($url_api, $transaksiApi);
+
+                        if ($response->successful()) {
+                            Log::info("Transaksi berhasil", $response->json());
+                        } else {
+                            Log::error("Error API", [
+                                'status' => $response->status(),
+                                'response' => $response->json()
+                            ]);
+                        }
         
-                        TransaksiAp::create([
+                        $transaksiAp = TransaksiAp::create([
                             'kode_branch' => $item->kode_branch,
                             'kode_transaksi' => 'BU'.'/'.$item->kode_branch.'/'.$kode_transaksi,
                             'kode_rekening' => '2500000',
@@ -221,9 +409,38 @@ class klaimController extends Controller
                             'debet' => 0,
                             'kredit' => $item->harga_pembelian * $item->kuantitas,
                         ]);
+
+                        $transaksiApi = [
+                            'unit' => $transaksiAp->kode_branch,
+                            'kode_transaksi' => $transaksiAp->kode_transaksi,
+                            'kode_rekening' => $transaksiAp->kode_rekening,
+                            'tanggal_transaksi' => $transaksiAp->tanggal_transaksi->toDateString(),
+                            'jenis_transaksi' => $transaksiAp->jenis_transaksi,
+                            'keterangan_transaksi' => $transaksiAp->keterangan,
+                            'debet' => $transaksiAp->debet,
+                            'kredit' => $transaksiAp->kredit,
+                            'tanggal_posting' => now()->toDateString(),
+                            'keterangan_posting' => 'Post',
+                            'id_admin' => auth()->id() ?? 1,
+                        ];
+
+                        $response = Http::timeout(30)
+                            ->asForm()
+                            ->withHeaders([
+                                'Accept' => 'application/json',
+                            ])
+                            ->post($url_api, $transaksiApi);
+
+                        if ($response->successful()) {
+                            Log::info("Transaksi berhasil", $response->json());
+                        } else {
+                            Log::error("Error API", [
+                                'status' => $response->status(),
+                                'response' => $response->json()
+                            ]);
+                        }
         
-                        // dd($item->ap->GL);
-                        TransaksiKp::create([
+                        $transaksiKp = TransaksiKp::create([
                             'kode_branch' => 1010,
                             'kode_transaksi' => 'BU'.'/'.'1010'.'/'.$kode_transaksi,
                             'kode_rekening' => '1010'.'-'.$item->ap->GL,
@@ -233,8 +450,38 @@ class klaimController extends Controller
                             'debet' => $item->harga_pembelian * $item->kuantitas,
                             'kredit' => 0
                         ]);
+
+                        $transaksiApi = [
+                            'unit' => $transaksiKp->kode_branch,
+                            'kode_transaksi' => $transaksiKp->kode_transaksi,
+                            'kode_rekening' => $transaksiKp->kode_rekening,
+                            'tanggal_transaksi' => $transaksiKp->tanggal_transaksi->toDateString(),
+                            'jenis_transaksi' => $transaksiKp->jenis_transaksi,
+                            'keterangan_transaksi' => $transaksiKp->keterangan,
+                            'debet' => $transaksiKp->debet,
+                            'kredit' => $transaksiKp->kredit,
+                            'tanggal_posting' => now()->toDateString(),
+                            'keterangan_posting' => 'Post',
+                            'id_admin' => auth()->id() ?? 1,
+                        ];
+
+                        $response = Http::timeout(30)
+                            ->asForm()
+                            ->withHeaders([
+                                'Accept' => 'application/json',
+                            ])
+                            ->post($url_api, $transaksiApi);
+
+                        if ($response->successful()) {
+                            Log::info("Transaksi berhasil", $response->json());
+                        } else {
+                            Log::error("Error API", [
+                                'status' => $response->status(),
+                                'response' => $response->json()
+                            ]);
+                        }
         
-                        TransaksiKp::create([
+                        $transaksiKp = TransaksiKp::create([
                             'kode_branch' => 1010,
                             'kode_transaksi' => 'BU'.'/'.'1010'.'/'.$kode_transaksi,
                             'kode_rekening' => '1010-1312000',
@@ -244,6 +491,36 @@ class klaimController extends Controller
                             'debet' => 0,
                             'kredit' => $item->harga_pembelian * $item->kuantitas
                         ]);
+
+                        $transaksiApi = [
+                            'unit' => $transaksiKp->kode_branch,
+                            'kode_transaksi' => $transaksiKp->kode_transaksi,
+                            'kode_rekening' => $transaksiKp->kode_rekening,
+                            'tanggal_transaksi' => $transaksiKp->tanggal_transaksi->toDateString(),
+                            'jenis_transaksi' => $transaksiKp->jenis_transaksi,
+                            'keterangan_transaksi' => $transaksiKp->keterangan,
+                            'debet' => $transaksiKp->debet,
+                            'kredit' => $transaksiKp->kredit,
+                            'tanggal_posting' => now()->toDateString(),
+                            'keterangan_posting' => 'Post',
+                            'id_admin' => auth()->id() ?? 1,
+                        ];
+
+                        $response = Http::timeout(30)
+                            ->asForm()
+                            ->withHeaders([
+                                'Accept' => 'application/json',
+                            ])
+                            ->post($url_api, $transaksiApi);
+
+                        if ($response->successful()) {
+                            Log::info("Transaksi berhasil", $response->json());
+                        } else {
+                            Log::error("Error API", [
+                                'status' => $response->status(),
+                                'response' => $response->json()
+                            ]);
+                        }
                     } // jurnal klaim untuk cabang
                 }
             }

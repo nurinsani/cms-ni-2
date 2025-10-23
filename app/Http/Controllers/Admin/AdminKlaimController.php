@@ -27,7 +27,7 @@ class AdminKlaimController extends Controller
     public function klaim_peralatan()
     {
         $data['title'] = 'Pengajuan Peralatan';
-        $data['temp_pengajuan'] = TempPengajuanDetail::all();
+        $data['temp_pengajuan'] = TempPengajuanDetail::where('user_id', auth()->user()->id)->get();
         $data['jenis_peralatan'] = JenisPeralatan::all();
         $data['rekening'] = Rekening::all();
         $data['param_peralatan'] = ParamPeralatan::whereHas('jenis_bdd', function($query) {
@@ -40,7 +40,7 @@ class AdminKlaimController extends Controller
     public function klaim_inventaris()
     {
         $data['title'] = 'Pengajuan Peralatan';
-        $data['temp_pengajuan'] = TempPengajuanDetail::all();
+        $data['temp_pengajuan'] = TempPengajuanDetail::where('user_id', auth()->user()->id)->get();
         $data['jenis_peralatan'] = JenisPeralatan::all();
         $data['rekening'] = Rekening::all();
         $data['param_peralatan'] = ParamPeralatan::whereHas('jenis_bdd', function($query) {
@@ -81,7 +81,7 @@ class AdminKlaimController extends Controller
             $data['status_approve'] = 'klaim-admin-head';
         }
         
-        $temp_pengajuan = TempPengajuanDetail::all();
+        $temp_pengajuan = TempPengajuanDetail::where('user_id', auth()->user()->id)->get();
         $pengajuan = Pengajuan::create($data);
         
         foreach ($temp_pengajuan as $item) {
@@ -104,10 +104,12 @@ class AdminKlaimController extends Controller
             $pengajuan_detail->moa = $item->moa;
             $pengajuan_detail->umur = $item->umur;
             $pengajuan_detail->keterangan = $request->keterangan;
+            $pengajuan_detail->status_branch = $request->status_branch;
             $pengajuan_detail->save();
         }
         
-        TempPengajuanDetail::query()->delete();
+        TempPengajuanDetail::where('user_id', auth()->user()->id)->delete();
+        
         return redirect('admin/klaim-pembelian')->with('success', 'Data berhasil dibuat');
     }
 
@@ -115,7 +117,7 @@ class AdminKlaimController extends Controller
     {
         $title = 'Detail';
         $klaim = Pengajuan::findOrFail($id);
-        $branch = Branch::where('code_area', 'kode_area')->get();
+        $branch = Branch::where('code_area', auth()->user()->code_area)->get();
         return view('admin.klaim-pembelian.detail', compact('title', 'klaim'));
     }
 }

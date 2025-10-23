@@ -23,6 +23,7 @@ class TempPengajuanDetailController extends Controller
         $temp_pengajuan_detail = New TempPengajuanDetail;
         $temp_pengajuan_detail->jenis_peralatan_id = $request->jenis_peralatan_id;
         $temp_pengajuan_detail->rekening_id = $request->rekening_id;
+        $temp_pengajuan_detail->status_branch = $request->status_branch;
         $temp_pengajuan_detail->kode_branch = $request->kode_branch;
         $temp_pengajuan_detail->kode_area = $request->kode_area;
         $temp_pengajuan_detail->kode_user = $request->kode_user;
@@ -39,6 +40,7 @@ class TempPengajuanDetailController extends Controller
         $temp_pengajuan_detail->keterangan = $request->keterangan;
         $temp_pengajuan_detail->umur = $request->umur;
         $temp_pengajuan_detail->status_lpj = 'belum';
+        $temp_pengajuan_detail->user_id = auth()->user()->id;
 
         if ($request->has('moa')) {
             $file = $request->moa;

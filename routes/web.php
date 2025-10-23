@@ -151,6 +151,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('approval-mutasi/detail/{id}', [App\Http\Controllers\Akunting\ApprovalMutasiController::class, 'show']);
         Route::post('approval-mutasi/approve/{id}', [App\Http\Controllers\Akunting\ApprovalMutasiController::class, 'approve']);
         Route::post('approval-mutasi/tolak/{id}', [App\Http\Controllers\Akunting\ApprovalMutasiController::class, 'tolak']);
+        
 
         Route::resources([
             'jenis-peralatan' => JenisPeralatanController::class,
@@ -407,6 +408,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/penyusutan-gol-2', [PenyusutanGol2Controller::class, 'index'])->name('penyusutanGol2.index');
     Route::post('/penyusutan-gol-2', [PenyusutanGol2Controller::class, 'jalankanPenyusutanGol2'])->name('jalankanPenyusutanGol2');
     Route::post('/jurnal-penyusutan-gol-2', [PenyusutanGol2Controller::class, 'jalankanJurnalPenyusutanGol2'])->name('jalankanJurnalPenyusutanGol2');
+    Route::post('/jurnal-pembebanan-gol-2', [PenyusutanGol2Controller::class, 'jalankanJurnalPembebananGol2'])->name('jalankanJurnalPembebananGol2');
 
     Route::get('/get/area-by-branch/{id}', [MiscController::class, 'areaByBranch']);
     Route::post('/get-branches', [DataUserController::class, 'getBranches']);

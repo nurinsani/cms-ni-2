@@ -212,6 +212,9 @@
     <script src="{{ asset('/AdminLTE/plugins/datatables-buttons/js/buttons.print.min.js') }}"></script>
     <script src="{{ asset('/AdminLTE/plugins/datatables-buttons/js/buttons.colVis.min.js') }}"></script>
 
+    <!-- JSZip untuk Excel -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
     <!-- Select2 -->
     <script src="{{ asset('/AdminLTE/plugins/select2/js/select2.full.min.js') }}"></script>
 
@@ -226,15 +229,16 @@
                 "ordering": false,
                 "buttons": ["copy", "csv", "excel", "pdf", "print"]
             }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+
             $('#example2').DataTable({
                 "paging": true,
                 "lengthChange": true,
                 "searching": true,
                 "ordering": true,
-                "info": false,
                 "autoWidth": false,
-                "responsive": false,
-            });
+                "buttons": ["copy", "csv", "excel", "pdf", "print"]
+            }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+
             $('.myTable').DataTable({
                 "paging": true,
                 "lengthChange": true,

@@ -15,8 +15,8 @@ return new class extends Migration
     {
         Schema::create('pengajuan_mutasi_detail', function (Blueprint $table) {
             $table->id();
-            $table->integer('pengajuan_mutasi_id ');
-            $table->integer('peralatan_id ');
+            $table->integer('pengajuan_mutasi_id');
+            $table->integer('peralatan_id');
             $table->timestamps();
         });
     }

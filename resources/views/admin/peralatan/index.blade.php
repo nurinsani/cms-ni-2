@@ -19,7 +19,7 @@
 <div class="card">
     <!-- /.card-header -->
     <div class="card-body">
-      <table id="example2" class="table table-bordered table-hover">
+      <table id="example1" class="table table-bordered table-hover">
         <thead>
         <tr>
           <th>No</th>
@@ -59,3 +59,32 @@
     <!-- /.card-body -->
   </div>
 @endsection
+
+@push('js')
+    <script>
+      $(document).ready(function() {
+          $('#example1').DataTable({
+              dom: 'Bfrtip', // Atur posisi tombol
+              buttons: [
+                  {
+                      extend: 'excelHtml5',
+                      title: 'Daftar Peralatan',
+                      text: 'Export Excel',
+                      className: 'btn btn-success btn-sm'
+                  },
+                  {
+                      extend: 'csvHtml5',
+                      title: 'Daftar Peralatan',
+                      text: 'Export CSV',
+                      className: 'btn btn-primary btn-sm'
+                  },
+                  {
+                      extend: 'print',
+                      text: 'Print',
+                      className: 'btn btn-warning btn-sm'
+                  }
+              ]
+          });
+      });
+</script>
+@endpush

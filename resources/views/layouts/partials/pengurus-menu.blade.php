@@ -48,11 +48,11 @@
         </li>
 
         <li class="nav-item">
-            <a href="{{ url('pengurus/approval-bdd') }}"
-                class="nav-link {{ request()->is('pengurus/approval-bdd*') ? 'active' : '' }}">
+            <a href="{{ url('pengurus/approval-mutasi') }}"
+                class="nav-link {{ request()->is('pengurus/pengajuan-mutasi*') ? 'active' : '' }}">
                 <i class="nav-icon far fa-circle nav-icon"></i>
                 <p>
-                    BDD
+                    Mutasi
                 </p>
             </a>
         </li>

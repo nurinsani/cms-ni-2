@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Models\HistoryApprove;
 use App\Models\TransaksiKp;
+use Illuminate\Support\Facades\Http;
 
 class ApprovalPeralatanController extends Controller
 {
@@ -60,7 +61,7 @@ class ApprovalPeralatanController extends Controller
             $data['kode_approve2'] = $pengajuan->id.'/'.$pengajuan->updated_at->format('Y-m-d-Hid').'/'.$pengajuan->approval2->id.'/'.$nomor_urut;
             $data['kode_approve3'] = $pengajuan->id.'/'.$pengajuan->updated_at->format('Y-m-d-Hid').'/'.$pengajuan->approval3->id.'/'.$nomor_urut;
             $data['kode_approve4'] = $kode_approve4 = $pengajuan->id.'/'.$pengajuan->updated_at->format('Y-m-d-Hid').'/'.$pengajuan->approval4->id.'/'.$nomor_urut;
-            $data['kode_approve6'] = $pengajuan->id.'/'.$pengajuan->updated_at->format('Y-m-d-Hid').'/'.$pengajuan->approval6->id.'/'.$nomor_urut;
+            $data['kode_approve6'] = $pengajuan->id.'/'.$pengajuan->updated_at->format('Y-m-d-Hid').'/'.(optional($pengajuan->approval6)->id ?? 0) .'/'.$nomor_urut;
 
         }
 
@@ -84,7 +85,7 @@ class ApprovalPeralatanController extends Controller
         try {
             DB::beginTransaction();
             $pengajuan = Pengajuan::findOrfail($id);
-            $pengajuan->status_approve = 'lpj-admin';
+            $pengajuan->status_approve = 'finance';
             $pengajuan->approval_4 = auth()->user()->id;
             $pengajuan->save();
 
@@ -92,16 +93,20 @@ class ApprovalPeralatanController extends Controller
                 
             }
 
-            if ($item->kode_area == true) {
+            if ($item->status_branch == 'AREA') {
                 $keterangan = strtoupper('UM PEMBELIAN' . ' ' . $item->jenis_peralatan->nama_jenis . ' ' . 'WILAYAH' . ' ' . $item->area->area);
-            } elseif ($item->kode_branch == '1010') {
-                $keterangan = strtoupper('UM PEMBELIAN' . ' ' . $item->jenis_peralatan->nama_jenis . ' ' . 'KANTOR PUSAT');
-            } else {
+            } elseif ($item->status_branch == 'UNIT') {
                 $keterangan = strtoupper('UM PEMBELIAN' . ' ' . $item->jenis_peralatan->nama_jenis . ' ' . 'AP' . ' ' .  $item->ap->unit);
+            } else {
+                $keterangan = strtoupper('UM PEMBELIAN' . ' ' . $item->jenis_peralatan->nama_jenis . ' ' . 'KANTOR PUSAT');
             }
+
+            $url_api = 'http://192.168.1.7:8080/api/transaksi'; // URL API lokal
+            // $url_api = 'http://36.64.7.130:7117/nurinsani/api/transaksi_cms.php?function=insert_transaksi'; // URL API test
+            // $url_api = 'http://192.168.88.4/nurinsani/api/transaksi_cms.php?function=insert_transaksi';// URL API production
             
             $kode_transaksi = date('m').random_int(100000, 999999);
-            TransaksiKp::create([
+            $transaksiKp = TransaksiKp::create([
                 'kode_branch' => 1010,
                 'kode_transaksi' => 'BU'.'/'.'1010'.'/'.$kode_transaksi,
                 'kode_rekening' => '1010-1929000',
@@ -112,7 +117,37 @@ class ApprovalPeralatanController extends Controller
                 'kredit' => 0
             ]);
 
-            TransaksiKp::create([
+            $transaksiApi = [
+                'unit' => $transaksiKp->kode_branch,
+                'kode_transaksi' => $transaksiKp->kode_transaksi,
+                'kode_rekening' => $transaksiKp->kode_rekening,
+                'tanggal_transaksi' => $transaksiKp->tanggal_transaksi->toDateString(),
+                'jenis_transaksi' => $transaksiKp->jenis_transaksi,
+                'keterangan_transaksi' => $transaksiKp->keterangan,
+                'debet' => $transaksiKp->debet,
+                'kredit' => $transaksiKp->kredit,
+                'tanggal_posting' => now()->toDateString(),
+                'keterangan_posting' => 'Post',
+                'id_admin' => auth()->id() ?? 1,
+            ];
+
+            $response = Http::timeout(30)
+            ->asForm()
+            ->withHeaders([
+                'Accept' => 'application/json',
+            ])
+            ->post($url_api, $transaksiApi);
+
+            if ($response->successful()) {
+                Log::info("Transaksi berhasil", $response->json());
+            } else {
+                Log::error("Error API", [
+                    'status' => $response->status(),
+                    'response' => $response->json()
+                ]);
+            }
+
+            $transaksiKp = TransaksiKp::create([
                 'kode_branch' => 1010,
                 'kode_transaksi' => 'BU'.'/'.'1010'.'/'.$kode_transaksi,
                 'kode_rekening' => '1010-1312000',
@@ -122,6 +157,36 @@ class ApprovalPeralatanController extends Controller
                 'debet' => 0,
                 'kredit' => $pengajuan->subtotal(),
             ]);
+
+            $transaksiApi = [
+                'unit' => $transaksiKp->kode_branch,
+                'kode_transaksi' => $transaksiKp->kode_transaksi,
+                'kode_rekening' => $transaksiKp->kode_rekening,
+                'tanggal_transaksi' => $transaksiKp->tanggal_transaksi->toDateString(),
+                'jenis_transaksi' => $transaksiKp->jenis_transaksi,
+                'keterangan_transaksi' => $transaksiKp->keterangan,
+                'debet' => $transaksiKp->debet,
+                'kredit' => $transaksiKp->kredit,
+                'tanggal_posting' => now()->toDateString(),
+                'keterangan_posting' => 'Post',
+                'id_admin' => auth()->id() ?? 1,
+            ];
+
+            $response = Http::timeout(30)
+            ->asForm()
+            ->withHeaders([
+                'Accept' => 'application/json',
+            ])
+            ->post($url_api, $transaksiApi);
+
+            if ($response->successful()) {
+                Log::info("Transaksi berhasil", $response->json());
+            } else {
+                Log::error("Error API", [
+                    'status' => $response->status(),
+                    'response' => $response->json()
+                ]);
+            }
 
             DB::commit();
             return redirect()->back()->with('success', 'Data berhasil Approve');

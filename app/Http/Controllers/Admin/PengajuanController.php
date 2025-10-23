@@ -82,16 +82,12 @@ class PengajuanController extends Controller
         $kode_tahun = date('Y');
         $kode_bulan = date('m');
         $kode_tanggal = date('d');
-        // dd($kode_tanggal);
 
         if ($pengajuan == null) {
             $nomor_urut = '0001';
         } else {
             $nomor_urut = substr($pengajuan->nomor, 16, 4) + 1;
-            // $nomor_urut = strval(substr($pengajuan->nomor, 18, 4) + 1);
-            // $nomor_urut = substr($pengajuan->nomor, 18, 4) + 1;
             $nomor_urut = "000". $nomor_urut;
-            // $nomor_urut = str_pad($nomor_urut, 4, "0", STR_PAD_LEFT);
         }
 
         $data['nomor'] = $kode_branch.'/'.$kode_tanggal.$kode_bulan.$kode_tahun.'/'.$nomor_urut;
@@ -106,12 +102,13 @@ class PengajuanController extends Controller
         }
         
         $pengajuan = Pengajuan::create($data);
-        $temp_pengajuan = TempPengajuanDetail::all();
+        $temp_pengajuan = TempPengajuanDetail::where('user_id', auth()->user()->id)->get();
         
         foreach ($temp_pengajuan as $item) {
             $pengajuan_detail = New PengajuanDetail;
             $pengajuan_detail->pengajuan_id = $pengajuan->id;
             $pengajuan_detail->rekening_id = $item->rekening_id;
+            $pengajuan_detail->status_branch = $item->status_branch;
             $pengajuan_detail->kode_branch = $item->kode_branch;
             $pengajuan_detail->kode_area = $item->kode_area;
             $pengajuan_detail->kode_user = $item->kode_user;
@@ -134,7 +131,7 @@ class PengajuanController extends Controller
         if ($temp_pengajuan == null) {
             return redirect()->back()->with('success', 'Hmmm SAlah!');
         }
-        TempPengajuanDetail::query()->delete();
+        TempPengajuanDetail::where('user_id', auth()->user()->id)->delete();
 
         // $this->sendWhatsAppNotification($pengajuan);
 

@@ -15,11 +15,10 @@
 @endsection
 
 @section('content')
-<a href="{{ url('admin/export-excel-peralatan') }}" class="btn btn-sm btn-success my-2">Export</a>
 <div class="card">
     <!-- /.card-header -->
     <div class="card-body">
-      <table id="example2" class="table table-bordered table-hover">
+      <table id="example1" class="table table-bordered table-hover">
         <thead>
         <tr>
           <th>No</th>

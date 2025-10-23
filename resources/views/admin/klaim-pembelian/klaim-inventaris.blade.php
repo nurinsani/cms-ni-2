@@ -117,16 +117,15 @@
                                     <label for="" class="form-label">Pilih Branch</label>
                                     <select id="select-option" class="form-control">
                                         <option value="" hidden>-- Pilih Branch --</option>
-                                        <option value="ap">Unit</option>
-                                        <option value="cabang">Area</option>
-                                        <option value="region">Region</option>
+                                        <option value="ap">AP</option>
+                                        <option value="cabang">Wilayah</option>
                                     </select>
                                 </div>
-
+                                
                                 <div id="select-ap" class="form-group d-none">
-                                    <label for="" class="form-label">Pilih Unit</label>
+                                    <label for="" class="form-label">Pilih AP</label>
                                     <select name="kode_branch" id="kode_branch" class="form-control select2bs4">
-                                        <option value="">-- Pilih Unit --</option>
+                                        <option value="">-- Pilih AP --</option>
                                         @foreach ($branch as $item)
                                             <option value="{{ $item->kode_branch }}">{{ $item->unit }}</option>
                                         @endforeach
@@ -134,9 +133,9 @@
                                 </div>
                                 
                                 <div id="select-cabang" class="form-group d-none">
-                                    <label for="" class="form-label">Pilih Area</label>
+                                    <label for="" class="form-label">Pilih Wilayah</label>
                                     <select name="kode_area" id="kode_area" class="form-control">
-                                        <option value="">-- Pilih Area --</option>
+                                        <option value="">-- Pilih Wilayah --</option>
                                         @foreach ($branch as $item)
                                         @endforeach
                                         <option value="{{ $item->code_area }}">{{ $item->area }}</option>

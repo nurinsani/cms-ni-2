@@ -185,6 +185,8 @@
                         <br>
                         <b class="mt-1 d-block">Admin</b>
                     </div>
+
+                    @if ($pengajuan->approval1 !== null || $pengajuan->approval6 !== null)
                     <div class="col text-center">
                         <p>Diketahui Oleh,</p>
                         @if ($pengajuan->approval1 == NULL)
@@ -205,6 +207,7 @@
                             <b class="mt-1 d-block">Admin Head</b>
                         @endif
                     </div>
+                    @endif
                     <div class="col text-center">
                         <p>Disetujui Oleh,</p>
                         {!! DNS2D::getBarcodeSVG($kode_approve3, 'QRCODE', 2, 2) !!}

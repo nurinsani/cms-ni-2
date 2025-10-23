@@ -11,6 +11,7 @@ use App\Models\TransaksiPenyusutanAp;
 use App\Models\TransaksiPenyusutanKp;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class PenyusutanController extends Controller
@@ -30,10 +31,10 @@ class PenyusutanController extends Controller
         ->exists(); // Menggunakan exists() untuk pengecekan cepat
 
         if ($penyusutanSudahAda) {
-        // Jika sudah ada penyusutan di bulan ini, tampilkan alert error ini geis
+
         return redirect()->back()->with('error', 'Proses penyusutan untuk bulan ini sudah dilakukan.');
+
         } else {
-            // Inventaris::penyusutan();
             try {
                 DB::beginTransaction();
     
@@ -63,18 +64,15 @@ class PenyusutanController extends Controller
                             continue;
                         }
                     
-                        $hasil_penyusutan = $harga_perolehan > 0 && $penyusutan > 0 ?
-                            $harga_perolehan / $penyusutan :
-                            0;
-                    
-                        // $hasil_pembebanan = $hasil_penyusutan / $debet->count();
+                        $hasil_penyusutan = $harga_perolehan > 0 && $penyusutan > 0 ? $harga_perolehan / $penyusutan : 0;
                     
                         $branch = Branch::where('kode_branch', $kode_branch)->first();
                     
-                        if ($tanggal_sekarang == 13) {
+                        if ($tanggal_sekarang == 15) {
+                        // if ($tanggal_sekarang == date('d')) {
                             if ($value->penyusutan_ke + count($value->susut) !== 48) {
                                 // Tambahkan logika untuk penyusutan dua kali jika tanggal perolehan antara 16-31 dan penyusutan awal 0
-                                if (count($value->susut) == 0 && intval(date('d', strtotime($value->tanggal_perolehan))) >= 16) {
+                                if (count($value->susut) == 0 && intval(date('d', strtotime($value->tanggal_perolehan))) >= 15) {
                                     if ($value->status_branch !== 'AUDIT') {
                                         // Lakukan penyusutan dua kali
                                         for ($j = 0; $j < 2; $j++) {
@@ -127,36 +125,43 @@ class PenyusutanController extends Controller
 
             return redirect()->back()->with('success', 'Proses penyusutan berhasil dijalankan.');
         }
-        // cek tanggal nya juga, hanya bisa di akses hanya di tanggal 15
     }
 
     public function jalankanJurnalPenyusutan(Request $request)
     {
+                        $url_api = 'http://192.168.1.13:5500/api/transaksi'; // URL API lokal
+                // $url_api = 'http://36.64.7.130:7117/nurinsani/api/transaksi_cms.php?function=insert_transaksi'; // URL API test
+                // $url_api = 'http://192.168.88.4/nurinsani/api/transaksi_cms.php?function=insert_transaksi';// URL API production
         try {
             DB::beginTransaction();
     
             $i = 0;
     
+            // Mengecek apakah sudah ada data penyusutan untuk bulan dan tahun ini (tidak digunakan di bawah)
             $penyusutan = Penyusutan::whereMonth('tanggal_penyusutan', date('m'))
                 ->whereYear('tanggal_penyusutan', date('Y'))
                 ->first();
     
+                // ambil semua branch
                 $branches = Branch::all();
     
                 foreach ($branches as $branch) {
+                    // Ambil data penyusutan untuk branch ini di bulan dan tahun ini, dan status_branch 'AP' atau 'ALL'
                     $penyusutan = Penyusutan::where('kode_branch', $branch->kode_branch)
                         ->whereMonth('tanggal_penyusutan', date('m'))
                         ->whereYear('tanggal_penyusutan', date('Y'))
-                        ->whereIn('status_branch', ['AP', 'ALL'])
+                        // ->whereIn('status_branch', ['AP', 'ALL'])
                         ->get();
     
                     if (count($penyusutan) > 0) {
+                        // Hitung total penyusutan bulan ini untuk cabang ini
                         $penyusutan_per_bulan = Penyusutan::where('kode_branch', $branch->kode_branch)
                             ->whereMonth('tanggal_penyusutan', date('m'))
                             ->whereYear('tanggal_penyusutan', date('Y'))
                             ->sum('penyusutan_per_bulan');
     
                         if ($branch->kode_branch == '1010') {
+                             // Cek apakah sudah ada transaksi debet dan kredit sebelumnya
                             $transaksiKpDebet = TransaksiPenyusutanKp::where('kode_branch', $branch->kode_branch)
                                 ->whereMonth('tanggal_transaksi', date('m'))
                                 ->whereYear('tanggal_transaksi', date('Y'))
@@ -171,6 +176,7 @@ class PenyusutanController extends Controller
     
                             $kode_transaksi = date('m') . random_int(100000, 999999);
                             if ($transaksiKpDebet && $transaksiKpKredit) {
+                                // jika transaksi udah ada, lakukan update nominal
                                 TransaksiPenyusutanKp::where('id', $transaksiKpDebet->id)->update([
                                     'debet' => $penyusutan_per_bulan,
                                 ]);
@@ -179,7 +185,7 @@ class PenyusutanController extends Controller
                                     'kredit' => $penyusutan_per_bulan,
                                 ]);
                             } else {
-                                TransaksiPenyusutanKp::create([
+                                $transaksiPenyusutanKp = TransaksiPenyusutanKp::create([
                                     'kode_branch' => $branch->kode_branch,
                                     'kode_transaksi' => 'BU' . '/' . $branch->kode_branch . '/' . $kode_transaksi,
                                     'kode_rekening' => '1010-52915',
@@ -189,8 +195,38 @@ class PenyusutanController extends Controller
                                     'debet' => $penyusutan_per_bulan,
                                     'kredit' => 0,
                                 ]);
+
+                                // $transaksiApi = [
+                                //     'unit' => $transaksiPenyusutanKp->kode_branch,
+                                //     'kode_transaksi' => $transaksiPenyusutanKp->kode_transaksi,
+                                //     'kode_rekening' => $transaksiPenyusutanKp->kode_rekening,
+                                //     'tanggal_transaksi' => $transaksiPenyusutanKp->tanggal_transaksi->toDateString(),
+                                //     'jenis_transaksi' => $transaksiPenyusutanKp->jenis_transaksi,
+                                //     'keterangan_transaksi' => $transaksiPenyusutanKp->keterangan,
+                                //     'debet' => $transaksiPenyusutanKp->debet,
+                                //     'kredit' => $transaksiPenyusutanKp->kredit,
+                                //     'tanggal_posting' => now()->toDateString(),
+                                //     'keterangan_posting' => 'Post',
+                                //     'id_admin' => auth()->id() ?? 1,
+                                // ];
+
+                                // $response = Http::timeout(30)
+                                //     ->asForm()
+                                //     ->withHeaders([
+                                //         'Accept' => 'application/json',
+                                //     ])
+                                //     ->post($url_api, $transaksiApi);
+
+                                // if ($response->successful()) {
+                                //     Log::info("Transaksi berhasil", $response->json());
+                                // } else {
+                                //     Log::error("Error API", [
+                                //         'status' => $response->status(),
+                                //         'response' => $response->json()
+                                //     ]);
+                                // }
     
-                                TransaksiPenyusutanKp::create([
+                                $transaksiPenyusutanKp = TransaksiPenyusutanKp::create([
                                     'kode_branch' => $branch->kode_branch,
                                     'kode_transaksi' => 'BU' . '/' . $branch->kode_branch . '/' . $kode_transaksi,
                                     'kode_rekening' => '1010-1672000',
@@ -200,8 +236,39 @@ class PenyusutanController extends Controller
                                     'debet' => 0,
                                     'kredit' => $penyusutan_per_bulan,
                                 ]);
+
+                                // $transaksiApi = [
+                                //     'unit' => $transaksiPenyusutanKp->kode_branch,
+                                //     'kode_transaksi' => $transaksiPenyusutanKp->kode_transaksi,
+                                //     'kode_rekening' => $transaksiPenyusutanKp->kode_rekening,
+                                //     'tanggal_transaksi' => $transaksiPenyusutanKp->tanggal_transaksi->toDateString(),
+                                //     'jenis_transaksi' => $transaksiPenyusutanKp->jenis_transaksi,
+                                //     'keterangan_transaksi' => $transaksiPenyusutanKp->keterangan,
+                                //     'debet' => $transaksiPenyusutanKp->debet,
+                                //     'kredit' => $transaksiPenyusutanKp->kredit,
+                                //     'tanggal_posting' => now()->toDateString(),
+                                //     'keterangan_posting' => 'Post',
+                                //     'id_admin' => auth()->id() ?? 1,
+                                // ];
+
+                                // $response = Http::timeout(30)
+                                //     ->asForm()
+                                //     ->withHeaders([
+                                //         'Accept' => 'application/json',
+                                //     ])
+                                //     ->post($url_api, $transaksiApi);
+
+                                // if ($response->successful()) {
+                                //     Log::info("Transaksi berhasil", $response->json());
+                                // } else {
+                                //     Log::error("Error API", [
+                                //         'status' => $response->status(),
+                                //         'response' => $response->json()
+                                //     ]);
+                                // }
                             }
                         } else {
+                            // jurnal penyusutan untuk AP
                             $transaksiApKredit = TransaksiPenyusutanAp::where('kode_branch', $branch->kode_branch)
                                 ->whereMonth('tanggal_transaksi', date('m'))
                                 ->whereYear('tanggal_transaksi', date('Y'))
@@ -256,23 +323,11 @@ class PenyusutanController extends Controller
         } catch (\Throwable $th) {
             DB::rollBack();
     
-            dd($th);
+            // dd($th);
             Log::error($th->getMessage());
         }
     
         return redirect()->back()->with('success', 'Proses penyusutan berhasil dijalankan.');
-
-        // // Cek apakah penyusutan sudah dilakukan di bulan ini
-        // $penyusutanSudahAda = Penyusutan::whereMonth('tanggal_penyusutan', date('m'))
-        // ->whereYear('tanggal_penyusutan', date('Y'))
-        // ->exists(); // Menggunakan exists() untuk pengecekan cepat
-
-        // if ($penyusutanSudahAda) {
-        // // Jika sudah ada penyusutan di bulan ini, tampilkan alert error ini geis
-        // return redirect()->back()->with('error', 'Proses penyusutan untuk bulan ini sudah dilakukan.');
-        // } else {
-        // }
-        // // cek tanggal nya juga, hanya bisa di akses hanya di tanggal 15
     }
 
     public function jalankanJurnalPembebanan(Request $request)
@@ -282,11 +337,15 @@ class PenyusutanController extends Controller
 
             $i = 0;
     
+            // mengambil data penyusutan untuk bulan dan tahun berjalan
+            // kecuali yang memiliki status_branch 'AP' atau 'ALL'
             $pembebanan = Penyusutan::whereMonth('tanggal_penyusutan', date('m'))
                     ->whereYear('tanggal_penyusutan', date('Y'))
                     ->whereNotIn('status_branch', ['AP', 'ALL'])
+                    ->whereNotIn('kode_branch', ['1010'])
                     ->get();
 
+                // jika ada data penyusutan
                 if (count($pembebanan) > 0) {
                     foreach ($pembebanan as $row) {
                         $status_branch = $row->status_branch;
@@ -303,22 +362,24 @@ class PenyusutanController extends Controller
                             })
                             ->count();
 
-                        $credit = round($row->penyusutan_per_bulan);
+                        $credit = round($row->penyusutan_per_bulan); // nilai penyusutan yg dibulatkan
 
                         $credit = round($credit);
 
                         $ids = [];
                         $gl = [];
 
+                        // jika termasuk region (pembebanan berdasarkan region)
                         if ($isRegion > 0) {
-
+                            // logic khusus untuk status_branch 9999 (region khusus)
                             if ($status_branch == '9999') {
                                 $otherBranches = Branch::whereIn('code_region', ['3333', '2222'])
                                     // ->where('kode_branch', '<>', $row->kode_branch)
                                     ->where('status_aktif', 'aktif')
                                     ->get();
 
-                                // $debet = round(($credit / (count($otherBranches))));
+                                // Hitung debet dengan membagi credit dengan jumlah branch + 1
+                                // (termasuk branch asal)
                                 $debet = round(($credit / (count($otherBranches) + 1)));
                             } else {
                                 $debet = round(($credit / ($isRegion)));
@@ -326,10 +387,10 @@ class PenyusutanController extends Controller
                                 $otherBranches = Branch::where('code_region', $status_branch)
                                     ->where('kode_branch', '<>', $row->kode_branch)
                                     ->where('status_aktif', 'aktif')
-                                    ->where(function ($query) {
-                                        $query->whereNull('status_pembebanan') // Jika null, tetap eksekusi
-                                              ->orWhere('status_pembebanan', '!=', 'no'); // Jika bukan 'no', tetap eksekusi
-                                    })
+                                    // ->where(function ($query) {
+                                    //     $query->whereNull('status_pembebanan') // Jika null, tetap eksekusi
+                                    //           ->orWhere('status_pembebanan', '!=', 'no'); // Jika bukan 'no', tetap eksekusi
+                                    // })
                                     ->get();
                             }
 
@@ -411,6 +472,7 @@ class PenyusutanController extends Controller
                                 'kredit' => $credit,
                             ]);
                         } else {
+                            // Area normal
                             if ($isArea != 0) {
                                 $debet = round(($credit / $isArea));
                                 $credit = $credit;
@@ -438,6 +500,13 @@ class PenyusutanController extends Controller
 
                                 $debet = round(($credit / (count($otherBranches) + 1)));
                                 
+                            } elseif ($status_branch == '9998') {
+                                $otherBranches = Branch::whereIn('code_region', ['3333', '2222'])
+                                    ->where('kode_branch', '<>', $row->kode_branch)
+                                    ->where('status_aktif', 'aktif')
+                                    ->get();
+
+                                $debet = round(($credit / (count($otherBranches) + 1)));
                             } else {
                                 if ($isArea != 0) {
                                     $debet = round(($credit / $isArea));
@@ -460,6 +529,7 @@ class PenyusutanController extends Controller
 
                             $kode_transaksi_kp = date('m') . random_int(100000, 999999);
 
+                            // kode yang akan diulang
                             for ($j = 0; $j < count($ids); $j++) {
                                 TransaksiPembebananKp::create([
                                     'kode_branch' => 1010,
