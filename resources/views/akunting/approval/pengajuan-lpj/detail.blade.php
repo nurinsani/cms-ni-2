@@ -72,6 +72,7 @@
                                     <th scope="col">COA</th>
                                     <th scope="col">Nama jenis Peralatan</th>
                                     <th scope="col">Merk/Type</th>
+                                    <!-- <th scope="col">Qty</th> -->
                                     <th scope="col">Pengajuan</th>
                                     <th scope="col">Harga Pembelian</th>
                                     <th>Struk pembelian</th>
@@ -86,6 +87,7 @@
                                         <td>{{ $item->jenis_peralatan->param_peralatan->coa }}</td>
                                         <td>{{ $item->jenis_peralatan->nama_jenis }}</td>
                                         <td>{{ $item->merk }} {{ $item->type }}</td>
+                                        <!-- <td>{{ $item->kuantitas }}</td> -->
                                         <td>Rp. {{ number_format($item->harga * $item->kuantitas) }}</td>
                                         <td>Rp. {{ number_format($item->harga_pembelian) }}</td>
                                         <td><a href="" onclick="window.open('{{ url('images/lpj/struk_pembelian/'.$item->struk_pembelian) }}')">{{ $item->struk_pembelian }}</a></td>

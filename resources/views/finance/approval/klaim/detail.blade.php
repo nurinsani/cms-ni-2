@@ -57,11 +57,7 @@
                         <th scope="col">Kuantitas</th>
                         <th scope="col">Jumlah</th>
                         <th scope="col">Total</th>
-                        @foreach ($pengajuan->pengajuan_details as $item)
-                        @if ($item->jenis_peralatan->group_inventaris == 'ya')
                         <th scope="col">MOA</th>
-                        @endif
-                        @endforeach
                         <th scope="col">Bukti Pembelian</th>
                     </tr>
                 </thead>
@@ -109,17 +105,19 @@
                                 @endforeach
                             </ul>
                         </td>
-                        @if ($item->jenis_peralatan->group_inventaris == 'ya')
                         <td>
+                            @foreach ($pengajuan->pengajuan_details as $item)
                             <ul class="p-0" style="list-style: none">
-                                @foreach ($pengajuan->pengajuan_details as $item)
                                 <a href="" onclick="window.open('{{ url('files/moa/'.$item->moa) }}')">{{ $item->moa }}</a>
-                                @endforeach
                             </ul>
+                            @endforeach
                         </td>
-                        @endif
                         <td>
+                        @foreach ($pengajuan->pengajuan_details as $item)
+                        <ul class="p-0" style="list-style: none">
                             <a href="" onclick="window.open('{{ url('files/struk_pembelian/'.$item->struk_pembelian) }}')">{{ $item->struk_pembelian }}</a>
+                            </ul>
+                            @endforeach
                         </td>
                     </tr>
                 </tbody>

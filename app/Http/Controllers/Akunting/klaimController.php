@@ -39,71 +39,39 @@ class klaimController extends Controller
             $pengajuan->approval_2 = auth()->user()->id;
 
             foreach ($pengajuan->pengajuan_details as $item) {
-                if ($item->harga_pembelian > 500000) {
-                    if ($item->tanggal_perolehan >= 16) {
-                        if ($item->kode_branch == NULL) {
-                            RencanaPenyusutan::create([
-                                'user_id' => auth()->user()->id,
-                                'kode_branch' => $item->kode_area,
-                                'status_branch' => 'AP',
-                                'kode_peralatan' => 'INV-NI-'.$pengajuan->nomor,
-                                'jenis' => $item->jenis_peralatan->nama_jenis,
-                                'merk' => $item->merk,
-                                'type' => $item->type,
-                                'tanggal_perolehan' => $item->tanggal_perolehan,
-                                'jumlah' => $item->kuantitas,
-                                'harga_perolehan' => $item->harga_pembelian,
-                                'umur' => 48,
-                                'keterangan' => $item->keterangan
-                            ]);
-                        } else {
-                            RencanaPenyusutan::create([
-                                'user_id' => auth()->user()->id,
-                                'kode_branch' => $item->kode_branch,
-                                'status_branch' => 'AP',
-                                'kode_peralatan' => 'INV-NI-'.$pengajuan->nomor,
-                                'jenis' => $item->jenis_peralatan->nama_jenis,
-                                'merk' => $item->merk,
-                                'type' => $item->type,
-                                'tanggal_perolehan' => $item->tanggal_perolehan,
-                                'jumlah' => $item->kuantitas,
-                                'harga_perolehan' => $item->harga_pembelian,
-                                'umur' => 48,
-                                'keterangan' => $item->keterangan
-                            ]);
-                        }
+                if (($item->harga_pembelian / $item->kuantitas) >= 500000) {
+                    if ($item->kode_branch == NULL) {
+                        Inventaris::create([
+                            'user_id' => auth()->user()->id,
+                            'kode_branch' => $item->kode_area,
+                            'status_branch' => $item->kode_user ?? 'AP',
+                            'kode_peralatan' => 'INV-NI-'.$pengajuan->nomor,
+                            'jenis' => strtoupper($item->jenis_peralatan->nama_jenis),
+                            'merk' => strtoupper($item->merk),
+                            'type' => strtoupper($item->type),
+                            'tanggal_perolehan' => $item->tanggal_perolehan,
+                            'jumlah' => $item->kuantitas,
+                            'harga_perolehan' => $item->harga_pembelian,
+                            'umur' => 48,
+                            'keterangan' => strtoupper($item->jenis_peralatan->nama_jenis . ' ' . $item->type . ' ' . $item->pengguna),
+                            'pengguna' => strtoupper($item->pengguna)
+                        ]);
                     } else {
-                        if ($item->kode_branch == NULL) {
-                            Inventaris::create([
-                                'user_id' => auth()->user()->id,
-                                'kode_branch' => $item->kode_area,
-                                'status_branch' => 'AP',
-                                'kode_peralatan' => 'INV-NI-'.$pengajuan->nomor,
-                                'jenis' => $item->jenis_peralatan->nama_jenis,
-                                'merk' => $item->merk,
-                                'type' => $item->type,
-                                'tanggal_perolehan' => $item->tanggal_perolehan,
-                                'jumlah' => $item->kuantitas,
-                                'harga_perolehan' => $item->harga_pembelian,
-                                'umur' => 48,
-                                'keterangan' => $item->keterangan
-                            ]);
-                        } else {
-                            Inventaris::create([
-                                'user_id' => auth()->user()->id,
-                                'kode_branch' => $item->kode_branch,
-                                'status_branch' => 'AP',
-                                'kode_peralatan' => 'INV-NI-'.$pengajuan->nomor,
-                                'jenis' => $item->jenis_peralatan->nama_jenis,
-                                'merk' => $item->merk,
-                                'type' => $item->type,
-                                'tanggal_perolehan' => $item->tanggal_perolehan,
-                                'jumlah' => $item->kuantitas,
-                                'harga_perolehan' => $item->harga_pembelian,
-                                'umur' => 48,
-                                'keterangan' => $item->keterangan
-                            ]);
-                        }
+                        Inventaris::create([
+                            'user_id' => auth()->user()->id,
+                            'kode_branch' => $item->kode_branch,
+                            'status_branch' => $item->kode_user ?? 'AP',
+                            'kode_peralatan' => 'INV-NI-'.$pengajuan->nomor,
+                            'jenis' => strtoupper($item->jenis_peralatan->nama_jenis),
+                            'merk' => strtoupper($item->merk),
+                            'type' => strtoupper($item->type),
+                            'tanggal_perolehan' => $item->tanggal_perolehan,
+                            'jumlah' => $item->kuantitas,
+                            'harga_perolehan' => $item->harga_pembelian,
+                            'umur' => 48,
+                            'keterangan' => strtoupper($item->jenis_peralatan->nama_jenis . ' ' . $item->type . ' ' . $item->pengguna),
+                            'pengguna' => strtoupper($item->pengguna)
+                        ]);
                     }
                 } else {
                     if ($item->kode_branch == NULL) {
@@ -118,7 +86,7 @@ class klaimController extends Controller
                             'tanggal_perolehan' => $item->tanggal_perolehan,
                             'jumlah' => $item->kuantitas,
                             'harga_perolehan' => $item->harga_pembelian,
-                            'keterangan' => $item->keterangan
+                            'keterangan' => $item->jenis_peralatan->nama_jenis . ' ' . $item->type
                         ]);
                     } else {
                         Peralatan::create([
@@ -132,7 +100,7 @@ class klaimController extends Controller
                             'tanggal_perolehan' => $item->tanggal_perolehan,
                             'jumlah' => $item->kuantitas,
                             'harga_perolehan' => $item->harga_pembelian,
-                            'keterangan' => $item->keterangan
+                            'keterangan' => $item->jenis_peralatan->nama_jenis . ' ' . $item->type
                         ]);
                     }
                 }

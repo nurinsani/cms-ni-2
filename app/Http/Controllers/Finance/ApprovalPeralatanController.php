@@ -105,6 +105,9 @@ class ApprovalPeralatanController extends Controller
             // $url_api = 'http://36.64.7.130:7117/nurinsani/api/transaksi_cms.php?function=insert_transaksi'; // URL API test
             // $url_api = 'http://192.168.88.4/nurinsani/api/transaksi_cms.php?function=insert_transaksi';// URL API production
             
+            $url_api = 'http://192.168.88.4/nurinsani/api/transaksi_cms.php?function=insert_transaksi'; // URL API production
+
+
             $kode_transaksi = date('m').random_int(100000, 999999);
             $transaksiKp = TransaksiKp::create([
                 'kode_branch' => 1010,

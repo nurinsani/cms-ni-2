@@ -160,6 +160,7 @@
                                         <option value="">-- Pilih Pengguna --</option>
                                             <option value="9999">Business Head</option>
                                             <option value="9999">QA</option>
+                                            <option value="2200">BM Jateng 1</option>
                                             <option value="8888">AM Area 2</option>
                                             <option value="1101">AL Jabar 1</option>
                                             <option value="1102">AL Jabar 2</option>
@@ -167,6 +168,11 @@
                                             <option value="2205">AL Jateng 2</option>
                                             <option value="2203">AL Jateng 3</option>
                                             <option value="2204">AL Jateng 4</option>
+                                            <option value="2202">AL Jateng 5</option>
+                                            <option value="2206">AL Jateng 6</option>
+                                            <option value="2207">AL Jateng 7</option>
+                                            <option value="2208">AL Jateng 8</option>
+
 
                                     </select>
                                 </div>
