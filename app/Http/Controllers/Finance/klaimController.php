@@ -355,6 +355,36 @@ class klaimController extends Controller
                                 'debet' => 0,
                                 'kredit' => ($cabang->harga_pembelian * $cabang->kuantitas) / $total_branch
                             ]);
+
+                            $transaksiApi = [
+                                'unit' => $transaksiAp->kode_branch,
+                                'kode_transaksi' => $transaksiAp->kode_transaksi,
+                                'kode_rekening' => $transaksiAp->kode_rekening,
+                                'tanggal_transaksi' => $transaksiAp->tanggal_transaksi->toDateString(),
+                                'jenis_transaksi' => $transaksiAp->jenis_transaksi,
+                                'keterangan_transaksi' => $transaksiAp->keterangan,
+                                'debet' => $transaksiAp->debet,
+                                'kredit' => $transaksiAp->kredit,
+                                'tanggal_posting' => now()->toDateString(),
+                                'keterangan_posting' => 'Post',
+                                'id_admin' => auth()->id() ?? 1,
+                            ];
+
+                            $response = Http::timeout(30)
+                            ->asForm()
+                            ->withHeaders([
+                                'Accept' => 'application/json',
+                            ])
+                            ->post($url_api, $transaksiApi);
+
+                            if ($response->successful()) {
+                                Log::info("Transaksi berhasil", $response->json());
+                            } else {
+                                Log::error("Error API", [
+                                    'status' => $response->status(),
+                                    'response' => $response->json()
+                                ]);
+                            }
                         }
                     }
                 } else {
