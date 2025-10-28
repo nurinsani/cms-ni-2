@@ -101,7 +101,7 @@ class ApprovalPeralatanController extends Controller
                 $keterangan = strtoupper('UM PEMBELIAN' . ' ' . $item->jenis_peralatan->nama_jenis . ' ' . 'KANTOR PUSAT');
             }
 
-            $url_api = 'http://192.168.1.7:8080/api/transaksi'; // URL API lokal
+            // $url_api = 'http://192.168.1.7:8080/api/transaksi'; // URL API lokal
             // $url_api = 'http://36.64.7.130:7117/nurinsani/api/transaksi_cms.php?function=insert_transaksi'; // URL API test
             // $url_api = 'http://192.168.88.4/nurinsani/api/transaksi_cms.php?function=insert_transaksi';// URL API production
             

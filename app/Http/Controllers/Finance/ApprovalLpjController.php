@@ -105,9 +105,9 @@ class ApprovalLpjController extends Controller
                     $keterangan = strtoupper('LPJ PEMBELIAN' . ' ' . $row->jenis_peralatan->nama_jenis . ' ' . 'AP' . ' ' .  $row->ap->unit);
                 }
 
-                $url_api = 'http://192.168.1.4:5500/api/transaksi'; // URL API lokal
+                // $url_api = 'http://192.168.1.4:5500/api/transaksi'; // URL API lokal
                 // $url_api = 'http://36.64.7.130:7117/nurinsani/api/transaksi_cms.php?function=insert_transaksi'; // URL API test
-                // $url_api = 'http://192.168.88.4/nurinsani/api/transaksi_cms.php?function=insert_transaksi';// URL API production
+                $url_api = 'http://192.168.88.4/nurinsani/api/transaksi_cms.php?function=insert_transaksi';// URL API production
 
                 $kode_transaksi_kp = date('m') . random_int(100000, 999999);
 
