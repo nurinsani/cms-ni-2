@@ -16,33 +16,36 @@
 
 @section('content')
     <div class="row">
-        <div class="col-lg-3 col-6">
+        <div class="col-lg-6 col-6">
             <!-- small box -->
-            <div class="small-box bg-info">
-                <div class="inner">
-                    <h3>{{ $belum_approve->count() }}</h3>
-
-                    <p>Pengajuan Peralatan</p>
+            <a href="{{ url('/akunting/approval-peralatan') }}">
+                <div class="small-box bg-info">
+                    <div class="inner">
+                        <h3>{{ $approval_um->count() }}</h3>
+    
+                        <p>PENGAJUAN UM</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-clipboard-check"></i>
+                    </div>
                 </div>
-                <div class="icon">
-                    <i class="ion ion-bag"></i>
-                </div>
-            </div>
+            </a>
         </div>
         <!-- ./col -->
-        <div class="col-lg-3 col-6">
+        <div class="col-lg-6 col-6">
             <!-- small box -->
-            <div class="small-box bg-success">
-                <div class="inner">
-                    <h3>0</h3>
-                    {{-- <h3>{{ $belum_approve_bdd->count() }}</h3> --}}
-
-                    <p>Pengajuan BDD</p>
+            <a href="{{ url('/akunting/approval-lpj') }}">
+                <div class="small-box bg-success">
+                    <div class="inner">
+                        <h3>{{ $approval_lpj->count() }}</h3>
+    
+                        <p>PENGAJUAN LPJ</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-clipboard-check"></i>
+                    </div>
                 </div>
-                <div class="icon">
-                    <i class="ion ion-stats-bars"></i>
-                </div>
-            </div>
+            </a>
         </div>
     </div>
 

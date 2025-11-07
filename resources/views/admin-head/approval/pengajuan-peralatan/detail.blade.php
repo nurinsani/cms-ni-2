@@ -40,11 +40,19 @@
 <div class="card">
     <div class="card-body">
         <a href="{{ url('admin-head/pengajuan-peralatan') }}" class="btn btn-sm btn-primary mb-3"><i class="fas fa-arrow-left"></i> Kembali</a>
-        <ul class="p-0" style="list-style: none">
-            <li>Nomor : {{ $pengajuan->nomor }}</li>
-            <li>Kepada : Ketua dan Pengurus KSPPS Nur Insani</li>
-            <li>Dari : {{ $pengajuan->user->name }}</li>
-            <li>Tanggal : {{ $pengajuan->tanggal_pengajuan->format('d-M-Y') }}</li>
+        <ul class="list-unstyled mb-3">
+            <li class="d-flex">
+                <strong class="mr-2" style="width:120px;">Nomor</strong> : {{ $pengajuan->nomor }}
+            </li>
+            <li class="d-flex">
+                <strong class="mr-2" style="width:120px;">Kepada</strong> : Ketua dan Pengurus KSPPS Nur Insani
+            </li>
+            <li class="d-flex">
+                <strong class="mr-2" style="width:120px;">Dari</strong> : {{ $pengajuan->user->name }}
+            </li>
+            <li class="d-flex">
+                <strong class="mr-2" style="width:120px;">Tanggal</strong> : {{ $pengajuan->tanggal_pengajuan->format('d-M-Y') }}
+            </li>
         </ul>
 
         <div class="table-responsive">
@@ -52,9 +60,9 @@
                 <thead>
                     <tr>
                         <th scope="col">Branch</th>
-                        <th scope="col">Keperluan</th>
+                        <th scope="col">Jenis</th>
                         <th scope="col">Qty</th>
-                        <th scope="col" width="120px">Jumlah</th>
+                        <th scope="col" width="120px">Harga</th>
                         <th scope="col" width="140px">Total</th>
                         @foreach ($pengajuan->pengajuan_details as $item)
                         @endforeach

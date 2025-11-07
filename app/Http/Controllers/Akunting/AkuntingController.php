@@ -17,10 +17,8 @@ class AkuntingController extends Controller
     public function dashboard()
     {
         $data['title'] = 'Akunting Dashboard';
-        $data['belum_approve'] = Pengajuan::where('status_approve', 'akunting-it')->get();
-        // $data['belum_approve_bdd'] = PengajuanBdd::where('status_proses', 'akunting-it')->whereHas('jenis_bdd', function($query){
-        //     $query->where('group_approval', 'umum');
-        //     })->get();
+        $data['approval_um'] = Pengajuan::where('status_approve', 'akunting-it');
+        $data['approval_lpj'] = Pengajuan::where('status_approve', 'lpj-akunting-it');
         return view('akunting.dashboard', $data);
     }
 

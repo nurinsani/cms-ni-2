@@ -29,10 +29,10 @@
                 <thead>
                     <tr>
                         <th>No</th>
-                        <th>Nomor</th>
+                        <th>No. Pengajuan</th>
                         <th>Area</th>
                         <th>COA</th>
-                        <th>Nama Jenis</th>
+                        <th>Jenis Pengajuan</th>
                         <th>Tanggal Pengajuan</th>
                         <th>Status</th>
                         <th>Aksi</th>

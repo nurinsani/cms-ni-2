@@ -20,9 +20,9 @@
     <!-- small box -->
     <div class="small-box bg-info">
       <div class="inner">
-        <h3>1</h3>
+        <h3></h3>
 
-        <p>Pengajuan Peralatan</p>
+        <p>Total Pengajuan</p>
       </div>
       <div class="icon">
         <i class="ion ion-bag"></i>
@@ -71,20 +71,7 @@
       </div>
     </div>
   </div>
-  
-  <div class="col-lg-3 col-6">
-    <!-- small box -->
-    <div class="small-box bg-warning">
-      <div class="inner">
-        <h3>{{ $user1->count() }}</h3>
 
-        <p>User 1101</p>
-      </div>
-      <div class="icon">
-        <i class="ion ion-person-add"></i>
-      </div>
-    </div>
-  </div>
 </div>
   <!-- /.row -->
 @endsection
