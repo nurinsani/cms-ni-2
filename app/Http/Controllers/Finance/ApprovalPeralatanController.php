@@ -105,7 +105,7 @@ class ApprovalPeralatanController extends Controller
             // $url_api = 'http://36.64.7.130:7117/nurinsani/api/transaksi_cms.php?function=insert_transaksi'; // URL API test
             // $url_api = 'http://192.168.88.4/nurinsani/api/transaksi_cms.php?function=insert_transaksi';// URL API production
             
-            // $url_api = 'http://192.168.88.4/nurinsani/api/transaksi_cms.php?function=insert_transaksi'; // URL API production
+            $url_api = 'http://192.168.88.4/nurinsani/api/transaksi_cms.php?function=insert_transaksi'; // URL API production
 
 
             $kode_transaksi = date('m').random_int(100000, 999999);
@@ -120,35 +120,35 @@ class ApprovalPeralatanController extends Controller
                 'kredit' => 0
             ]);
 
-            // $transaksiApi = [
-            //     'unit' => $transaksiKp->kode_branch,
-            //     'kode_transaksi' => $transaksiKp->kode_transaksi,
-            //     'kode_rekening' => $transaksiKp->kode_rekening,
-            //     'tanggal_transaksi' => $transaksiKp->tanggal_transaksi->toDateString(),
-            //     'jenis_transaksi' => $transaksiKp->jenis_transaksi,
-            //     'keterangan_transaksi' => $transaksiKp->keterangan,
-            //     'debet' => $transaksiKp->debet,
-            //     'kredit' => $transaksiKp->kredit,
-            //     'tanggal_posting' => now()->toDateString(),
-            //     'keterangan_posting' => 'Post',
-            //     'id_admin' => auth()->id() ?? 1,
-            // ];
+            $transaksiApi = [
+                'unit' => $transaksiKp->kode_branch,
+                'kode_transaksi' => $transaksiKp->kode_transaksi,
+                'kode_rekening' => $transaksiKp->kode_rekening,
+                'tanggal_transaksi' => $transaksiKp->tanggal_transaksi->toDateString(),
+                'jenis_transaksi' => $transaksiKp->jenis_transaksi,
+                'keterangan_transaksi' => $transaksiKp->keterangan,
+                'debet' => $transaksiKp->debet,
+                'kredit' => $transaksiKp->kredit,
+                'tanggal_posting' => now()->toDateString(),
+                'keterangan_posting' => 'Post',
+                'id_admin' => auth()->id() ?? 1,
+            ];
 
-            // $response = Http::timeout(30)
-            // ->asForm()
-            // ->withHeaders([
-            //     'Accept' => 'application/json',
-            // ])
-            // ->post($url_api, $transaksiApi);
+            $response = Http::timeout(30)
+            ->asForm()
+            ->withHeaders([
+                'Accept' => 'application/json',
+            ])
+            ->post($url_api, $transaksiApi);
 
-            // if ($response->successful()) {
-            //     Log::info("Transaksi berhasil", $response->json());
-            // } else {
-            //     Log::error("Error API", [
-            //         'status' => $response->status(),
-            //         'response' => $response->json()
-            //     ]);
-            // }
+            if ($response->successful()) {
+                Log::info("Transaksi berhasil", $response->json());
+            } else {
+                Log::error("Error API", [
+                    'status' => $response->status(),
+                    'response' => $response->json()
+                ]);
+            }
 
             $transaksiKp = TransaksiKp::create([
                 'kode_branch' => 1010,
@@ -161,35 +161,35 @@ class ApprovalPeralatanController extends Controller
                 'kredit' => $pengajuan->subtotal(),
             ]);
 
-            // $transaksiApi = [
-            //     'unit' => $transaksiKp->kode_branch,
-            //     'kode_transaksi' => $transaksiKp->kode_transaksi,
-            //     'kode_rekening' => $transaksiKp->kode_rekening,
-            //     'tanggal_transaksi' => $transaksiKp->tanggal_transaksi->toDateString(),
-            //     'jenis_transaksi' => $transaksiKp->jenis_transaksi,
-            //     'keterangan_transaksi' => $transaksiKp->keterangan,
-            //     'debet' => $transaksiKp->debet,
-            //     'kredit' => $transaksiKp->kredit,
-            //     'tanggal_posting' => now()->toDateString(),
-            //     'keterangan_posting' => 'Post',
-            //     'id_admin' => auth()->id() ?? 1,
-            // ];
+            $transaksiApi = [
+                'unit' => $transaksiKp->kode_branch,
+                'kode_transaksi' => $transaksiKp->kode_transaksi,
+                'kode_rekening' => $transaksiKp->kode_rekening,
+                'tanggal_transaksi' => $transaksiKp->tanggal_transaksi->toDateString(),
+                'jenis_transaksi' => $transaksiKp->jenis_transaksi,
+                'keterangan_transaksi' => $transaksiKp->keterangan,
+                'debet' => $transaksiKp->debet,
+                'kredit' => $transaksiKp->kredit,
+                'tanggal_posting' => now()->toDateString(),
+                'keterangan_posting' => 'Post',
+                'id_admin' => auth()->id() ?? 1,
+            ];
 
-            // $response = Http::timeout(30)
-            // ->asForm()
-            // ->withHeaders([
-            //     'Accept' => 'application/json',
-            // ])
-            // ->post($url_api, $transaksiApi);
+            $response = Http::timeout(30)
+            ->asForm()
+            ->withHeaders([
+                'Accept' => 'application/json',
+            ])
+            ->post($url_api, $transaksiApi);
 
-            // if ($response->successful()) {
-            //     Log::info("Transaksi berhasil", $response->json());
-            // } else {
-            //     Log::error("Error API", [
-            //         'status' => $response->status(),
-            //         'response' => $response->json()
-            //     ]);
-            // }
+            if ($response->successful()) {
+                Log::info("Transaksi berhasil", $response->json());
+            } else {
+                Log::error("Error API", [
+                    'status' => $response->status(),
+                    'response' => $response->json()
+                ]);
+            }
 
             DB::commit();
             return redirect()->back()->with('success', 'Data berhasil Approve');
