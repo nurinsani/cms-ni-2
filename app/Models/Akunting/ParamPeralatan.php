@@ -16,7 +16,7 @@ class ParamPeralatan extends Model
         return $this->belongsTo(JenisPeralatan::class, 'jenis_peralatan_id');
     }
 
-    public function jenis_bdd()
+    public function param_peralatan()
     {
         return $this->hasMany(JenisPeralatan::class, 'param_peralatan_id');
     }

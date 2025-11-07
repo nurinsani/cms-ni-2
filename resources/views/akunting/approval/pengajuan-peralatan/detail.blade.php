@@ -52,9 +52,9 @@
                 <thead>
                     <tr>
                         <th scope="col">Branch</th>
-                        <th scope="col">Keperluan</th>
+                        <th scope="col">Jenis</th>
                         <th scope="col">Qty</th>
-                        <th scope="col" width="120px">Jumlah</th>
+                        <th scope="col" width="120px">Harga</th>
                         <th scope="col" width="140px">Total</th>
                         @foreach ($pengajuan->pengajuan_details as $item)
                         @endforeach

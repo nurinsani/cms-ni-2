@@ -47,12 +47,14 @@ class PengajuanController extends Controller
     {
         $data['title'] = 'Pengajuan Peralatan';
         $data['temp_pengajuan'] = TempPengajuanDetail::all();
-        $data['jenis_peralatan'] = JenisPeralatan::all();
         $data['rekening'] = Rekening::all();
-        $data['param_peralatan'] = ParamPeralatan::whereHas('jenis_bdd', function($query) {
+        $data['param_peralatan'] = ParamPeralatan::whereHas('param_peralatan', function($query) {
             $query->where('group_inventaris', 'tidak');
         })->get();
         $data['branch'] = Branch::where('code_area', auth()->user()->code_area)->get();
+        $data['area'] = Branch::where('code_area', auth()->user()->code_area)->first();
+        // dd($data['area']->code_area);
+
         return view('admin.pengajuan-peralatan.tambah-peralatan', $data);
     }
 
@@ -62,10 +64,12 @@ class PengajuanController extends Controller
         $data['temp_pengajuan'] = TempPengajuanDetail::all();
         $data['jenis_peralatan'] = JenisPeralatan::all();
         $data['rekening'] = Rekening::all();
-        $data['param_peralatan'] = ParamPeralatan::whereHas('jenis_bdd', function($query) {
+        $data['param_peralatan'] = ParamPeralatan::whereHas('param_peralatan', function($query) {
             $query->where('group_inventaris', 'ya');
         })->get();
         $data['branch'] = Branch::where('code_area', auth()->user()->code_area)->get();
+        $data['area'] = Branch::where('code_area', auth()->user()->code_area)->first();
+        dd($area);
         return view('admin.pengajuan-peralatan.tambah-inventaris', $data);
     }
 
@@ -79,9 +83,8 @@ class PengajuanController extends Controller
     {
         $pengajuan = Pengajuan::latest()->first();
         $kode_branch = auth()->user()->code_area;
-        $kode_tahun = date('Y');
-        $kode_bulan = date('m');
-        $kode_tanggal = date('d');
+        $today = now();
+        $tanggal = $today->format('dmY');
 
         if ($pengajuan == null) {
             $nomor_urut = '0001';
@@ -90,7 +93,7 @@ class PengajuanController extends Controller
             $nomor_urut = "000". $nomor_urut;
         }
 
-        $data['nomor'] = $kode_branch.'/'.$kode_tanggal.$kode_bulan.$kode_tahun.'/'.$nomor_urut;
+        $data['nomor'] = $kode_branch .'/'. $tanggal .'/'. $nomor_urut;
         $data['tanggal_pengajuan'] = Carbon::now(); 
         $data['user_id'] = auth()->user()->id;
         $data['code_area'] = auth()->user()->code_area;
@@ -103,6 +106,10 @@ class PengajuanController extends Controller
         
         $pengajuan = Pengajuan::create($data);
         $temp_pengajuan = TempPengajuanDetail::where('user_id', auth()->user()->id)->get();
+
+        if ($temp_pengajuan->count() < 1) {
+            return redirect()->back()->with('error', 'Data pengajuan masih kosong!');
+        }
         
         foreach ($temp_pengajuan as $item) {
             $pengajuan_detail = New PengajuanDetail;
@@ -127,10 +134,7 @@ class PengajuanController extends Controller
             $pengajuan_detail->umur = $item->umur;
             $pengajuan_detail->save();
         }
-        
-        if ($temp_pengajuan == null) {
-            return redirect()->back()->with('success', 'Hmmm SAlah!');
-        }
+
         TempPengajuanDetail::where('user_id', auth()->user()->id)->delete();
 
         // $this->sendWhatsAppNotification($pengajuan);

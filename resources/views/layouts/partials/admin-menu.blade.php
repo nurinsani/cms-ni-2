@@ -10,7 +10,8 @@
 {{-- menu pengajuan --}}
 <li class="nav-item">
     <a href="#" class="nav-link">
-        <i class="nav-icon fas fa-folder-plus"></i>
+        <i class="fas fa-file-signature nav-icon"></i>
+
         <p>
             Pengajuan
             <i class="fas fa-angle-left right"></i>
@@ -28,9 +29,8 @@
                 class="nav-link {{ request()->is('admin/pengajuan') ? 'active' : '' }}">
                 <i class="nav-icon far fa-circle nav-icon"></i>
                 <p>
-                    Peralatan & Inventaris
+                    Uang Muka
                 </p>
-                {{-- <span class="badge badge-info right">{{ $pengajuan_peralatan->count() }}</span> --}}
             </a>
         </li>
 
@@ -41,11 +41,20 @@
                 <p>
                     Klaim
                 </p>
-                {{-- <span class="badge badge-info right">{{ $pengajuan_peralatan->count() }}</span> --}}
             </a>
         </li>
 
         <li class="nav-item">
+            <a href="{{ route('admin.lpj.index') }}"
+                class="nav-link {{ request()->is('admin/lpj*') ? 'active' : '' }}">
+                <i class="nav-icon far fa-circle nav-icon"></i>
+                <p>
+                    LPJ
+                </p>
+            </a>
+        </li>
+
+        {{-- <li class="nav-item">
             <a href="{{ route('admin.pengajuan-bdd.index') }}" class="nav-link">
                 <i class="nav-icon far fa-circle nav-icon"></i>
                 <p>
@@ -63,7 +72,7 @@
                     Pemutusan BDD
                 </p>
             </a>
-        </li>
+        </li> --}}
 
         <li class="nav-item">
             <a href="{{ route('admin.pengajuan-mutasi.index') }}"
@@ -84,57 +93,24 @@
             </a>
         </li>
 
-        <li class="nav-item">
+        {{-- <li class="nav-item">
             <a href="#" class="nav-link {{ request()->is('admin/pengajuan-penjualan*') ? 'active' : '' }}">
                 <i class="nav-icon far fa-circle nav-icon"></i>
                 <p>
                     Penjualan
                 </p>
             </a>
-        </li>
+        </li> --}}
 
     </ul>
 </li>
 {{-- end menu pengajuan --}}
 
-{{-- menu LPJ --}}
 <li class="nav-item">
     <a href="#" class="nav-link">
-        <i class="nav-icon fas fa-file-alt"></i>
+        <i class="fas fa-list-alt nav-icon"></i>
         <p>
-            LPJ
-            <i class="fas fa-angle-left right"></i>
-        </p>
-    </a>
-    <ul class="nav nav-treeview">
-        <li class="nav-item">
-            <a href="{{ route('admin.lpj.index') }}"
-                class="nav-link {{ request()->is('admin/lpj*') ? 'active' : '' }}">
-                <i class="nav-icon far fa-circle nav-icon"></i>
-                <p>
-                    Peralatan
-                </p>
-            </a>
-        </li>
-
-        <li class="nav-item">
-            <a href="{{ route('admin.lpj-bdd.index') }}"
-                class="nav-link {{ request()->is('admin/pengajuan-lpj-bdd*') ? 'active' : '' }}">
-                <i class="nav-icon far fa-circle nav-icon"></i>
-                <p>
-                    BDD
-                </p>
-            </a>
-        </li>
-    </ul>
-</li>
-{{-- end menu LPJ --}}
-
-<li class="nav-item">
-    <a href="#" class="nav-link">
-        <i class="nav-icon fas fa-clipboard-list"></i>
-        <p>
-            Nominative
+            Nominatif
             <i class="fas fa-angle-left right"></i>
         </p>
     </a>
@@ -168,16 +144,6 @@
                 </p>
             </a>
         </li>
-
-        {{-- <li class="nav-item">
-            <a href="{{ route('admin.daftar-bdd') }}"
-                class="nav-link {{ request()->is('admin/daftar-bdd*') ? 'active' : '' }}">
-                <i class="nav-icon far fa-circle nav-icon"></i>
-                <p>
-                    BDD
-                </p>
-            </a>
-        </li> --}}
     </ul>
 </li>
 
@@ -255,17 +221,28 @@
     </ul>
 </li>
 
+<li class="nav-item">
+    <a href="#" class="nav-link">
+        <i class="nav-icon fas fa-database"></i>
+        <p>
+            Data Master
+            <i class="fas fa-angle-left right"></i>
+        </p>
+    </a>
+    <ul class="nav nav-treeview">
+        <li class="nav-item">
+            <a href="{{ url('admin/rekening') }}" class="nav-link {{ request()->is('admin/rekening*') ? 'active' : '' }}">
+                <i class="nav-icon far fa-circle nav-icon"></i>
+                <p>
+                    Daftar Rekening
+                </p>
+            </a>
+        </li>
+    </ul>
+</li>
 
 {{-- <li class="nav-header">Menu Inventaris</li> --}}
 
-<li class="nav-item">
-    <a href="{{ url('admin/rekening') }}" class="nav-link {{ request()->is('admin/rekening*') ? 'active' : '' }}">
-        <i class="nav-icon fas fa-credit-card"></i>
-        <p>
-            Daftar Rekening
-        </p>
-    </a>
-</li>
 
 <li class="nav-item">
     <a href="#" class="nav-link {{ request()->is('admin/stock-opname*') ? 'active' : '' }}">
@@ -287,7 +264,7 @@
 
 <li class="nav-item">
     <a href="{{ url('/update-password') }}" class="nav-link {{ request()->is('/update-password') ? 'active' : '' }}">
-        <i class="nav-icon fas fa-fingerprint"></i>
+        <i class="nav-icon fas fa-lock"></i>
         <p>
             Ganti Password
         </p>

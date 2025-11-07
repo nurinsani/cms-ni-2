@@ -7,18 +7,10 @@
         </p>
     </a>
 </li>
-<li class="nav-item">
-    <a href="{{ url('/update-password') }}" class="nav-link {{ request()->is('/update-password') ? 'active' : '' }}">
-        <i class="fas fa-fingerprint"></i>
-        <p>
-            Ganti Password
-        </p>
-    </a>
-</li>
 
 <li class="nav-item">
     <a href="#" class="nav-link">
-        <i class="nav-icon fas fa-file-alt"></i>
+        <i class="fas fa-file-signature nav-icon"></i>
         <p>
             Pengajuan
             <i class="fas fa-angle-left right"></i>
@@ -166,7 +158,7 @@
 
 <li class="nav-item">
     <a href="#" class="nav-link">
-        <i class="nav-icon fas fa-clipboard-list"></i>
+        <i class="fas fa-list-alt nav-icon"></i>
         <p>
             Nominative
             <i class="fas fa-angle-left right"></i>
@@ -279,6 +271,14 @@
 </li>
 {{-- end menu LPJ --}}
 
+<li class="nav-item">
+    <a href="{{ url('/update-password') }}" class="nav-link {{ request()->is('/update-password') ? 'active' : '' }}">
+        <i class="nav-icon fas fa-lock"></i>
+        <p>
+            Ganti Password
+        </p>
+    </a>
+</li>
 
 {{-- <li class="nav-item">
   <a href="#" class="nav-link {{ (request()->is('supervisor/stock-opname*')) ? 'active' : '' }}">
