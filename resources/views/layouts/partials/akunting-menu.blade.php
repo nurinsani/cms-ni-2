@@ -32,7 +32,7 @@
                 class="nav-link {{ request()->is('akunting/approval-peralatan*') ? 'active' : '' }}">
                 <i class="nav-icon far fa-circle nav-icon"></i>
                 <p>
-                    Peralatan
+                    Pengajuan FPD
                 </p>
             </a>
         </li>
@@ -42,7 +42,7 @@
                 class="nav-link {{ request()->is('akunting/approval-lpj*') ? 'active' : '' }}">
                 <i class="nav-icon far fa-circle nav-icon"></i>
                 <p>
-                    LPJ
+                    Pengajuan LPJ
                 </p>
             </a>
         </li>
@@ -52,12 +52,12 @@
                 class="nav-link {{ request()->is('akunting/klaim-pembelian*') ? 'active' : '' }}">
                 <i class="nav-icon far fa-circle nav-icon"></i>
                 <p>
-                    Klaim
+                    Pengajuan Klaim
                 </p>
             </a>
         </li>
 
-        <li class="nav-item">
+        {{-- <li class="nav-item">
             <a href="{{ url('akunting/approval-bdd') }}"
                 class="nav-link {{ request()->is('akunting/approval-bdd*') ? 'active' : '' }}">
                 <i class="nav-icon far fa-circle nav-icon"></i>
@@ -65,9 +65,9 @@
                     BDD
                 </p>
             </a>
-        </li>
+        </li> --}}
 
-        <li class="nav-item">
+        {{-- <li class="nav-item">
             <a href="{{ url('akunting/approval-mutasi') }}"
                 class="nav-link {{ request()->is('akunting/approval-mutasi*') ? 'active' : '' }}">
                 <i class="nav-icon far fa-circle nav-icon"></i>
@@ -75,7 +75,7 @@
                     Mutasi
                 </p>
             </a>
-        </li>
+        </li> --}}
 
     </ul>
 </li>
@@ -253,23 +253,31 @@
 </li>
 {{-- end menu LPJ --}}
 
-<li class="nav-header">Menu Master</li>
-<li class="nav-item">
-    <a href="{{ route('akunting.param-peralatan.index') }}"
-        class="nav-link {{ request()->is('akunting/param-peralatan*') ? 'active' : '' }}">
-        <i class="nav-icon fas fa-tachometer-alt"></i>
+<li class="nav-item has-treeview {{ request()->is('akunting/param-peralatan*') || request()->is('akunting/jenis-peralatan*') ? 'menu-open' : '' }}">
+    <a href="#" class="nav-link {{ request()->is('akunting/param-peralatan*') || request()->is('akunting/jenis-peralatan*') ? 'active' : '' }}">
+        <i class="nav-icon fas fa-tools"></i>
         <p>
-            Parameter Peralatan
+            Master Data
+            <i class="right fas fa-angle-left"></i>
         </p>
     </a>
+
+    <ul class="nav nav-treeview">
+        <li class="nav-item">
+            <a href="{{ route('akunting.param-peralatan.index') }}"
+                class="nav-link {{ request()->is('akunting/param-peralatan*') ? 'active' : '' }}">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Parameter Peralatan</p>
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a href="{{ route('akunting.jenis-peralatan.index') }}"
+                class="nav-link {{ request()->is('akunting/jenis-peralatan*') ? 'active' : '' }}">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Jenis Peralatan</p>
+            </a>
+        </li>
+    </ul>
 </li>
 
-<li class="nav-item">
-    <a href="{{ route('akunting.jenis-peralatan.index') }}"
-        class="nav-link {{ request()->is('akunting/jenis-peralatan*') ? 'active' : '' }}">
-        <i class="nav-icon fas fa-tachometer-alt"></i>
-        <p>
-            Jenis Peralatan
-        </p>
-    </a>
-</li>
