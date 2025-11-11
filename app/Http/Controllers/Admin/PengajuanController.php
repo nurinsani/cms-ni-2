@@ -69,6 +69,7 @@ class PengajuanController extends Controller
         })->get();
         $data['branch'] = Branch::where('code_area', auth()->user()->code_area)->get();
         $data['area'] = Branch::where('code_area', auth()->user()->code_area)->first();
+        // dd($area);
         return view('admin.pengajuan-peralatan.tambah-inventaris', $data);
     }
 
