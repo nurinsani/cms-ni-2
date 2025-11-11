@@ -85,7 +85,7 @@ class ApprovalPeralatanController extends Controller
         try {
             DB::beginTransaction();
             $pengajuan = Pengajuan::findOrfail($id);
-            $pengajuan->status_approve = 'selesai';
+            $pengajuan->status_approve = 'lpj-admin';
             $pengajuan->approval_4 = auth()->user()->id;
             $pengajuan->save();
 
