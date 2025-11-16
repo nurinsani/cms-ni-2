@@ -272,6 +272,15 @@
 {{-- end menu LPJ --}}
 
 <li class="nav-item">
+    <a href="{{ url('/koreksi-jurnal/ap') }}" class="nav-link {{ request()->is('/koreksi-jurnal') ? 'active' : '' }}">
+        <i class="nav-icon fas fa-edit"></i>
+        <p>
+            Koreksi Jurnal
+        </p>
+    </a>
+</li>
+
+<li class="nav-item">
     <a href="{{ url('/update-password') }}" class="nav-link {{ request()->is('/update-password') ? 'active' : '' }}">
         <i class="nav-icon fas fa-lock"></i>
         <p>

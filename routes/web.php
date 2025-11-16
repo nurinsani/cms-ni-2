@@ -45,6 +45,7 @@ use App\Http\Controllers\JurnalController;
 use App\Http\Controllers\MiscController;
 use App\Http\Controllers\PenyusutanController;
 use App\Http\Controllers\PenyusutanGol2Controller;
+use App\Http\Controllers\TransaksiController;
 
 // DaftarBdd::jurnal_bdd();
 // Inventaris::penyusutan();
@@ -425,6 +426,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/fetch-data', [InventarisController::class, 'fetchData'])->name('inventaris.fetchData');
     Route::get('/inventaris/data', [InventarisController::class, 'getData'])->name('inventaris.data');
     Route::get('/get-inventaris/{kodeBranch}', [PengajuanMutasiController::class, 'getInventaris']);
+
+    Route::get('koreksi-jurnal/ap', [TransaksiController::class, 'koreksi_jurnal_ap']);
+    Route::post('/koreksi-jurnal/ap/update/{id}', [TransaksiController::class, 'update_jurnal_ap']);
+
+    Route::get('koreksi-jurnal/kp', [TransaksiController::class, 'koreksi_jurnal_kp']);
+    Route::post('/koreksi-jurnal/kp/update/{id}', [TransaksiController::class, 'update_jurnal_kp']);
+
 });
 
 
