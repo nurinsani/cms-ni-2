@@ -93,12 +93,12 @@ class ApprovalPeralatanController extends Controller
                 
             }
 
-            if ($item->status_branch == 'AREA') {
+            if ($item->kode_area == true) {
                 $keterangan = strtoupper('UM PEMBELIAN' . ' ' . $item->jenis_peralatan->nama_jenis . ' ' . 'WILAYAH' . ' ' . $item->area->area);
-            } elseif ($item->status_branch == 'UNIT') {
-                $keterangan = strtoupper('UM PEMBELIAN' . ' ' . $item->jenis_peralatan->nama_jenis . ' ' . 'AP' . ' ' .  $item->ap->unit);
-            } else {
+            } elseif ($item->kode_branch == '1010') {
                 $keterangan = strtoupper('UM PEMBELIAN' . ' ' . $item->jenis_peralatan->nama_jenis . ' ' . 'KANTOR PUSAT');
+            } else {
+                $keterangan = strtoupper('UM PEMBELIAN' . ' ' . $item->jenis_peralatan->nama_jenis . ' ' . 'AP' . ' ' .  $item->ap->unit);
             }
 
             // $url_api = 'http://192.168.1.7:8080/api/transaksi'; // URL API lokal
