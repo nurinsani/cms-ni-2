@@ -92,7 +92,8 @@ class InventarisController extends Controller
         }
     
         $inventaris = $query->get();
-    
+
+        /** @var \App\Models\Inventaris $item */
         foreach ($inventaris as $item) {
             $totalPenyusutanTahunSebelumnya = 0;
             $penyusutanBerjalan = 0;
