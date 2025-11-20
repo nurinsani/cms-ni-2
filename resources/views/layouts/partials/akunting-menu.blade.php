@@ -281,7 +281,7 @@
     </ul>
 </li>
 
-<li class="nav-item">
+{{-- <li class="nav-item">
     <a href="{{ url('/koreksi-jurnal/kp') }}" class="nav-link {{ request()->is('/koreksi-jurnal') ? 'active' : '' }}">
         <i class="nav-icon fas fa-edit"></i>
         <p>
@@ -289,4 +289,13 @@
         </p>
     </a>
 </li>
+
+<li class="nav-item">
+    <a href="{{ url('/akunting/stock-opname') }}" class="nav-link {{ request()->is('/akunting/stock-opname') ? 'active' : '' }}">
+        <i class="nav-icon fas fa-edit"></i>
+        <p>
+            Stock Opname
+        </p>
+    </a>
+</li> --}}
 

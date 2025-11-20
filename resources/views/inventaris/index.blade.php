@@ -125,7 +125,7 @@
                 @endif
 
                 <div class="table-responsive">
-                    <table id="inventaris-table" class="table table-sm table-bordered table-striped text-nowrap">
+                    <table id="inventaris-table" class="table table-sm table-bordered table-striped text-nowrap" style="font-size: 14px; width: 100%;">
                         <thead>
                             <tr>
                                 <th>Kode Branch</th>

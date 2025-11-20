@@ -45,6 +45,7 @@ use App\Http\Controllers\JurnalController;
 use App\Http\Controllers\MiscController;
 use App\Http\Controllers\PenyusutanController;
 use App\Http\Controllers\PenyusutanGol2Controller;
+use App\Http\Controllers\StokOpnameController;
 use App\Http\Controllers\TransaksiController;
 
 // DaftarBdd::jurnal_bdd();
@@ -432,6 +433,13 @@ Route::middleware('auth')->group(function () {
 
     Route::get('koreksi-jurnal/kp', [TransaksiController::class, 'koreksi_jurnal_kp']);
     Route::post('/koreksi-jurnal/kp/update/{id}', [TransaksiController::class, 'update_jurnal_kp']);
+
+    Route::get('/akunting/stock-opname', [StokOpnameController::class, 'index']);
+    Route::get('/kartu-stok-all', [StokOpnameController::class, 'cetakKartu']);
+    Route::post('/stok-opname/store', [StokOpnameController::class, 'store'])->name('stok-opname.store');
+    Route::put('/stok-opname/{id}', [StokOpnameController::class, 'update'])->name('stok-opname.update');
+    Route::delete('/stok-opname/{id}', [StokOpnameController::class, 'destroy'])->name('stok-opname.destroy');
+
 
 });
 
