@@ -32,7 +32,11 @@ class PengajuanKlaimController extends Controller
         $data['param_peralatan'] = ParamPeralatan::whereHas('param_peralatan', function($query) {
             $query->where('group_inventaris', 'tidak');
         })->get();
-        $data['branch'] = Branch::where('code_area', auth()->user()->code_area)->get();
+        $data['branch'] = Branch::where('code_region', auth()->user()->code_region)->get();
+        $data['area'] = Branch::where('code_region', auth()->user()->code_region)
+        ->select('area')
+        ->distinct()
+        ->get();
         return view('admin-head.klaim-pembelian.klaim-peralatan', $data);
     }
 
@@ -45,7 +49,11 @@ class PengajuanKlaimController extends Controller
         $data['param_peralatan'] = ParamPeralatan::whereHas('param_peralatan', function($query) {
             $query->where('group_inventaris', 'ya');
         })->get();
-        $data['branch'] = Branch::where('code_area', auth()->user()->code_area)->get();
+        $data['branch'] = Branch::where('code_region', auth()->user()->code_region)->get();
+        $data['area'] = Branch::where('code_region', auth()->user()->code_region)
+        ->select('area')
+        ->distinct()
+        ->get();
         return view('admin-head.klaim-pembelian.klaim-inventaris', $data);
     }
 
