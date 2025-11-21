@@ -109,18 +109,9 @@ class ApprovalLpjController extends Controller
                     $keterangan = strtoupper('LPJ PEMBELIAN' . ' ' . $row->jenis_peralatan->nama_jenis . ' ' . 'AP' . ' ' .  $row->ap->unit);
                 }
 
-                // Jika kode_branch adalah array dengan multiple values
-                // if (is_array($row->kode_branch) && count($row->kode_branch) > 1) {
-                //     $keterangan = strtoupper('LPJ PEMBELIAN' . ' ' . $row->jenis_peralatan->nama_jenis . ' ' . 'WILAYAH' . ' ' . $row->area->area);
-                // } elseif ($row->kode_branch == '1010') {
-                //     $keterangan = strtoupper('LPJ PEMBELIAN' . ' ' . $row->jenis_peralatan->nama_jenis . ' ' . 'KANTOR PUSAT');
-                // } else {
-                //     $keterangan = strtoupper('LPJ PEMBELIAN' . ' ' . $row->jenis_peralatan->nama_jenis . ' ' . 'AP' . ' ' .  $row->ap->unit);
-                // }
-
-                $url_api = 'http://127.0.0.1:8000/api/transaksi'; // URL API lokal
+                // $url_api = 'http://127.0.0.1:8000/api/transaksi'; // URL API lokal
                 // $url_api = 'http://36.64.7.130:7117/nurinsani/api/transaksi_cms.php?function=insert_transaksi'; // URL API test
-                // $url_api = 'http://192.168.88.4/nurinsani/api/transaksi_cms.php?function=insert_transaksi';// URL API production
+                $url_api = 'http://192.168.88.4/nurinsani/api/transaksi_cms.php?function=insert_transaksi';// URL API production
 
                 $kode_transaksi_kp = date('m') . random_int(100000, 999999);
 
