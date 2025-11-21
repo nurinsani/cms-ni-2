@@ -93,9 +93,9 @@
                                 @foreach ($lpj->pengajuan_details as $item)
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
-                                        <td>{{ $item->ap->unit ?? ($item->area->area ?? $item->region->region) }}</td>
-                                        <td>{{ $item->jenis_peralatan->param_peralatan->coa }}</td>
-                                        <td>{{ $item->jenis_peralatan->nama_jenis }}</td>
+                                        <td>{{ $item->ap->unit ?? ($item->area->area ?? $item->region->region) ?? '' }}</td>
+                                        <td>{{ $item->jenis_peralatan->param_peralatan->coa  ?? '' }}</td>
+                                        <td>{{ $item->jenis_peralatan->nama_jenis ?? '' }}</td>
                                         <td>{{ $item->merk }}</td>
                                         <td>{{ $item->kuantitas }}</td>
                                         <td>Rp. {{ number_format($item->harga * $item->kuantitas) }}</td>

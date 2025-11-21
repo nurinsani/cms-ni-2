@@ -94,20 +94,33 @@ class ApprovalLpjController extends Controller
             $pengajuan->status_approve = 'selesai';
             $pengajuan->save();
 
+
+            $uniqueKodeArea = $pengajuan->pengajuan_details->pluck('kode_branch')->unique()->count();
+
+
             // jurnal untuk KP
             foreach ($pengajuan->pengajuan_details as $row) {
 
-                if ($row->kode_area == true) {
-                    $keterangan = strtoupper('LPJ PEMBELIAN' . ' ' . $row->jenis_peralatan->nama_jenis . ' ' . 'WILAYAH' . ' ' . $row->area->area);
+                if ($uniqueKodeArea > 1) {
+                    $keterangan = strtoupper('LPJ PEMBELIAN' . ' ' . $row->jenis_peralatan->nama_jenis . ' ' . 'WILAYAH' . ' ' . $pengajuan->area->area);
                 } elseif ($row->kode_branch == '1010') {
                     $keterangan = strtoupper('LPJ PEMBELIAN' . ' ' . $row->jenis_peralatan->nama_jenis . ' ' . 'KANTOR PUSAT');
                 } else {
                     $keterangan = strtoupper('LPJ PEMBELIAN' . ' ' . $row->jenis_peralatan->nama_jenis . ' ' . 'AP' . ' ' .  $row->ap->unit);
                 }
 
-                // $url_api = 'http://192.168.1.4:5500/api/transaksi'; // URL API lokal
+                // Jika kode_branch adalah array dengan multiple values
+                // if (is_array($row->kode_branch) && count($row->kode_branch) > 1) {
+                //     $keterangan = strtoupper('LPJ PEMBELIAN' . ' ' . $row->jenis_peralatan->nama_jenis . ' ' . 'WILAYAH' . ' ' . $row->area->area);
+                // } elseif ($row->kode_branch == '1010') {
+                //     $keterangan = strtoupper('LPJ PEMBELIAN' . ' ' . $row->jenis_peralatan->nama_jenis . ' ' . 'KANTOR PUSAT');
+                // } else {
+                //     $keterangan = strtoupper('LPJ PEMBELIAN' . ' ' . $row->jenis_peralatan->nama_jenis . ' ' . 'AP' . ' ' .  $row->ap->unit);
+                // }
+
+                $url_api = 'http://127.0.0.1:8000/api/transaksi'; // URL API lokal
                 // $url_api = 'http://36.64.7.130:7117/nurinsani/api/transaksi_cms.php?function=insert_transaksi'; // URL API test
-                $url_api = 'http://192.168.88.4/nurinsani/api/transaksi_cms.php?function=insert_transaksi';// URL API production
+                // $url_api = 'http://192.168.88.4/nurinsani/api/transaksi_cms.php?function=insert_transaksi';// URL API production
 
                 $kode_transaksi_kp = date('m') . random_int(100000, 999999);
 
@@ -331,48 +344,10 @@ class ApprovalLpjController extends Controller
                 }
             }
 
+            // pengajuan kektika pembelian pas - jurnal untuk KP
             if ($row->kode_branch !== '1010') {
                 if ($pengajuan->subtotal() <= $pengajuan->total_pembelian()) {
-                    $transaksiKp = TransaksiKp::create([
-                        'kode_branch' => 1010,
-                        'kode_transaksi' => 'BU' . '/' . '1010' . '/' . $kode_transaksi_kp,
-                        'kode_rekening' => '1010-1311000',
-                        'tanggal_transaksi' => Carbon::now(),
-                        'jenis_transaksi' => 'Bukti SYSTEM',
-                        'keterangan' => $keterangan,
-                        'debet' => 0,
-                        'kredit' => $pengajuan->subtotal(),
-                    ]);
-
-                    $transaksiApi = [
-                        'unit' => $transaksiKp->kode_branch,
-                        'kode_transaksi' => $transaksiKp->kode_transaksi,
-                        'kode_rekening' => $transaksiKp->kode_rekening,
-                        'tanggal_transaksi' => $transaksiKp->tanggal_transaksi->toDateString(),
-                        'jenis_transaksi' => $transaksiKp->jenis_transaksi,
-                        'keterangan_transaksi' => $transaksiKp->keterangan,
-                        'debet' => $transaksiKp->debet,
-                        'kredit' => $transaksiKp->kredit,
-                        'tanggal_posting' => now()->toDateString(),
-                        'keterangan_posting' => 'Post',
-                        'id_admin' => auth()->id() ?? 1,
-                    ];
-
-                    $response = Http::timeout(30)
-                        ->asForm()
-                        ->withHeaders([
-                            'Accept' => 'application/json',
-                        ])
-                        ->post($url_api, $transaksiApi);
-
-                    if ($response->successful()) {
-                        Log::info("Transaksi berhasil", $response->json());
-                    } else {
-                        Log::error("Error API", [
-                            'status' => $response->status(),
-                            'response' => $response->json()
-                        ]);
-                    }
+                    
                 } else {
                     $transaksiKp = TransaksiKp::create([
                         'kode_branch' => 1010,
@@ -425,7 +400,7 @@ class ApprovalLpjController extends Controller
                         'jenis_transaksi' => 'Bukti SYSTEM',
                         'keterangan' => $keterangan,
                         'debet' => 0,
-                        'kredit' => $pengajuan->total_pembelian() - $pengajuan->subtotal()
+                        'kredit' => $pengajuan->subtotal()
                     ]);
 
                     $transaksiApi = [
