@@ -20,7 +20,7 @@
                 class="nav-link {{ request()->is('finance/approval-peralatan*') ? 'active' : '' }}">
                 <i class="nav-icon far fa-circle nav-icon"></i>
                 <p>
-                    Peralatan
+                    Pengajuan FPD
                 </p>
             </a>
         </li>
@@ -30,7 +30,7 @@
                 class="nav-link {{ request()->is('finance/approval-lpj*') ? 'active' : '' }}">
                 <i class="nav-icon far fa-circle nav-icon"></i>
                 <p>
-                    LPJ
+                    Pengajuan LPJ
                 </p>
             </a>
         </li>
@@ -40,12 +40,12 @@
                 class="nav-link {{ request()->is('finance/klaim-pembelian*') ? 'active' : '' }}">
                 <i class="nav-icon far fa-circle nav-icon"></i>
                 <p>
-                    Klaim
+                    Pengajuan Klaim
                 </p>
             </a>
         </li>
 
-        <li class="nav-item">
+        {{-- <li class="nav-item">
             <a href="{{ url('finance/approval-bdd') }}"
                 class="nav-link {{ request()->is('finance/approval-bdd*') ? 'active' : '' }}">
                 <i class="nav-icon far fa-circle nav-icon"></i>
@@ -53,7 +53,7 @@
                     BDD
                 </p>
             </a>
-        </li>
+        </li> --}}
     </ul>
 </li>
 
