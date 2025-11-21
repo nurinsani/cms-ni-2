@@ -31,7 +31,7 @@
 
         <li class="nav-item">
             <a href="{{ url('admin-head/pengajuan/klaim') }}"
-                class="nav-link {{ request()->is('admin/pengajuan') ? 'active' : '' }}">
+                class="nav-link {{ request()->is('admin-head/pengajuan/klaim') ? 'active' : '' }}">
                 <i class="nav-icon far fa-circle nav-icon"></i>
                 <p>
                     Klaim
@@ -63,7 +63,7 @@
             </a>
         </li>
 
-        <li class="nav-item">
+        {{-- <li class="nav-item">
             <a href="{{ route('admin.lpj-bdd.index') }}"
                 class="nav-link {{ request()->is('admin/pengajuan-lpj-bdd*') ? 'active' : '' }}">
                 <i class="nav-icon far fa-circle nav-icon"></i>
@@ -71,7 +71,7 @@
                     BDD
                 </p>
             </a>
-        </li>
+        </li> --}}
     </ul>
 </li>
 {{-- end menu LPJ --}}
@@ -115,7 +115,7 @@
             </a>
         </li>
 
-        <li class="nav-item">
+        {{-- <li class="nav-item">
             <a href="{{ url('admin-head/pengajuan-bdd') }}"
                 class="nav-link {{ request()->is('supervisor/pengajuan-bdd*') ? 'active' : '' }}">
                 <i class="nav-icon far fa-circle nav-icon"></i>
@@ -123,7 +123,7 @@
                     BDD
                 </p>
             </a>
-        </li>
+        </li> --}}
 
         <li class="nav-item">
             <a href="{{ url('admin-head/approval-mutasi') }}"
@@ -135,23 +135,23 @@
             </a>
         </li>
 
-        <li class="nav-item">
+        {{-- <li class="nav-item">
             <a href="#" class="nav-link {{ request()->is('supervisor/pengajuan-hapus-buku*') ? 'active' : '' }}">
                 <i class="nav-icon far fa-circle nav-icon"></i>
                 <p>
                     Hapus Buku
                 </p>
             </a>
-        </li>
+        </li> --}}
 
-        <li class="nav-item">
+        {{-- <li class="nav-item">
             <a href="#" class="nav-link {{ request()->is('supervisor/pengajuan-penjualan*') ? 'active' : '' }}">
                 <i class="nav-icon far fa-circle nav-icon"></i>
                 <p>
                     Penjualan
                 </p>
             </a>
-        </li>
+        </li> --}}
 
     </ul>
 </li>

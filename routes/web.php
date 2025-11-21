@@ -43,6 +43,7 @@ use App\Http\Controllers\It\ItLpjController;
 use App\Http\Controllers\It\PengajuanItController;
 use App\Http\Controllers\JurnalController;
 use App\Http\Controllers\MiscController;
+use App\Http\Controllers\PengajuanKlaimController;
 use App\Http\Controllers\PenyusutanController;
 use App\Http\Controllers\PenyusutanGol2Controller;
 use App\Http\Controllers\StokOpnameController;
@@ -235,6 +236,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('jurnal-pembebanan-ap', [JurnalController::class, 'jurnal_pembebanan_ap']);
 
         Route::get('export-excel', [PeralatanController::class, 'excel'])->name('peralatan.export');
+
+        Route::get('pengajuan/klaim', [PengajuanKlaimController::class, 'index']);
+        Route::get('pengajuan/klaim/{id}', [PengajuanKlaimController::class, 'detail']);
+        Route::get('/klaim/peralatan', [PengajuanKlaimController::class, 'klaim_peralatan']);
+        Route::get('/klaim/inventaris', [PengajuanKlaimController::class, 'klaim_inventaris']);
+        Route::post('/klaim/pembelian', [PengajuanKlaimController::class, 'klaim_store']);
     });
 
     Route::group(['prefix' => 'finance', 'as' => 'finance.', 'middleware' => 'role:finance'], function () {
