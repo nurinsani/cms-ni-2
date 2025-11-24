@@ -89,19 +89,30 @@ class ApprovalPeralatanController extends Controller
             $pengajuan->approval_4 = auth()->user()->id;
             $pengajuan->save();
 
+            $uniqueKodeArea = $pengajuan->pengajuan_details->pluck('kode_branch')->unique()->count();
+
+
             foreach ($pengajuan->pengajuan_details as $item) {
                 
             }
 
-            if ($item->kode_area == true) {
-                $keterangan = strtoupper('UM PEMBELIAN' . ' ' . $item->jenis_peralatan->nama_jenis . ' ' . 'WILAYAH' . ' ' . $item->area->area);
+            // if ($item->kode_area == true) {
+            //     $keterangan = strtoupper('UM PEMBELIAN' . ' ' . $item->jenis_peralatan->nama_jenis . ' ' . 'WILAYAH' . ' ' . $item->area->area);
+            // } elseif ($item->kode_branch == '1010') {
+            //     $keterangan = strtoupper('UM PEMBELIAN' . ' ' . $item->jenis_peralatan->nama_jenis . ' ' . 'KANTOR PUSAT');
+            // } else {
+            //     $keterangan = strtoupper('UM PEMBELIAN' . ' ' . $item->jenis_peralatan->nama_jenis . ' ' . 'AP' . ' ' .  $item->ap->unit);
+            // }
+
+            if ($uniqueKodeArea > 1) {
+                $keterangan = strtoupper('UM PEMBELIAN' . ' ' . $item->jenis_peralatan->nama_jenis . ' ' . 'WILAYAH' . ' ' . $pengajuan->area->area);
             } elseif ($item->kode_branch == '1010') {
                 $keterangan = strtoupper('UM PEMBELIAN' . ' ' . $item->jenis_peralatan->nama_jenis . ' ' . 'KANTOR PUSAT');
             } else {
                 $keterangan = strtoupper('UM PEMBELIAN' . ' ' . $item->jenis_peralatan->nama_jenis . ' ' . 'AP' . ' ' .  $item->ap->unit);
             }
 
-            // $url_api = 'http://192.168.1.7:8080/api/transaksi'; // URL API lokal
+            // $url_api = 'http://127.0.0.1:5500/api/transaksi'; // URL API lokal
             // $url_api = 'http://36.64.7.130:7117/nurinsani/api/transaksi_cms.php?function=insert_transaksi'; // URL API test
             // $url_api = 'http://192.168.88.4/nurinsani/api/transaksi_cms.php?function=insert_transaksi';// URL API production
             
