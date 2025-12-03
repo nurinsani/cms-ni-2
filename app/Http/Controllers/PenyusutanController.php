@@ -22,7 +22,25 @@ class PenyusutanController extends Controller
     public function index()
     {
         $title = 'Proses Penyusutan';
-        return view('transaksi.penyusutan.index', compact('title'));
+        $transaksiKp = TransaksiPembebananKp::whereMonth('tanggal_transaksi', date('m'))
+            ->whereYear('tanggal_transaksi', date('Y'))->first();
+
+        $transaksiAp = TransaksiPembebananAp::whereMonth('tanggal_transaksi', date('m'))
+            ->whereYear('tanggal_transaksi', date('Y'))->first();
+
+        $penyusutanKp = TransaksiPenyusutanKp::whereMonth('tanggal_transaksi', date('m'))
+            ->whereYear('tanggal_transaksi', date('Y'))->first();
+
+        $penyusutanAp = TransaksiPenyusutanAp::whereMonth('tanggal_transaksi', date('m'))
+            ->whereYear('tanggal_transaksi', date('Y'))->first();
+
+        return view('transaksi.penyusutan.index', compact(
+            'title',
+            'transaksiKp',
+            'transaksiAp',
+            'penyusutanKp',
+            'penyusutanAp'
+        ));
     }
 
     public function jalankanPenyusutan(Request $request)
@@ -70,7 +88,7 @@ class PenyusutanController extends Controller
                     
                         $branch = Branch::where('kode_branch', $kode_branch)->first();
                     
-                        if ($tanggal_sekarang == 16) {
+                        if ($tanggal_sekarang == 1) {
                         // if ($tanggal_sekarang == date('d')) {
                             if ($value->penyusutan_ke + count($value->susut) !== 48) {
                                 // Tambahkan logika untuk penyusutan dua kali jika tanggal perolehan antara 16-31 dan penyusutan awal 0
@@ -131,9 +149,6 @@ class PenyusutanController extends Controller
 
     public function jalankanJurnalPenyusutan(Request $request)
     {
-                        $url_api = 'http://192.168.1.13:5500/api/transaksi'; // URL API lokal
-                // $url_api = 'http://36.64.7.130:7117/nurinsani/api/transaksi_cms.php?function=insert_transaksi'; // URL API test
-                // $url_api = 'http://192.168.88.4/nurinsani/api/transaksi_cms.php?function=insert_transaksi';// URL API production
         try {
             DB::beginTransaction();
     
@@ -187,7 +202,7 @@ class PenyusutanController extends Controller
                                     'kredit' => $penyusutan_per_bulan,
                                 ]);
                             } else {
-                                $transaksiPenyusutanKp = TransaksiPenyusutanKp::create([
+                                TransaksiPenyusutanKp::create([
                                     'kode_branch' => $branch->kode_branch,
                                     'kode_transaksi' => 'BU' . '/' . $branch->kode_branch . '/' . $kode_transaksi,
                                     'kode_rekening' => '1010-52915',
@@ -197,38 +212,8 @@ class PenyusutanController extends Controller
                                     'debet' => $penyusutan_per_bulan,
                                     'kredit' => 0,
                                 ]);
-
-                                // $transaksiApi = [
-                                //     'unit' => $transaksiPenyusutanKp->kode_branch,
-                                //     'kode_transaksi' => $transaksiPenyusutanKp->kode_transaksi,
-                                //     'kode_rekening' => $transaksiPenyusutanKp->kode_rekening,
-                                //     'tanggal_transaksi' => $transaksiPenyusutanKp->tanggal_transaksi->toDateString(),
-                                //     'jenis_transaksi' => $transaksiPenyusutanKp->jenis_transaksi,
-                                //     'keterangan_transaksi' => $transaksiPenyusutanKp->keterangan,
-                                //     'debet' => $transaksiPenyusutanKp->debet,
-                                //     'kredit' => $transaksiPenyusutanKp->kredit,
-                                //     'tanggal_posting' => now()->toDateString(),
-                                //     'keterangan_posting' => 'Post',
-                                //     'id_admin' => auth()->id() ?? 1,
-                                // ];
-
-                                // $response = Http::timeout(30)
-                                //     ->asForm()
-                                //     ->withHeaders([
-                                //         'Accept' => 'application/json',
-                                //     ])
-                                //     ->post($url_api, $transaksiApi);
-
-                                // if ($response->successful()) {
-                                //     Log::info("Transaksi berhasil", $response->json());
-                                // } else {
-                                //     Log::error("Error API", [
-                                //         'status' => $response->status(),
-                                //         'response' => $response->json()
-                                //     ]);
-                                // }
     
-                                $transaksiPenyusutanKp = TransaksiPenyusutanKp::create([
+                                TransaksiPenyusutanKp::create([
                                     'kode_branch' => $branch->kode_branch,
                                     'kode_transaksi' => 'BU' . '/' . $branch->kode_branch . '/' . $kode_transaksi,
                                     'kode_rekening' => '1010-1672000',
@@ -239,35 +224,6 @@ class PenyusutanController extends Controller
                                     'kredit' => $penyusutan_per_bulan,
                                 ]);
 
-                                // $transaksiApi = [
-                                //     'unit' => $transaksiPenyusutanKp->kode_branch,
-                                //     'kode_transaksi' => $transaksiPenyusutanKp->kode_transaksi,
-                                //     'kode_rekening' => $transaksiPenyusutanKp->kode_rekening,
-                                //     'tanggal_transaksi' => $transaksiPenyusutanKp->tanggal_transaksi->toDateString(),
-                                //     'jenis_transaksi' => $transaksiPenyusutanKp->jenis_transaksi,
-                                //     'keterangan_transaksi' => $transaksiPenyusutanKp->keterangan,
-                                //     'debet' => $transaksiPenyusutanKp->debet,
-                                //     'kredit' => $transaksiPenyusutanKp->kredit,
-                                //     'tanggal_posting' => now()->toDateString(),
-                                //     'keterangan_posting' => 'Post',
-                                //     'id_admin' => auth()->id() ?? 1,
-                                // ];
-
-                                // $response = Http::timeout(30)
-                                //     ->asForm()
-                                //     ->withHeaders([
-                                //         'Accept' => 'application/json',
-                                //     ])
-                                //     ->post($url_api, $transaksiApi);
-
-                                // if ($response->successful()) {
-                                //     Log::info("Transaksi berhasil", $response->json());
-                                // } else {
-                                //     Log::error("Error API", [
-                                //         'status' => $response->status(),
-                                //         'response' => $response->json()
-                                //     ]);
-                                // }
                             }
                         } else {
                             // jurnal penyusutan untuk AP
@@ -364,9 +320,9 @@ class PenyusutanController extends Controller
                             })
                             ->count();
 
-                        $credit = round($row->penyusutan_per_bulan); // nilai penyusutan yg dibulatkan
+                        $credit = (int) round($row->penyusutan_per_bulan); // nilai penyusutan yg dibulatkan
 
-                        $credit = round($credit);
+                        $credit = (int) round($credit);
 
                         $ids = [];
                         $gl = [];

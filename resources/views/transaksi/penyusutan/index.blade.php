@@ -15,6 +15,18 @@
 @endsection
 
 @section('content')
+{{-- <a href="{{ route('pembebanan.proses') }}" 
+   class="btn btn-primary"
+   onclick="return confirm('Jalankan proses pembebanan penyusutan bulan ini?')">
+   Proses Pembebanan Penyusutan
+</a> --}}
+
+{{-- <form action="{{ route('pembebanan.upload-api') }}" method="POST">
+    @csrf
+    <button class="btn btn-primary">Upload Jurnal ke API</button>
+</form> --}}
+
+
     <div class="card shadow-sm">
         {{-- <div class="card-header bg-primary text-white">
             <h5 class="card-title">Proses Penyusutan dan Jurnal Pembebanan</h5>
@@ -48,10 +60,15 @@
                     <button type="submit" class="btn btn-success w-100">Jalankan Jurnal Penyusutan</button>
                 </form>
 
-                <form action="{{ route('jalankanJurnalPembebanan') }}" method="POST" id="form-step3" class="step-form">
+                {{-- <form action="{{ route('jalankanJurnalPembebanan') }}" method="POST" id="form-step3" class="step-form">
                     @csrf
                     <button type="submit" class="btn btn-warning w-100">Jalankan Jurnal Pembebanan</button>
-                </form>
+                </form> --}}
+
+                <a href="{{ route('pembebanan.proses') }}" class="btn btn-warning w-100 step-form" id="form-step3"
+                onclick="return confirm('Jalankan jurnal pembebanan bulan ini?')">
+                Jalankan Jurnal Pembebanan
+                </a>
             </div>
 
             <!-- Stepper Navigation Buttons -->
@@ -59,6 +76,34 @@
                 <button class="btn btn-secondary" id="prevStep" disabled>Previous</button>
                 <button class="btn btn-primary" id="nextStep">Next</button>
             </div>
+        </div>
+    </div>
+
+    <div class="card card-shadow-sm mt-3">
+        <div class="card-header text-center">
+            Upload Jurnal Transaksi ke Sistem NI
+        </div>
+        <div class="card-body">
+
+            <button type="button" class="btn btn-primary w-100 mb-3" id="penyusutanUpload">
+                Upload Jurnal Penyusutan
+            </button>
+
+            <button type="button" class="btn btn-primary w-100 mb-3" id="pembebananKp">
+                Upload Jurnal Pembebanan KP
+            </button>
+
+            <button type="button" class="btn btn-primary w-100 mb-3" id="pembebananAp">
+                Upload Jurnal Pembebanan AP
+            </button>
+
+            {{-- @if ($transaksiAp->status == "uploaded")
+                <button type="button" class="btn btn-primary w-100 mb-3" id="" disabled>
+                    Data Pembebanan KP Sudah diupload.
+                </button>
+            @else
+            @endif --}}
+
         </div>
     </div>
 
@@ -100,6 +145,9 @@
         }
     </style>
 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <script>
         // JavaScript for Stepper Functionality
         document.addEventListener('DOMContentLoaded', function () {
@@ -136,6 +184,122 @@
 
             // Initialize the first step
             showStep(currentStep);
+        });
+
+        // AJAX Upload Handlers
+
+        $('#penyusutanUpload').click(function (e) {
+            e.preventDefault();
+
+            Swal.fire({
+                title: "Proses upload sedang berjalan",
+                text: "Jangan tutup halaman ini...",
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading()
+                }
+            });
+            
+
+            $.ajax({
+                url: "{{ route('penyusutan.upload-api') }}",
+                type: "POST",
+                data: {
+                    _token: "{{ csrf_token() }}"
+                },
+                success: function (res) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil!',
+                        text: 'Upload jurnal selesai!'
+                    }).then(() => {
+                        location.reload();
+                    });
+                },
+                error: function (xhr) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal!',
+                        text: xhr.responseText
+                    });
+                }
+            });
+        });
+
+        $('#pembebananKp').click(function (e) {
+            e.preventDefault();
+
+            Swal.fire({
+                title: "Proses upload sedang berjalan",
+                text: "Jangan tutup halaman ini...",
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading()
+                }
+            });
+            
+
+            $.ajax({
+                url: "{{ route('pembebanan.upload-api-kp') }}",
+                type: "POST",
+                data: {
+                    _token: "{{ csrf_token() }}"
+                },
+                success: function (res) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil!',
+                        text: 'Upload jurnal selesai!'
+                    }).then(() => {
+                        location.reload();
+                    });
+                },
+                error: function (xhr) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal!',
+                        text: xhr.responseText
+                    });
+                }
+            });
+        });
+
+        $('#pembebananAp').click(function (e) {
+            e.preventDefault();
+
+            Swal.fire({
+                title: "Proses upload sedang berjalan",
+                text: "Jangan tutup halaman ini...",
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading()
+                }
+            });
+            
+
+            $.ajax({
+                url: "{{ route('pembebanan.upload-api-ap') }}",
+                type: "POST",
+                data: {
+                    _token: "{{ csrf_token() }}"
+                },
+                success: function (res) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil!',
+                        text: 'Upload jurnal selesai!'
+                    }).then(() => {
+                        location.reload();
+                    });
+                },
+                error: function (xhr) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal!',
+                        text: xhr.responseText
+                    });
+                }
+            });
         });
     </script>
 @endsection
