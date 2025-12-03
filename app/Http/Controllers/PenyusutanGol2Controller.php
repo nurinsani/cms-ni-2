@@ -77,7 +77,7 @@ class PenyusutanGol2Controller extends Controller
                     
                         $branch = Branch::where('kode_branch', $kode_branch)->first();
                     
-                        if ($tanggal_sekarang == 15) {
+                        if ($tanggal_sekarang == 3) {
                             if (count($value->susut) + $value->penyusutan_ke !== 24) {
                                 // Tambahkan logika untuk penyusutan dua kali jika tanggal perolehan antara 16-31 dan penyusutan awal 0
                                 PenyusutanGol2::create([
@@ -92,29 +92,7 @@ class PenyusutanGol2Controller extends Controller
                                     'penyusutan_per_bulan' => $hasil_penyusutan,
                                     'status_branch' => $value->status_branch
                                 ]);
-                                // if ($value->status_branch !== 'AUDIT') {
-                                //     // Lakukan penyusutan dua kali
-                                //     for ($j = 0; $j < 2; $j++) {
-                                //     }
-                                // }
-                                // if (count($value->susut) == 0 && intval(date('d', strtotime($value->tanggal_perolehan))) >= 16) {
-                                // } else {
-                                //     // Penyusutan normal
-                                //     if ($value->status_branch !== 'AUDIT') {
-                                //         Penyusutan::create([
-                                //             'inventaris_id' => $value->id,
-                                //             'user_id' => $value->user_id,
-                                //             'kode_branch' => $branch->kode_branch,
-                                //             'gl' => $branch->GL,
-                                //             'kode_peralatan' => $value->kode_peralatan,
-                                //             'nama_peralatan' => $value->jenis,
-                                //             'keterangan' => $value->keterangan,
-                                //             'tanggal_penyusutan' => date('Y-m-d'),
-                                //             'penyusutan_per_bulan' => $hasil_penyusutan,
-                                //             'status_branch' => $value->status_branch
-                                //         ]);
-                                //     }
-                                // }
+                                
                             }
                         }
                     

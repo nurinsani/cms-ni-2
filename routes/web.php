@@ -43,9 +43,12 @@ use App\Http\Controllers\It\ItLpjController;
 use App\Http\Controllers\It\PengajuanItController;
 use App\Http\Controllers\JurnalController;
 use App\Http\Controllers\MiscController;
+use App\Http\Controllers\PembebananController;
+use App\Http\Controllers\PembebananUploadController;
 use App\Http\Controllers\PengajuanKlaimController;
 use App\Http\Controllers\PenyusutanController;
 use App\Http\Controllers\PenyusutanGol2Controller;
+use App\Http\Controllers\PenyusutanUploadController;
 use App\Http\Controllers\StokOpnameController;
 use App\Http\Controllers\TransaksiController;
 
@@ -447,6 +450,22 @@ Route::middleware('auth')->group(function () {
     Route::put('/stok-opname/{id}', [StokOpnameController::class, 'update'])->name('stok-opname.update');
     Route::delete('/stok-opname/{id}', [StokOpnameController::class, 'destroy'])->name('stok-opname.destroy');
 
+    // Proses Pembebanan
+    Route::get('/pembebanan/proses', [PembebananController::class, 'prosesPembebanan'])->name('pembebanan.proses');
+    Route::get('/pembebanan/proses-gol-2', [PembebananController::class, 'prosesPembebananGol2'])->name('pembebanan-gol-2.proses');
+
+    // Upload via API Pembebanan
+    Route::post('/pembebanan/upload-api-kp', [PembebananUploadController::class, 'pembebananUploadApiKp'])->name('pembebanan.upload-api-kp');
+    Route::post('/pembebanan/upload-api-ap', [PembebananUploadController::class, 'pembebananUploadApiAp'])->name('pembebanan.upload-api-ap');
+
+    Route::post('/pembebanan/upload-api-gol-2-kp', [PembebananUploadController::class, 'pembebananUploadApiGol2Kp'])->name('pembebanan.upload-api-kp-gol-2');
+    Route::post('/pembebanan/upload-api-gol-2-ap', [PembebananUploadController::class, 'pembebananUploadApiGol2Ap'])->name('pembebanan.upload-api-ap-gol-2');
+
+    Route::post('/pembebanan/upload-penyusutan', [PenyusutanUploadController::class, 'penyusutanUploadApi'])->name('penyusutan.upload-api');
+    // Route::post('/pembebanan/upload-penyusutan-ap', [PenyusutanUploadController::class, 'penyusutanUploadApiAp'])->name('penyusutan.upload-api-ap');
+
+    Route::post('/pembebanan/upload-penyusutan-kp-gol-2', [PenyusutanUploadController::class, 'penyusutanUploadApiGol2'])->name('penyusutan.upload-api-gol-2');
+    // Route::post('/pembebanan/upload-penyusutan-ap-gol-2', [PenyusutanUploadController::class, 'penyusutanUploadApiGol2Ap'])->name('penyusutan.upload-api-gol-2-ap');
 
 });
 
