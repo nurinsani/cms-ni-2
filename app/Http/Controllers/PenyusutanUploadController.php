@@ -15,8 +15,8 @@ class PenyusutanUploadController extends Controller
     public function penyusutanUploadApi(Request $request)
     {
         try {
-            $url_api = 'http://127.0.0.1:5500/api/transaksi';
-            // $url_api = 'http://192.168.88.4/nurinsani/api/transaksi_cms.php?function=insert_transaksi';// URL API production
+            // $url_api = 'http://127.0.0.1:5500/api/transaksi';
+            $url_api = 'http://192.168.88.4/nurinsani/api/transaksi_cms.php?function=insert_transaksi';// URL API production
 
 
             // Ambil data dari dua tabel
@@ -85,8 +85,8 @@ class PenyusutanUploadController extends Controller
     public function penyusutanUploadApiGol2(Request $request)
     {
         try {
-            $url_api = 'http://127.0.0.1:5500/api/transaksi';
-            // $url_api = 'http://192.168.88.4/nurinsani/api/transaksi_cms.php?function=insert_transaksi';// URL API production
+            // $url_api = 'http://127.0.0.1:5500/api/transaksi';
+            $url_api = 'http://192.168.88.4/nurinsani/api/transaksi_cms.php?function=insert_transaksi';// URL API production
 
 
             // Ambil data dari dua tabel

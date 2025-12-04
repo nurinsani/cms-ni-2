@@ -16,8 +16,8 @@ class PembebananUploadController extends Controller
     {
         try {
 
-            $url_api = 'http://127.0.0.1:5500/api/transaksi';
-            // $url_api = 'http://192.168.88.4/nurinsani/api/transaksi_cms.php?function=insert_transaksi';// URL API production
+            // $url_api = 'http://127.0.0.1:5500/api/transaksi';
+            $url_api = 'http://192.168.88.4/nurinsani/api/transaksi_cms.php?function=insert_transaksi';// URL API production
             
 
             $transaksi = TransaksiPembebananKp::whereMonth('tanggal_transaksi', date('m'))
@@ -82,8 +82,8 @@ class PembebananUploadController extends Controller
     {
         try {
 
-            $url_api = 'http://127.0.0.1:5500/api/transaksi';
-            // $url_api = 'http://192.168.88.4/nurinsani/api/transaksi_cms.php?function=insert_transaksi';// URL API production
+            // $url_api = 'http://127.0.0.1:5500/api/transaksi';
+            $url_api = 'http://192.168.88.4/nurinsani/api/transaksi_cms.php?function=insert_transaksi';// URL API production
 
             $transaksi = TransaksiPembebananAp::whereMonth('tanggal_transaksi', date('m'))
             ->whereYear('tanggal_transaksi', date('Y'))
@@ -147,8 +147,8 @@ class PembebananUploadController extends Controller
     {
         try {
 
-            $url_api = 'http://127.0.0.1:5500/api/transaksi';
-            // $url_api = 'http://192.168.88.4/nurinsani/api/transaksi_cms.php?function=insert_transaksi';// URL API production
+            // $url_api = 'http://127.0.0.1:5500/api/transaksi';
+            $url_api = 'http://192.168.88.4/nurinsani/api/transaksi_cms.php?function=insert_transaksi';// URL API production
 
 
             $transaksi = TransaksiPembebananKpGol2::whereMonth('tanggal_transaksi', date('m'))
@@ -213,8 +213,8 @@ class PembebananUploadController extends Controller
     {
         try {
 
-            $url_api = 'http://127.0.0.1:5500/api/transaksi';
-            // $url_api = 'http://192.168.88.4/nurinsani/api/transaksi_cms.php?function=insert_transaksi';// URL API production
+            // $url_api = 'http://127.0.0.1:5500/api/transaksi';
+            $url_api = 'http://192.168.88.4/nurinsani/api/transaksi_cms.php?function=insert_transaksi';// URL API production
 
 
             $transaksi = TransaksiPembebananApGol2::whereMonth('tanggal_transaksi', date('m'))
