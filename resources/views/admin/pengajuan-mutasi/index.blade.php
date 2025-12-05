@@ -30,7 +30,7 @@
           <th>Dari AP</th>
           <th>Ke AP</th>
           <th>Bulan Mutasi</th>
-          <th>Jumalah</th>
+          <th>Total</th>
           <th>Status</th>
           <th>Aksi</th>
         </tr>
@@ -58,7 +58,7 @@
                       
                   @endif
                   <a href="{{ route('admin.pengajuan-mutasi.show', $item->id) }}" class="btn btn-info btn-sm">
-                      Lihat Detail
+                    <i class="fa fa-info-circle"></i> Detail
                   </a>
                 </td>
               </tr>
