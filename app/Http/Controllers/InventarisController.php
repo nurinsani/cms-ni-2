@@ -45,7 +45,7 @@ class InventarisController extends Controller
         $area = $request->input('area');
         $region = $request->input('region');
     
-        $query = Inventaris::with('penyusutans');
+        $query = Inventaris::with('penyusutans', 'branch');
     
         $pivotData = [];
         $areas = [];
@@ -139,6 +139,7 @@ class InventarisController extends Controller
         
             $pivotRow = [
                 'kode_branch' => $item->kode_branch,
+                'unit' => $item->branch->unit,
                 'kode_peralatan' => $item->kode_peralatan,
                 'jenis' => $item->jenis,
                 'type' => $item->type,
@@ -174,6 +175,6 @@ class InventarisController extends Controller
             'areas' => $areas,
             'branches' => $branches,
         ]);
-    }  
+    }
 
 }

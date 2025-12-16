@@ -18,6 +18,12 @@ class Inventaris extends Model
     protected $table = 'inventaris';
     protected $guarded = ['id'];
 
+    public function branch()
+    {
+        return $this->belongsTo(Branch::class, 'kode_branch', 'kode_branch');
+    }
+
+
     public function pengajuan()
     {
         return $this->belongsTo(Pengajuan::class, 'pengajuan_id');

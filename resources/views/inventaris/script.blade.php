@@ -121,6 +121,7 @@
 
                         var tr = '<tr>';
                         tr += '<td>' + row.kode_branch + '</td>';
+                        tr += '<td>' + row.unit + '</td>';
                         tr += '<td>' + row.kode_peralatan + '</td>';
                         tr += '<td>' + row.jenis + '</td>';
                         tr += '<td>' + row.type + '</td>';

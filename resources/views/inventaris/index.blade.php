@@ -129,6 +129,7 @@
                         <thead>
                             <tr>
                                 <th>Kode Branch</th>
+                                <th>Unit</th>
                                 <th>Kode Peralatan</th>
                                 <th>Jenis</th>
                                 <th>Type</th>
@@ -160,7 +161,7 @@
                         </thead>
                         <tfoot>
                             <tr>
-                                <th colspan="7">Total</th>
+                                <th colspan="8">Total</th>
                                 <th id="total-harga">0</th>
                                 <th id="total-umur">0</th>
                                 <th id="total-penyusutan-perbulan">0</th>
