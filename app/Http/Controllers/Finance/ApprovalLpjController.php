@@ -382,7 +382,7 @@ class ApprovalLpjController extends Controller
                     }
                 }
                 
-                if ($pengajuan->subtotal() <= $pengajuan->total_pembelian()) {
+                if ($pengajuan->subtotal() < $pengajuan->total_pembelian()) {
                         $transaksiKp = TransaksiKp::create([
                         'kode_branch' => 1010,
                         'kode_transaksi' => 'BU' . '/' . '1010' . '/' . $kode_transaksi_kp,
