@@ -120,87 +120,89 @@ class klaimController extends Controller
 
             // TODO buat foreach pada kp juga
             if ($item->kode_branch == '1010') {
-                $kode_transaksi = date('m').random_int(100000, 999999);
-                $transaksiKp = TransaksiKp::create([
-                    'kode_branch' => 1010,
-                    'kode_transaksi' => 'BU'.'/'.'1010'.'/'.$kode_transaksi,
-                    'kode_rekening' => '1010-'.$item->jenis_peralatan->param_peralatan->coa,
-                    'tanggal_transaksi' => Carbon::now(),
-                    'jenis_transaksi' => 'Bukti SYSTEM',
-                    'keterangan' => $keterangan,
-                    'debet' => $item->harga_pembelian * $item->kuantitas,
-                    'kredit' => 0
-                ]);
-
-                $transaksiApi = [
-                    'unit' => $transaksiKp->kode_branch,
-                    'kode_transaksi' => $transaksiKp->kode_transaksi,
-                    'kode_rekening' => $transaksiKp->kode_rekening,
-                    'tanggal_transaksi' => $transaksiKp->tanggal_transaksi->toDateString(),
-                    'jenis_transaksi' => $transaksiKp->jenis_transaksi,
-                    'keterangan_transaksi' => $transaksiKp->keterangan,
-                    'debet' => $transaksiKp->debet,
-                    'kredit' => $transaksiKp->kredit,
-                    'tanggal_posting' => now()->toDateString(),
-                    'keterangan_posting' => 'Post',
-                    'id_admin' => auth()->id() ?? 1,
-                ];
-
-                $response = Http::timeout(30)
-                ->asForm()
-                ->withHeaders([
-                    'Accept' => 'application/json',
-                ])
-                ->post($url_api, $transaksiApi);
-
-                if ($response->successful()) {
-                    Log::info("Transaksi berhasil", $response->json());
-                } else {
-                    Log::error("Error API", [
-                        'status' => $response->status(),
-                        'response' => $response->json()
+                foreach ($pengajuan->pengajuan_details as $item) {
+                    $kode_transaksi = date('m').random_int(100000, 999999);
+                    $transaksiKp = TransaksiKp::create([
+                        'kode_branch' => 1010,
+                        'kode_transaksi' => 'BU'.'/'.'1010'.'/'.$kode_transaksi,
+                        'kode_rekening' => '1010-'.$item->jenis_peralatan->param_peralatan->coa,
+                        'tanggal_transaksi' => Carbon::now(),
+                        'jenis_transaksi' => 'Bukti SYSTEM',
+                        'keterangan' => $keterangan,
+                        'debet' => $item->harga_pembelian * $item->kuantitas,
+                        'kredit' => 0
                     ]);
-                }
+    
+                    $transaksiApi = [
+                        'unit' => $transaksiKp->kode_branch,
+                        'kode_transaksi' => $transaksiKp->kode_transaksi,
+                        'kode_rekening' => $transaksiKp->kode_rekening,
+                        'tanggal_transaksi' => $transaksiKp->tanggal_transaksi->toDateString(),
+                        'jenis_transaksi' => $transaksiKp->jenis_transaksi,
+                        'keterangan_transaksi' => $transaksiKp->keterangan,
+                        'debet' => $transaksiKp->debet,
+                        'kredit' => $transaksiKp->kredit,
+                        'tanggal_posting' => now()->toDateString(),
+                        'keterangan_posting' => 'Post',
+                        'id_admin' => auth()->id() ?? 1,
+                    ];
 
-                $transaksiKp = TransaksiKp::create([
-                    'kode_branch' => 1010,
-                    'kode_transaksi' => 'BU'.'/'.'1010'.'/'.$kode_transaksi,
-                    'kode_rekening' => '1010-1312000',
-                    'tanggal_transaksi' => Carbon::now(),
-                    'jenis_transaksi' => 'Bukti SYSTEM',
-                    'keterangan' => $keterangan,
-                    'debet' => 0,
-                    'kredit' => $item->harga_pembelian * $item->kuantitas,
-                ]);
+                    $response = Http::timeout(30)
+                    ->asForm()
+                    ->withHeaders([
+                        'Accept' => 'application/json',
+                    ])
+                    ->post($url_api, $transaksiApi);
+    
+                    if ($response->successful()) {
+                        Log::info("Transaksi berhasil", $response->json());
+                    } else {
+                        Log::error("Error API", [
+                            'status' => $response->status(),
+                            'response' => $response->json()
+                        ]);
+                    }
 
-                $transaksiApi = [
-                    'unit' => $transaksiKp->kode_branch,
-                    'kode_transaksi' => $transaksiKp->kode_transaksi,
-                    'kode_rekening' => $transaksiKp->kode_rekening,
-                    'tanggal_transaksi' => $transaksiKp->tanggal_transaksi->toDateString(),
-                    'jenis_transaksi' => $transaksiKp->jenis_transaksi,
-                    'keterangan_transaksi' => $transaksiKp->keterangan,
-                    'debet' => $transaksiKp->debet,
-                    'kredit' => $transaksiKp->kredit,
-                    'tanggal_posting' => now()->toDateString(),
-                    'keterangan_posting' => 'Post',
-                    'id_admin' => auth()->id() ?? 1,
-                ];
-
-                $response = Http::timeout(30)
-                ->asForm()
-                ->withHeaders([
-                    'Accept' => 'application/json',
-                ])
-                ->post($url_api, $transaksiApi);
-
-                if ($response->successful()) {
-                    Log::info("Transaksi berhasil", $response->json());
-                } else {
-                    Log::error("Error API", [
-                        'status' => $response->status(),
-                        'response' => $response->json()
+                    $transaksiKp = TransaksiKp::create([
+                        'kode_branch' => 1010,
+                        'kode_transaksi' => 'BU'.'/'.'1010'.'/'.$kode_transaksi,
+                        'kode_rekening' => '1010-1312000',
+                        'tanggal_transaksi' => Carbon::now(),
+                        'jenis_transaksi' => 'Bukti SYSTEM',
+                        'keterangan' => $keterangan,
+                        'debet' => 0,
+                        'kredit' => $item->harga_pembelian * $item->kuantitas,
                     ]);
+    
+                    $transaksiApi = [
+                        'unit' => $transaksiKp->kode_branch,
+                        'kode_transaksi' => $transaksiKp->kode_transaksi,
+                        'kode_rekening' => $transaksiKp->kode_rekening,
+                        'tanggal_transaksi' => $transaksiKp->tanggal_transaksi->toDateString(),
+                        'jenis_transaksi' => $transaksiKp->jenis_transaksi,
+                        'keterangan_transaksi' => $transaksiKp->keterangan,
+                        'debet' => $transaksiKp->debet,
+                        'kredit' => $transaksiKp->kredit,
+                        'tanggal_posting' => now()->toDateString(),
+                        'keterangan_posting' => 'Post',
+                        'id_admin' => auth()->id() ?? 1,
+                    ];
+    
+                    $response = Http::timeout(30)
+                    ->asForm()
+                    ->withHeaders([
+                        'Accept' => 'application/json',
+                    ])
+                    ->post($url_api, $transaksiApi);
+    
+                    if ($response->successful()) {
+                        Log::info("Transaksi berhasil", $response->json());
+                    } else {
+                        Log::error("Error API", [
+                            'status' => $response->status(),
+                            'response' => $response->json()
+                        ]);
+                    }
                 }
             } else {
                 if ($item->kode_branch == NULL) {
