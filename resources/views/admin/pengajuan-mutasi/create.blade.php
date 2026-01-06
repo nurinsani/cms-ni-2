@@ -242,19 +242,19 @@
                                        id="inv_${value.id}">
                             </div>
                             <div class="flex-grow-1">
-                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                <div class="d-flex justify-content-between align-items-start mb-1">
                                     <label class="form-check-label text-bold text-primary mb-0" for="inv_${value.id}">
                                         ${value.kode_peralatan}
                                     </label>
-                                    <span class="badge bg-success inventaris-badge">
-                                        ${formatRupiah(value.harga_perolehan)}
-                                    </span>
                                 </div>
                                 <div class="text-muted small mb-1">
-                                    <i class="fas fa-tag me-1"></i><strong>Jenis: </strong> ${value.jenis}
+                                    <i class="fas fa-tag me-1"></i><strong> Jenis: </strong> ${value.jenis}
                                 </div>
-                                <div class="text-muted small">
-                                    <i class="fas fa-info-circle me-1"></i><strong>Keterangan:</strong> ${value.keterangan || '-'}
+                                <div class="text-muted small mb-1">
+                                    <i class="fas fa-info-circle me-1"></i><strong> Keterangan:</strong> ${value.keterangan || '-'}
+                                </div>
+                                <div class="text-muted small mb-1">
+                                    <i class="fas fa-money-bill-wave me-1"></i><strong> Harga Perolehan:</strong> ${formatRupiah(value.harga_perolehan)}
                                 </div>
                             </div>
                         </div>

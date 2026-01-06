@@ -67,15 +67,15 @@
             </a>
         </li> --}}
 
-        {{-- <li class="nav-item">
+        <li class="nav-item">
             <a href="{{ url('akunting/approval-mutasi') }}"
                 class="nav-link {{ request()->is('akunting/approval-mutasi*') ? 'active' : '' }}">
                 <i class="nav-icon far fa-circle nav-icon"></i>
                 <p>
-                    Mutasi
+                    Pengajuan Mutasi
                 </p>
             </a>
-        </li> --}}
+        </li>
 
     </ul>
 </li>

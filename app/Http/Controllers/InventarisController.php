@@ -40,7 +40,7 @@ class InventarisController extends Controller
 
     public function fetchData(Request $request)
     {
-        $currentYear = Carbon::now()->year;
+        $currentYear = 2025;
         $selectedBranch = $request->input('kode_branch');
         $area = $request->input('area');
         $region = $request->input('region');
