@@ -20,7 +20,7 @@ class PengajuanMutasiController extends Controller
     public function index()
     {
         $data['title'] = 'Pengajuan Mutasi';
-        $data['pengajuan_mutasi'] = PengajuanMutasi::with('inventaris')->get();
+        $data['pengajuan_mutasi'] = PengajuanMutasi::with('inventaris')->where('user_id', auth()->user()->id)->get();
         return view('admin.pengajuan-mutasi.index', $data);
     }
 
@@ -34,9 +34,9 @@ class PengajuanMutasiController extends Controller
         $data['title'] = 'Tambah Pengajuan Mutasi';
         $data['inventaris'] = Inventaris::all();
         $data['mutasi_ke'] = Branch::all();
-        $data['pilih_ap'] = Branch::all();
+        $data['pilih_ap'] = Branch::where('code_area', auth()->user()->code_area)
+        ->distinct()->get();
         $data['branch'] = Branch::where('code_area', auth()->user()->code_area)
-        // ->select('unit')
         ->distinct()
         ->get();
         return view('admin.pengajuan-mutasi.create', $data);

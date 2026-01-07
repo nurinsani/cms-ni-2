@@ -1,36 +1,51 @@
 @extends('layouts.main')
 
 @section('content')
-<div class="card">
-    <div class="card-header">
-        <h3 class="card-title">Detail Pengajuan Mutasi</h3>
-    </div>
-    <div class="card-body">
-        <table class="table">
-            <tr>
-                <th>Dari Cabang:</th>
-                <td>{{ $pengajuan->dari_ap->unit }}</td>
-            </tr>
-            <tr>
-                <th>Ke Cabang:</th>
-                <td>{{ $pengajuan->branch->unit }}</td>
-            </tr>
-            <tr>
-                <th>Bulan Mutasi:</th>
-                <td>{{ $pengajuan->bulan_mutasi }}</td>
-            </tr>
-        </table>
 
-        <h4>Inventaris yang Dimutasi:</h4>
-        <table class="table table-bordered">
+<a href="{{ route('admin.pengajuan-mutasi.index') }}" class="btn btn-primary mb-3">
+    <i class="fas fa-arrow-left"></i> Kembali
+</a>
+
+<div class="card">
+    <div class="card-body">
+        <h5 class="mb-3">
+            Informasi Mutasi
+        </h5>
+
+        <div class="card border-0">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="mb-2">
+                            <label class="text-muted small mb-1">AP Asal</label>
+                            <div class="text-bold">{{ $pengajuan->dari_ap->unit }}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-2">
+                            <label class="text-muted small mb-1">AP Tujuan</label>
+                            <div class="text-bold text-success">{{ $pengajuan->branch->unit }}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-2">
+                            <label class="text-muted small mb-1">Bulan Mutasi</label>
+                            <div class="text-bold">{{ strtoupper($pengajuan->bulan_mutasi) }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <table class="table table-bordered table-striped mt-4">
             <thead>
                 <tr>
-                    <th>No</th>
-                    <th>Kode Inventaris</th>
-                    <th>Jenis</th>
-                    <th>Harga Perolehan</th>
-                    <th>Akumulasi Penyusutan</th>
-                    <th>Nilai Buku Terakhir</th>
+                    <th>NO</th>
+                    <th>KODE INVENTARIS</th>
+                    <th>JENIS</th>
+                    <th>HARGA PEROLEHAN</th>
+                    <th>AKUMULASI PENYUSUTAN</th>
+                    <th>NILAI BUKU TERAKHIR</th>
                 </tr>
             </thead>
             <tbody>
@@ -41,8 +56,12 @@
                 @endphp
                 @foreach ($pengajuan->inventaris as $key => $inventaris)
                     @php
+                        $jumlahPenyusutan = $inventaris->penyusutans()->count() + $inventaris->penyusutan_ke;
+                        $penyusutanPerBulan = $inventaris->harga_perolehan / 48;
+                        $jumlahBulan = $inventaris->penyusutans()->count() + $inventaris->penyusutan_ke;
+                        
                         $harga_perolehan = $inventaris->harga_perolehan;
-                        $akumulasi_penyusutan = $inventaris->akumulasi_penyusutan_awal() + $inventaris->akumulasi_penyusutan();
+                        $akumulasi_penyusutan = $penyusutanPerBulan * $jumlahBulan;
                         $nilai_buku = $harga_perolehan - $akumulasi_penyusutan;
 
                         // Akumulasi total
@@ -60,7 +79,7 @@
                     </tr>
                 @endforeach
                 <tr class="font-weight-bold">
-                    <td colspan="3" class="text-center"><strong>Total</strong></td>
+                    <td colspan="3" class="text-center"><strong>TOTAL</strong></td>
                     <td><strong>{{ number_format($total_harga_perolehan) }}</strong></td>
                     <td><strong>{{ number_format($total_akumulasi_penyusutan) }}</strong></td>
                     <td><strong>{{ number_format($total_nilai_buku) }}</strong></td>
@@ -68,7 +87,62 @@
             </tbody>
         </table>
         
-        <a href="{{ url('akunting/approval-mutasi') }}" class="btn btn-secondary mt-3">Kembali</a>
     </div>
 </div>
+
+<div class="card mt-4">
+    <div class="card-body">
+        <h5 class="mb-3">Jurnal Mutasi</h5>
+
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr class="text-center">
+                    <th>KODE TRANSAKSI</th>
+                    <th>KODE REKENING</th>
+                    <th>TANGGAL</th>
+                    <th>JENIS</th>
+                    <th>KETERANGAN</th>
+                    <th>DEBET</th>
+                    <th>KREDIT</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{-- @php
+                    $totalDebet = 0;
+                    $totalKredit = 0;
+                @endphp --}}
+
+                {{-- @forelse ($jurnals as $jurnal) --}}
+                    {{-- @php
+                        $totalDebet += $jurnal->debet;
+                        $totalKredit += $jurnal->kredit;
+                    @endphp --}}
+                    <tr>
+                        <td>ghghfs</td>
+                        <td>shdgs</td>
+                        <td>hhfh</td>
+                        <td>shfg</td>
+                        <td>87799</td>
+                        <td class="text-right">77868786</td>
+                        <td class="text-right">77868786</td>
+                    </tr>
+                {{-- @empty --}}
+                    <tr>
+                        <td colspan="7" class="text-center text-muted">
+                            Tidak ada jurnal
+                        </td>
+                    </tr>
+                {{-- @endforelse --}}
+            </tbody>
+            <tfoot>
+                <tr class="font-weight-bold">
+                    <td colspan="5" class="text-center">TOTAL</td>
+                    <td class="text-right">8998</td>
+                    <td class="text-right">8998</td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+
 @endsection
