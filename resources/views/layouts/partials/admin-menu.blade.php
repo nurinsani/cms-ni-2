@@ -85,6 +85,16 @@
         </li>
 
         <li class="nav-item">
+            <a href="{{ route('admin.pengajuan-mutasi-gol-2.index') }}"
+                class="nav-link {{ request()->is('admin/mutasi-gol-2*') ? 'active' : '' }}">
+                <i class="nav-icon far fa-circle nav-icon"></i>
+                <p>
+                    Mutasi Gol 2
+                </p>
+            </a>
+        </li>
+
+        <li class="nav-item">
             <a href="#" class="nav-link {{ request()->is('admin/pengajuan-hapus-buku*') ? 'active' : '' }}">
                 <i class="nav-icon far fa-circle nav-icon"></i>
                 <p>
