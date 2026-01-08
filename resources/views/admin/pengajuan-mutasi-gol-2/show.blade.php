@@ -2,7 +2,7 @@
 
 @section('content')
 
-<a href="{{ route('admin.pengajuan-mutasi.index') }}" class="btn btn-primary mb-3">
+<a href="{{ route('admin.pengajuan-mutasi-gol-2.index') }}" class="btn btn-primary mb-3">
     <i class="fas fa-arrow-left"></i> Kembali
 </a>
 
