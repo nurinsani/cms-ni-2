@@ -13,4 +13,9 @@ class Transaksi extends Model
 
     protected $table = 'transaksi';
     protected $dates = ['tanggal_transaksi'];
+
+    public function transaksis()
+    {
+        return $this->hasMany(Transaksi::class, 'mutasi_id');
+    }
 }

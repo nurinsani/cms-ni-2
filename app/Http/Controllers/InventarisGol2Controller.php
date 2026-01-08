@@ -41,7 +41,7 @@ class InventarisGol2Controller extends Controller
 
     public function fetchData(Request $request)
     {
-        $currentYear = Carbon::now()->year;
+        $currentYear = 2025;
         $selectedBranch = $request->input('kode_branch');
         $area = $request->input('area');
         $region = $request->input('region');
@@ -140,7 +140,8 @@ class InventarisGol2Controller extends Controller
         
             $pivotRow = [
                 'kode_branch' => $item->kode_branch,
-                'unit' => $item->unit,
+                // 'unit' => $item->unit,
+                'unit' => $item->branch->unit,
                 'imei' => $item->imei,
                 'jenis' => $item->jenis,
                 'type' => $item->type,

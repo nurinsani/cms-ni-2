@@ -52,6 +52,7 @@ class PengajuanMutasiController extends Controller
     {
 
         // dd($request);
+        // dd($request->peralatan_id);
 
         $kode = date('m').random_int(100000, 999999);
 

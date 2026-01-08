@@ -77,6 +77,16 @@
             </a>
         </li>
 
+        <li class="nav-item">
+            <a href="{{ url('akunting/approval-mutasi-gol-2') }}"
+                class="nav-link {{ request()->is('akunting/approval-mutasi-gol-2*') ? 'active' : '' }}">
+                <i class="nav-icon far fa-circle nav-icon"></i>
+                <p>
+                    Pengajuan Mutasi Gol 2
+                </p>
+            </a>
+        </li>
+
     </ul>
 </li>
 

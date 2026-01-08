@@ -135,6 +135,16 @@
             </a>
         </li>
 
+        <li class="nav-item">
+            <a href="{{ url('admin-head/approval-mutasi-gol-2') }}"
+                class="nav-link {{ request()->is('supervisor/pengajuan-mutasi*') ? 'active' : '' }}">
+                <i class="nav-icon far fa-circle nav-icon"></i>
+                <p>
+                    Mutasi Gol 2
+                </p>
+            </a>
+        </li>
+
         {{-- <li class="nav-item">
             <a href="#" class="nav-link {{ request()->is('supervisor/pengajuan-hapus-buku*') ? 'active' : '' }}">
                 <i class="nav-icon far fa-circle nav-icon"></i>
