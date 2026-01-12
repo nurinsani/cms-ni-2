@@ -41,11 +41,14 @@
             <thead>
                 <tr>
                     <th>NO</th>
-                    <th>KODE INVENTARIS</th>
+                    <th>KODE INV</th>
+                    <th>IMEI</th>
                     <th>JENIS</th>
-                    <th>HARGA PEROLEHAN</th>
-                    <th>AKUMULASI PENYUSUTAN</th>
-                    <th>NILAI BUKU TERAKHIR</th>
+                    <th>HRG PEROLEHAN</th>
+                    <th>AKM PENYUSUTAN</th>
+                    <th>NILAI BUKU</th>
+                    <th>PENGGUNA</th>
+                    <th>JABATAN</th>
                 </tr>
             </thead>
             <tbody>
@@ -73,14 +76,31 @@
                         <td>{{ $key + 1 }}</td>
                         <td>{{ $inventaris->kode_peralatan }}</td>
                         <td>{{ $inventaris->jenis }}</td>
+                        <td>{{ $inventaris->imei }}</td>
+
                         
                         <td>{{ number_format($harga_perolehan) }}</td>
                         <td>{{ number_format($akumulasi_penyusutan) }}</td>
                         <td>{{ number_format($nilai_buku) }}</td>
+                        <td>
+                            <input type="text" readonly
+                                class="form-control form-control-sm editable"
+                                data-id="{{ $inventaris->id }}"
+                                data-field="pengguna"
+                                value="{{ $inventaris->pengguna }}">
+                        </td>
+
+                        <td>
+                            <input type="text" readonly
+                                class="form-control form-control-sm editable"
+                                data-id="{{ $inventaris->id }}"
+                                data-field="jabatan"
+                                value="{{ $inventaris->jabatan }}">
+                        </td>
                     </tr>
                 @endforeach
                 <tr class="font-weight-bold">
-                    <td colspan="3" class="text-center"><strong>TOTAL</strong></td>
+                    <td colspan="4" class="text-center"><strong>TOTAL</strong></td>
                     <td><strong>{{ number_format($total_harga_perolehan) }}</strong></td>
                     <td><strong>{{ number_format($total_akumulasi_penyusutan) }}</strong></td>
                     <td><strong>{{ number_format($total_nilai_buku) }}</strong></td>

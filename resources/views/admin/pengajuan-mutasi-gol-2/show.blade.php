@@ -83,22 +83,22 @@
                         <td>{{ number_format($akumulasi_penyusutan) }}</td>
                         <td>{{ number_format($nilai_buku) }}</td>
                         <td>
-                        <input type="text"
-                            class="form-control form-control-sm editable"
-                            data-id="{{ $inventaris->id }}"
-                            data-field="pengguna"
-                            data-old="{{ $inventaris->pengguna }}"
-                            value="{{ $inventaris->pengguna }}">
-                    </td>
+                            <input type="text"
+                                class="form-control form-control-sm editable"
+                                data-id="{{ $inventaris->id }}"
+                                data-field="pengguna"
+                                data-old="{{ $inventaris->pengguna }}"
+                                value="{{ $inventaris->pengguna }}">
+                        </td>
 
-                    <td>
-                        <input type="text"
-                            class="form-control form-control-sm editable"
-                            data-id="{{ $inventaris->id }}"
-                            data-field="jabatan"
-                            data-old="{{ $inventaris->jabatan }}"
-                            value="{{ $inventaris->jabatan }}">
-                    </td>
+                        <td>
+                            <input type="text"
+                                class="form-control form-control-sm editable"
+                                data-id="{{ $inventaris->id }}"
+                                data-field="jabatan"
+                                data-old="{{ $inventaris->jabatan }}"
+                                value="{{ $inventaris->jabatan }}">
+                        </td>
 
                     </tr>
                 @endforeach
