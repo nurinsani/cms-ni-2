@@ -41,11 +41,14 @@
             <thead>
                 <tr>
                     <th>NO</th>
-                    <th>KODE INVENTARIS</th>
+                    <th>KODE INV</th>
+                    <th>IMEI</th>
                     <th>JENIS</th>
-                    <th>HARGA PEROLEHAN</th>
-                    <th>AKUMULASI PENYUSUTAN</th>
-                    <th>NILAI BUKU TERAKHIR</th>
+                    <th>HRG PEROLEHAN</th>
+                    <th>AKM PENYUSUTAN</th>
+                    <th>NILAI BUKU</th>
+                    <th>PENGGUNA</th>
+                    <th>JABATAN</th>
                 </tr>
             </thead>
             <tbody>
@@ -73,14 +76,34 @@
                         <td>{{ $key + 1 }}</td>
                         <td>{{ $inventaris->kode_peralatan }}</td>
                         <td>{{ $inventaris->jenis }}</td>
+                        <td>{{ $inventaris->imei }}</td>
+
                         
                         <td>{{ number_format($harga_perolehan) }}</td>
                         <td>{{ number_format($akumulasi_penyusutan) }}</td>
                         <td>{{ number_format($nilai_buku) }}</td>
+                        <td>
+                        <input type="text"
+                            class="form-control form-control-sm editable"
+                            data-id="{{ $inventaris->id }}"
+                            data-field="pengguna"
+                            data-old="{{ $inventaris->pengguna }}"
+                            value="{{ $inventaris->pengguna }}">
+                    </td>
+
+                    <td>
+                        <input type="text"
+                            class="form-control form-control-sm editable"
+                            data-id="{{ $inventaris->id }}"
+                            data-field="jabatan"
+                            data-old="{{ $inventaris->jabatan }}"
+                            value="{{ $inventaris->jabatan }}">
+                    </td>
+
                     </tr>
                 @endforeach
                 <tr class="font-weight-bold">
-                    <td colspan="3" class="text-center"><strong>TOTAL</strong></td>
+                    <td colspan="4" class="text-center"><strong>TOTAL</strong></td>
                     <td><strong>{{ number_format($total_harga_perolehan) }}</strong></td>
                     <td><strong>{{ number_format($total_akumulasi_penyusutan) }}</strong></td>
                     <td><strong>{{ number_format($total_nilai_buku) }}</strong></td>
@@ -279,5 +302,85 @@
         </table>
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+document.querySelectorAll('.editable').forEach(input => {
+    input.addEventListener('change', function () {
+
+        let el = this;
+        let oldValue = el.getAttribute('data-old') ?? el.defaultValue;
+        let id = el.dataset.id;
+        let field = el.dataset.field;
+        let value = el.value;
+
+        // Jika tidak ada perubahan, hentikan
+        if (value === oldValue) {
+            return;
+        }
+
+        Swal.fire({
+            title: 'Simpan perubahan?',
+            text: 'Data akan diperbarui',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Ya, Simpan',
+            cancelButtonText: 'Batal',
+            reverseButtons: true
+        }).then((result) => {
+
+            if (result.isConfirmed) {
+
+                fetch("{{ route('inventaris-gol-2.update.inline') }}", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                    },
+                    body: JSON.stringify({
+                        id: id,
+                        field: field,
+                        value: value
+                    })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Berhasil',
+                            text: 'Data berhasil disimpan'
+                        });
+
+                        // update nilai awal
+                        el.defaultValue = value;
+                        el.setAttribute('data-old', value);
+                    } else {
+                        el.value = oldValue;
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal',
+                            text: 'Data gagal disimpan'
+                        });
+                    }
+                })
+                .catch(() => {
+                    el.value = oldValue;
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Terjadi kesalahan sistem'
+                    });
+                });
+
+            } else {
+                // Batal → kembalikan nilai lama
+                el.value = oldValue;
+            }
+        });
+    });
+});
+</script>
 
 @endsection

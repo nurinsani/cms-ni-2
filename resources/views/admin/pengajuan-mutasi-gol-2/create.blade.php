@@ -256,6 +256,15 @@
                                 <div class="text-muted small mb-1">
                                     <i class="fas fa-money-bill-wave me-1"></i><strong> Harga Perolehan:</strong> ${formatRupiah(value.harga_perolehan)}
                                 </div>
+                                <div class="text-muted small mb-1">
+                                    <i class="fas fa-info-circle me-1"></i><strong> Pengguna:</strong> ${value.pengguna || '-'}
+                                </div>
+                                <div class="text-muted small mb-1">
+                                    <i class="fas fa-info-circle me-1"></i><strong> Jabatan:</strong> ${value.jabatan || '-'}
+                                </div>
+                                <div class="text-muted small mb-1">
+                                    <i class="fas fa-info-circle me-1"></i><strong> IMEI:</strong> ${value.imei || '-'}
+                                </div>
                             </div>
                         </div>
                     </div>
