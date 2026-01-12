@@ -181,4 +181,18 @@ class InventarisGol2Controller extends Controller
         ]);
     }
 
+    public function updateInline(Request $request)
+    {
+        $inventaris = InventarisGol2::findOrFail($request->id);
+
+        $inventaris->update([
+            $request->field => $request->value
+        ]);
+
+        return response()->json([
+            'success' => true
+        ]);
+    }
+
+
 }

@@ -480,10 +480,12 @@ Route::middleware('auth')->group(function () {
     Route::post('/pembebanan/upload-api-gol-2-ap', [PembebananUploadController::class, 'pembebananUploadApiGol2Ap'])->name('pembebanan.upload-api-ap-gol-2');
 
     Route::post('/pembebanan/upload-penyusutan', [PenyusutanUploadController::class, 'penyusutanUploadApi'])->name('penyusutan.upload-api');
-    // Route::post('/pembebanan/upload-penyusutan-ap', [PenyusutanUploadController::class, 'penyusutanUploadApiAp'])->name('penyusutan.upload-api-ap');
 
     Route::post('/pembebanan/upload-penyusutan-kp-gol-2', [PenyusutanUploadController::class, 'penyusutanUploadApiGol2'])->name('penyusutan.upload-api-gol-2');
-    // Route::post('/pembebanan/upload-penyusutan-ap-gol-2', [PenyusutanUploadController::class, 'penyusutanUploadApiGol2Ap'])->name('penyusutan.upload-api-gol-2-ap');
+
+    Route::post('/inventaris-gol-2/update-inline', [InventarisGol2Controller::class, 'updateInline'])
+    ->name('inventaris-gol-2.update.inline');
+
 
 });
 
