@@ -41,7 +41,7 @@ class InventarisGol2Controller extends Controller
 
     public function fetchData(Request $request)
     {
-        $currentYear = 2025;
+        $currentYear = 2026;
         $selectedBranch = $request->input('kode_branch');
         $area = $request->input('area');
         $region = $request->input('region');
