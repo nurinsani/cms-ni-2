@@ -183,16 +183,47 @@ class InventarisGol2Controller extends Controller
 
     public function updateInline(Request $request)
     {
+        $request->validate([
+            'id'    => 'required|integer',
+            'field' => 'required|string',
+            'value' => 'nullable|string',
+        ]);
+
         $inventaris = InventarisGol2::findOrFail($request->id);
 
-        $inventaris->update([
-            $request->field => $request->value
-        ]);
+        $field = $request->field;
+        $value = $request->value;
+
+        // Field yang boleh diubah via inline edit
+        $allowedFields = ['pengguna', 'jabatan'];
+
+        if (!in_array($field, $allowedFields)) {
+            return response()->json(['success' => false]);
+        }
+
+        // Jika nilai sama, tidak usah update
+        if ($inventaris->$field === $value) {
+            return response()->json(['success' => true]);
+        }
+
+        // SIMPAN NILAI LAMA
+        if ($field === 'pengguna') {
+            $inventaris->old_pengguna = $inventaris->pengguna;
+        }
+
+        if ($field === 'jabatan') {
+            $inventaris->old_jabatan = $inventaris->jabatan;
+        }
+
+        // UPDATE NILAI BARU
+        $inventaris->$field = $value;
+        $inventaris->save();
 
         return response()->json([
             'success' => true
         ]);
     }
+
 
 
 }

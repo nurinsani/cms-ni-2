@@ -59,7 +59,7 @@
                                     </form>
                                     <a href="{{ url('akunting/approval-mutasi-gol-2/detail', $item->id) }}"
                                         class="btn btn-info btn-sm">
-                                        Lihat Detail
+                                        Detail
                                     </a>
                                 </td>
                             </tr>

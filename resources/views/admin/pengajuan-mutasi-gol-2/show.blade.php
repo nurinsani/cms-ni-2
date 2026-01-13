@@ -37,7 +37,7 @@
             </div>
         </div>
 
-        <table class="table table-bordered table-striped mt-4">
+        <table class="table table-sm table-bordered table-striped mt-4">
             <thead>
                 <tr>
                     <th>NO</th>
@@ -48,7 +48,9 @@
                     <th>AKM PENYUSUTAN</th>
                     <th>NILAI BUKU</th>
                     <th>PENGGUNA</th>
+                    {{-- <th>PENGGUNA LAMA</th> --}}
                     <th>JABATAN</th>
+                    {{-- <th>JABATAN LAMA</th> --}}
                 </tr>
             </thead>
             <tbody>
@@ -90,6 +92,8 @@
                                 data-old="{{ $inventaris->pengguna }}"
                                 value="{{ $inventaris->pengguna }}">
                         </td>
+                        {{-- <td>{{ $inventaris->old_pengguna }}</td> --}}
+
 
                         <td>
                             <input type="text"
@@ -99,6 +103,8 @@
                                 data-old="{{ $inventaris->jabatan }}"
                                 value="{{ $inventaris->jabatan }}">
                         </td>
+                        {{-- <td>{{ $inventaris->old_jabatan }}</td> --}}
+
 
                     </tr>
                 @endforeach
@@ -118,7 +124,7 @@
     <div class="card-body">
         <h5 class="mb-3">Jurnal Berkurang</h5>
 
-        <table class="table table-bordered table-striped">
+        <table class="table table-sm table-bordered table-striped">
             <thead>
                 <tr class="text-center">
                     <th>JENIS</th>
@@ -151,21 +157,21 @@
                     @endphp
                     <tr>
                         <td>Bukti SYSTEM</td>
-                        <td>Mutasi Inventaris Gol 2</td>
+                        <td>MUTASI INVENTARIS GOL 2</td>
                         <td>1674000</td>
-                        <td class="text-right">{{ number_format($nilai_buku) }}</td>
-                        <td class="text-right">0</td>
-                    </tr>
-                    <tr>
-                        <td>Bukti SYSTEM</td>
-                        <td>Mutasi Inventaris Gol 2</td>
-                        <td>2500000</td>
                         <td class="text-right">{{ number_format($akumulasi_penyusutan) }}</td>
                         <td class="text-right">0</td>
                     </tr>
                     <tr>
                         <td>Bukti SYSTEM</td>
-                        <td>Mutasi Inventaris Gol 2</td>
+                        <td>MUTASI INVENTARIS GOL 2</td>
+                        <td>2500000</td>
+                        <td class="text-right">{{ number_format($nilai_buku) }}</td>
+                        <td class="text-right">0</td>
+                    </tr>
+                    <tr>
+                        <td>Bukti SYSTEM</td>
+                        <td>MUTASI INVENTARIS GOL 2</td>
                         <td>1654000</td>
                         <td class="text-right">0</td>
                         <td class="text-right">{{ number_format($harga_perolehan) }}</td>
@@ -178,7 +184,7 @@
     <div class="card-body">
         <h5 class="mb-3">Jurnal Bertambah</h5>
 
-        <table class="table table-bordered table-striped">
+        <table class="table table-sm table-bordered table-striped">
             <thead>
                 <tr class="text-center">
                     <th>JENIS</th>
@@ -211,41 +217,34 @@
                     @endphp
                     <tr>
                         <td>Bukti SYSTEM</td>
-                        <td>Mutasi Inventaris Gol 2</td>
+                        <td>MUTASI INVENTARIS GOL 2</td>
                         <td>1654000</td>
                         <td class="text-right">{{ number_format($harga_perolehan) }}</td>
                         <td class="text-right">0</td>
                     </tr>
                     <tr>
                         <td>Bukti SYSTEM</td>
-                        <td>Mutasi Inventaris Gol 2</td>
+                        <td>MUTASI INVENTARIS GOL 2</td>
                         <td>1674000</td>
-                        <td class="text-right">0</td>
-                        <td class="text-right">{{ number_format($nilai_buku) }}</td>
-                    </tr>
-                    <tr>
-                        <td>Bukti SYSTEM</td>
-                        <td>Mutasi Inventaris Gol 2</td>
-                        <td>2500000</td>
                         <td class="text-right">0</td>
                         <td class="text-right">{{ number_format($akumulasi_penyusutan) }}</td>
                     </tr>
+                    <tr>
+                        <td>Bukti SYSTEM</td>
+                        <td>MUTASI INVENTARIS GOL 2</td>
+                        <td>2500000</td>
+                        <td class="text-right">0</td>
+                        <td class="text-right">{{ number_format($nilai_buku) }}</td>
+                    </tr>
                 @endforeach
             </tbody>
-            {{-- <tfoot>
-                <tr class="font-weight-bold">
-                    <td colspan="4" class="text-center">TOTAL</td>
-                    <td class="text-right">8998</td>
-                    <td class="text-right">8998</td>
-                </tr>
-            </tfoot> --}}
         </table>
     </div>
 
     <div class="card-body">
         <h5 class="mb-3">Jurnal KP</h5>
 
-        <table class="table table-bordered table-striped">
+        <table class="table table-sm table-bordered table-striped">
             <thead>
                 <tr class="text-center">
                     <th>JENIS</th>
@@ -278,27 +277,20 @@
                     @endphp
                     <tr>
                         <td>Bukti SYSTEM</td>
-                        <td>Mutasi Inventaris Gol 2</td>
+                        <td>MUTASI INVENTARIS GOL 2</td>
                         <td>1010-{{ $pengajuan->branch->GL }}</td>
-                        <td class="text-right">{{ number_format($akumulasi_penyusutan) }}</td>
+                        <td class="text-right">{{ number_format($nilai_buku) }}</td>
                         <td class="text-right">0</td>
                     </tr>
                     <tr>
                         <td>Bukti SYSTEM</td>
-                        <td>Mutasi Inventaris Gol 2</td>
+                        <td>MUTASI INVENTARIS GOL 2</td>
                         <td>1010-{{ $pengajuan->dari_ap->GL }}</td>
                         <td class="text-right">0</td>
-                        <td class="text-right">{{ number_format($akumulasi_penyusutan) }}</td>
+                        <td class="text-right">{{ number_format($nilai_buku) }}</td>
                     </tr>
                 @endforeach
             </tbody>
-            {{-- <tfoot>
-                <tr class="font-weight-bold">
-                    <td colspan="4" class="text-center">TOTAL</td>
-                    <td class="text-right">8998</td>
-                    <td class="text-right">8998</td>
-                </tr>
-            </tfoot> --}}
         </table>
     </div>
 </div>
@@ -306,81 +298,81 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
-document.querySelectorAll('.editable').forEach(input => {
-    input.addEventListener('change', function () {
+    document.querySelectorAll('.editable').forEach(input => {
+        input.addEventListener('change', function () {
 
-        let el = this;
-        let oldValue = el.getAttribute('data-old') ?? el.defaultValue;
-        let id = el.dataset.id;
-        let field = el.dataset.field;
-        let value = el.value;
+            let el = this;
+            let oldValue = el.getAttribute('data-old') ?? el.defaultValue;
+            let id = el.dataset.id;
+            let field = el.dataset.field;
+            let value = el.value;
 
-        // Jika tidak ada perubahan, hentikan
-        if (value === oldValue) {
-            return;
-        }
+            // Jika tidak ada perubahan, hentikan
+            if (value === oldValue) {
+                return;
+            }
 
-        Swal.fire({
-            title: 'Simpan perubahan?',
-            text: 'Data akan diperbarui',
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonText: 'Ya, Simpan',
-            cancelButtonText: 'Batal',
-            reverseButtons: true
-        }).then((result) => {
+            Swal.fire({
+                title: 'Simpan perubahan?',
+                text: 'Data akan diperbarui',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Ya, Simpan',
+                cancelButtonText: 'Batal',
+                reverseButtons: true
+            }).then((result) => {
 
-            if (result.isConfirmed) {
+                if (result.isConfirmed) {
 
-                fetch("{{ route('inventaris-gol-2.update.inline') }}", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                    },
-                    body: JSON.stringify({
-                        id: id,
-                        field: field,
-                        value: value
+                    fetch("{{ route('inventaris-gol-2.update.inline') }}", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                        },
+                        body: JSON.stringify({
+                            id: id,
+                            field: field,
+                            value: value
+                        })
                     })
-                })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.success) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Berhasil',
-                            text: 'Data berhasil disimpan'
-                        });
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Berhasil',
+                                text: 'Data berhasil disimpan'
+                            });
 
-                        // update nilai awal
-                        el.defaultValue = value;
-                        el.setAttribute('data-old', value);
-                    } else {
+                            // update nilai awal
+                            el.defaultValue = value;
+                            el.setAttribute('data-old', value);
+                        } else {
+                            el.value = oldValue;
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Gagal',
+                                text: 'Data gagal disimpan'
+                            });
+                        }
+                    })
+                    .catch(() => {
                         el.value = oldValue;
                         Swal.fire({
                             icon: 'error',
-                            title: 'Gagal',
-                            text: 'Data gagal disimpan'
+                            title: 'Error',
+                            text: 'Terjadi kesalahan sistem'
                         });
-                    }
-                })
-                .catch(() => {
-                    el.value = oldValue;
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'Terjadi kesalahan sistem'
                     });
-                });
 
-            } else {
-                // Batal → kembalikan nilai lama
-                el.value = oldValue;
-            }
+                } else {
+                    // Batal → kembalikan nilai lama
+                    el.value = oldValue;
+                }
+            });
         });
     });
-});
 </script>
 
 @endsection

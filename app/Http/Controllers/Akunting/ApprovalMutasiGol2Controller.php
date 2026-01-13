@@ -8,6 +8,7 @@ use App\Models\Branch;
 use App\Models\PengajuanMutasiGol2;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class ApprovalMutasiGol2Controller extends Controller
@@ -38,6 +39,9 @@ class ApprovalMutasiGol2Controller extends Controller
             $mutasi->status_approve = 'selesai';
             $mutasi->atasan_2 = auth()->user()->id;
             $mutasi->save();
+
+            // $url_api = 'http://127.0.0.1:5000/api/transaksi'; // URL API lokal
+            $url_api = 'http://192.168.88.4/nurinsani/api/transaksi_cms.php?function=insert_transaksi'; // URL API production
 
             // ===============================
             // INISIALISASI TOTAL
@@ -94,103 +98,343 @@ class ApprovalMutasiGol2Controller extends Controller
             // ===============================
             $kode_transaksi = date('m') . random_int(100000, 999999);
 
-            Transaksi::create([
+            $transaksiKP = Transaksi::create([
                 'kode_branch' => 1010,
                 'kode_transaksi' => 'BU/1010/' . $kode_transaksi,
                 'kode_rekening' => '1010-' . $glBerkurang,
                 'tanggal_transaksi' => now(),
                 'jenis_transaksi' => 'Bukti SYSTEM',
-                'keterangan' => 'Mutasi Inventaris Gol 2 ' . $unitDari . ' ke ' . $unitKe,
-                'debet' => $akumulasi_penyusutan,
+                'keterangan' => 'MUTASI INVENTARIS GOL 2 ' . $unitDari . ' KE ' . $unitKe,
+                'debet' => $totalNilaiBuku,
                 'kredit' => 0
             ]);
 
-            Transaksi::create([
+            $transaksiApi = [
+                'unit' => $transaksiKP->kode_branch,
+                'kode_transaksi' => $transaksiKP->kode_transaksi,
+                'kode_rekening' => $transaksiKP->kode_rekening,
+                'tanggal_transaksi' => $transaksiKP->tanggal_transaksi->toDateString(),
+                'jenis_transaksi' => $transaksiKP->jenis_transaksi,
+                'keterangan_transaksi' => $transaksiKP->keterangan,
+                'debet' => $transaksiKP->debet,
+                'kredit' => $transaksiKP->kredit,
+                'tanggal_posting' => now()->toDateString(),
+                'keterangan_posting' => 'Post',
+                'id_admin' => auth()->id() ?? 1,
+            ];
+
+            $response = Http::timeout(30)
+            ->asForm()
+            ->withHeaders([
+                'Accept' => 'application/json',
+            ])
+            ->post($url_api, $transaksiApi);
+
+            if ($response->successful()) {
+                Log::info("Transaksi berhasil", $response->json());
+            } else {
+                Log::error("Error API", [
+                    'status' => $response->status(),
+                    'response' => $response->json()
+                ]);
+            }
+
+            $transaksiKP = Transaksi::create([
                 'kode_branch' => 1010,
                 'kode_transaksi' => 'BU/1010/' . $kode_transaksi,
                 'kode_rekening' => '1010-' . $glBertambah,
                 'tanggal_transaksi' => now(),
                 'jenis_transaksi' => 'Bukti SYSTEM',
-                'keterangan' => 'Mutasi Inventaris Gol 2 ' . $unitDari . ' ke ' . $unitKe,
+                'keterangan' => 'MUTASI INVENTARIS GOL 2 ' . $unitDari . ' KE ' . $unitKe,
                 'debet' => 0,
-                'kredit' => $akumulasi_penyusutan
+                'kredit' => $totalNilaiBuku
             ]);
+
+            $transaksiApi = [
+                'unit' => $transaksiKP->kode_branch,
+                'kode_transaksi' => $transaksiKP->kode_transaksi,
+                'kode_rekening' => $transaksiKP->kode_rekening,
+                'tanggal_transaksi' => $transaksiKP->tanggal_transaksi->toDateString(),
+                'jenis_transaksi' => $transaksiKP->jenis_transaksi,
+                'keterangan_transaksi' => $transaksiKP->keterangan,
+                'debet' => $transaksiKP->debet,
+                'kredit' => $transaksiKP->kredit,
+                'tanggal_posting' => now()->toDateString(),
+                'keterangan_posting' => 'Post',
+                'id_admin' => auth()->id() ?? 1,
+            ];
+
+            $response = Http::timeout(30)
+            ->asForm()
+            ->withHeaders([
+                'Accept' => 'application/json',
+            ])
+            ->post($url_api, $transaksiApi);
+
+            if ($response->successful()) {
+                Log::info("Transaksi berhasil", $response->json());
+            } else {
+                Log::error("Error API", [
+                    'status' => $response->status(),
+                    'response' => $response->json()
+                ]);
+            }
 
             // ===============================
             // JURNAL BERKURANG (CABANG ASAL)
             // ===============================
             $kode_transaksi = date('m') . random_int(100000, 999999);
 
-            Transaksi::create([
+            $transaksiApAsal = Transaksi::create([
                 'kode_branch' => $mutasi->dari_cabang,
                 'kode_transaksi' => 'BU/'.$mutasi->dari_cabang.'/'.$kode_transaksi,
                 'kode_rekening' => '1674000',
                 'tanggal_transaksi' => now(),
                 'jenis_transaksi' => 'Bukti SYSTEM',
-                'keterangan' => 'Mutasi Inventaris Gol 2 ' . $unitDari . ' ke ' . $unitKe,
-                'debet' => $totalNilaiBuku,
+                'keterangan' => 'MUTASI INVENTARIS GOL 2 ' . $unitDari . ' KE ' . $unitKe,
+                'debet' => $akumulasi_penyusutan,
                 'kredit' => 0
             ]);
 
-            Transaksi::create([
+            $transaksiApi = [
+                'unit' => $transaksiApAsal->kode_branch,
+                'kode_transaksi' => $transaksiApAsal->kode_transaksi,
+                'kode_rekening' => $transaksiApAsal->kode_rekening,
+                'tanggal_transaksi' => $transaksiApAsal->tanggal_transaksi->toDateString(),
+                'jenis_transaksi' => $transaksiApAsal->jenis_transaksi,
+                'keterangan_transaksi' => $transaksiApAsal->keterangan,
+                'debet' => $transaksiApAsal->debet,
+                'kredit' => $transaksiApAsal->kredit,
+                'tanggal_posting' => now()->toDateString(),
+                'keterangan_posting' => 'Post',
+                'id_admin' => auth()->id() ?? 1,
+            ];
+
+            $response = Http::timeout(30)
+            ->asForm()
+            ->withHeaders([
+                'Accept' => 'application/json',
+            ])
+            ->post($url_api, $transaksiApi);
+
+            if ($response->successful()) {
+                Log::info("Transaksi berhasil", $response->json());
+            } else {
+                Log::error("Error API", [
+                    'status' => $response->status(),
+                    'response' => $response->json()
+                ]);
+            }
+
+            $transaksiApAsal = Transaksi::create([
                 'kode_branch' => $mutasi->dari_cabang,
                 'kode_transaksi' => 'BU/'.$mutasi->dari_cabang.'/'.$kode_transaksi,
                 'kode_rekening' => '2500000',
                 'tanggal_transaksi' => now(),
                 'jenis_transaksi' => 'Bukti SYSTEM',
-                'keterangan' => 'Mutasi Inventaris Gol 2 ' . $unitDari . ' ke ' . $unitKe,
-                'debet' => $akumulasi_penyusutan,
+                'keterangan' => 'MUTASI INVENTARIS GOL 2 ' . $unitDari . ' KE ' . $unitKe,
+                'debet' => $totalNilaiBuku,
                 'kredit' => 0
             ]);
 
-            Transaksi::create([
+            $transaksiApi = [
+                'unit' => $transaksiApAsal->kode_branch,
+                'kode_transaksi' => $transaksiApAsal->kode_transaksi,
+                'kode_rekening' => $transaksiApAsal->kode_rekening,
+                'tanggal_transaksi' => $transaksiApAsal->tanggal_transaksi->toDateString(),
+                'jenis_transaksi' => $transaksiApAsal->jenis_transaksi,
+                'keterangan_transaksi' => $transaksiApAsal->keterangan,
+                'debet' => $transaksiApAsal->debet,
+                'kredit' => $transaksiApAsal->kredit,
+                'tanggal_posting' => now()->toDateString(),
+                'keterangan_posting' => 'Post',
+                'id_admin' => auth()->id() ?? 1,
+            ];
+
+            $response = Http::timeout(30)
+            ->asForm()
+            ->withHeaders([
+                'Accept' => 'application/json',
+            ])
+            ->post($url_api, $transaksiApi);
+
+            if ($response->successful()) {
+                Log::info("Transaksi berhasil", $response->json());
+            } else {
+                Log::error("Error API", [
+                    'status' => $response->status(),
+                    'response' => $response->json()
+                ]);
+            }
+
+            $transaksiApAsal = Transaksi::create([
                 'kode_branch' => $mutasi->dari_cabang,
                 'kode_transaksi' => 'BU/'.$mutasi->dari_cabang.'/'.$kode_transaksi,
                 'kode_rekening' => '1654000',
                 'tanggal_transaksi' => now(),
                 'jenis_transaksi' => 'Bukti SYSTEM',
-                'keterangan' => 'Mutasi Inventaris Gol 2 ' . $unitDari . ' ke ' . $unitKe,
+                'keterangan' => 'MUTASI INVENTARIS GOL 2 ' . $unitDari . ' KE ' . $unitKe,
                 'debet' => 0,
                 'kredit' => $totalHargaPerolehan
             ]);
+
+            $transaksiApi = [
+                'unit' => $transaksiApAsal->kode_branch,
+                'kode_transaksi' => $transaksiApAsal->kode_transaksi,
+                'kode_rekening' => $transaksiApAsal->kode_rekening,
+                'tanggal_transaksi' => $transaksiApAsal->tanggal_transaksi->toDateString(),
+                'jenis_transaksi' => $transaksiApAsal->jenis_transaksi,
+                'keterangan_transaksi' => $transaksiApAsal->keterangan,
+                'debet' => $transaksiApAsal->debet,
+                'kredit' => $transaksiApAsal->kredit,
+                'tanggal_posting' => now()->toDateString(),
+                'keterangan_posting' => 'Post',
+                'id_admin' => auth()->id() ?? 1,
+            ];
+
+            $response = Http::timeout(30)
+            ->asForm()
+            ->withHeaders([
+                'Accept' => 'application/json',
+            ])
+            ->post($url_api, $transaksiApi);
+
+            if ($response->successful()) {
+                Log::info("Transaksi berhasil", $response->json());
+            } else {
+                Log::error("Error API", [
+                    'status' => $response->status(),
+                    'response' => $response->json()
+                ]);
+            }
 
             // ===============================
             // JURNAL BERTAMBAH (CABANG TUJUAN)
             // ===============================
             $kode_transaksi = date('m') . random_int(100000, 999999);
 
-            Transaksi::create([
+            $transaksiApTujuan = Transaksi::create([
                 'kode_branch' => $mutasi->ke_cabang,
                 'kode_transaksi' => 'BU/'.$mutasi->ke_cabang.'/'.$kode_transaksi,
                 'kode_rekening' => '1654000',
                 'tanggal_transaksi' => now(),
                 'jenis_transaksi' => 'Bukti SYSTEM',
-                'keterangan' => 'Mutasi Inventaris Gol 2 ' . $unitDari . ' ke ' . $unitKe,
+                'keterangan' => 'MUTASI INVENTARIS GOL 2 ' . $unitDari . ' KE ' . $unitKe,
                 'debet' => $totalHargaPerolehan,
                 'kredit' => 0
             ]);
 
-            Transaksi::create([
+            $transaksiApi = [
+                'unit' => $transaksiApTujuan->kode_branch,
+                'kode_transaksi' => $transaksiApTujuan->kode_transaksi,
+                'kode_rekening' => $transaksiApTujuan->kode_rekening,
+                'tanggal_transaksi' => $transaksiApTujuan->tanggal_transaksi->toDateString(),
+                'jenis_transaksi' => $transaksiApTujuan->jenis_transaksi,
+                'keterangan_transaksi' => $transaksiApTujuan->keterangan,
+                'debet' => $transaksiApTujuan->debet,
+                'kredit' => $transaksiApTujuan->kredit,
+                'tanggal_posting' => now()->toDateString(),
+                'keterangan_posting' => 'Post',
+                'id_admin' => auth()->id() ?? 1,
+            ];
+
+            $response = Http::timeout(30)
+            ->asForm()
+            ->withHeaders([
+                'Accept' => 'application/json',
+            ])
+            ->post($url_api, $transaksiApi);
+
+            if ($response->successful()) {
+                Log::info("Transaksi berhasil", $response->json());
+            } else {
+                Log::error("Error API", [
+                    'status' => $response->status(),
+                    'response' => $response->json()
+                ]);
+            }
+
+            $transaksiApTujuan = Transaksi::create([
                 'kode_branch' => $mutasi->ke_cabang,
                 'kode_transaksi' => 'BU/'.$mutasi->ke_cabang.'/'.$kode_transaksi,
                 'kode_rekening' => '1674000',
                 'tanggal_transaksi' => now(),
                 'jenis_transaksi' => 'Bukti SYSTEM',
-                'keterangan' => 'Mutasi Inventaris Gol 2 ' . $unitDari . ' ke ' . $unitKe,
+                'keterangan' => 'MUTASI INVENTARIS GOL 2 ' . $unitDari . ' KE ' . $unitKe,
                 'debet' => 0,
-                'kredit' => $totalNilaiBuku
+                'kredit' => $akumulasi_penyusutan
             ]);
 
-            Transaksi::create([
+            $transaksiApi = [
+                'unit' => $transaksiApTujuan->kode_branch,
+                'kode_transaksi' => $transaksiApTujuan->kode_transaksi,
+                'kode_rekening' => $transaksiApTujuan->kode_rekening,
+                'tanggal_transaksi' => $transaksiApTujuan->tanggal_transaksi->toDateString(),
+                'jenis_transaksi' => $transaksiApTujuan->jenis_transaksi,
+                'keterangan_transaksi' => $transaksiApTujuan->keterangan,
+                'debet' => $transaksiApTujuan->debet,
+                'kredit' => $transaksiApTujuan->kredit,
+                'tanggal_posting' => now()->toDateString(),
+                'keterangan_posting' => 'Post',
+                'id_admin' => auth()->id() ?? 1,
+            ];
+
+            $response = Http::timeout(30)
+            ->asForm()
+            ->withHeaders([
+                'Accept' => 'application/json',
+            ])
+            ->post($url_api, $transaksiApi);
+
+            if ($response->successful()) {
+                Log::info("Transaksi berhasil", $response->json());
+            } else {
+                Log::error("Error API", [
+                    'status' => $response->status(),
+                    'response' => $response->json()
+                ]);
+            }
+
+            $transaksiApTujuan = Transaksi::create([
                 'kode_branch' => $mutasi->ke_cabang,
                 'kode_transaksi' => 'BU/'.$mutasi->ke_cabang.'/'.$kode_transaksi,
                 'kode_rekening' => '2500000',
                 'tanggal_transaksi' => now(),
                 'jenis_transaksi' => 'Bukti SYSTEM',
-                'keterangan' => 'Mutasi Inventaris Gol 2 ' . $unitDari . ' ke ' . $unitKe,
+                'keterangan' => 'MUTASI INVENTARIS GOL 2 ' . $unitDari . ' KE ' . $unitKe,
                 'debet' => 0,
-                'kredit' => $akumulasi_penyusutan
+                'kredit' => $totalNilaiBuku
             ]);
+
+            $transaksiApi = [
+                'unit' => $transaksiApTujuan->kode_branch,
+                'kode_transaksi' => $transaksiApTujuan->kode_transaksi,
+                'kode_rekening' => $transaksiApTujuan->kode_rekening,
+                'tanggal_transaksi' => $transaksiApTujuan->tanggal_transaksi->toDateString(),
+                'jenis_transaksi' => $transaksiApTujuan->jenis_transaksi,
+                'keterangan_transaksi' => $transaksiApTujuan->keterangan,
+                'debet' => $transaksiApTujuan->debet,
+                'kredit' => $transaksiApTujuan->kredit,
+                'tanggal_posting' => now()->toDateString(),
+                'keterangan_posting' => 'Post',
+                'id_admin' => auth()->id() ?? 1,
+            ];
+
+            $response = Http::timeout(30)
+            ->asForm()
+            ->withHeaders([
+                'Accept' => 'application/json',
+            ])
+            ->post($url_api, $transaksiApi);
+
+            if ($response->successful()) {
+                Log::info("Transaksi berhasil", $response->json());
+            } else {
+                Log::error("Error API", [
+                    'status' => $response->status(),
+                    'response' => $response->json()
+                ]);
+            }
 
             DB::commit();
 

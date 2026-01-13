@@ -91,18 +91,9 @@ class ApprovalPeralatanController extends Controller
 
             $uniqueKodeArea = $pengajuan->pengajuan_details->pluck('kode_branch')->unique()->count();
 
-
             foreach ($pengajuan->pengajuan_details as $item) {
                 
             }
-
-            // if ($item->kode_area == true) {
-            //     $keterangan = strtoupper('UM PEMBELIAN' . ' ' . $item->jenis_peralatan->nama_jenis . ' ' . 'WILAYAH' . ' ' . $item->area->area);
-            // } elseif ($item->kode_branch == '1010') {
-            //     $keterangan = strtoupper('UM PEMBELIAN' . ' ' . $item->jenis_peralatan->nama_jenis . ' ' . 'KANTOR PUSAT');
-            // } else {
-            //     $keterangan = strtoupper('UM PEMBELIAN' . ' ' . $item->jenis_peralatan->nama_jenis . ' ' . 'AP' . ' ' .  $item->ap->unit);
-            // }
 
             if ($uniqueKodeArea > 1) {
                 $keterangan = strtoupper('UM PEMBELIAN' . ' ' . $item->jenis_peralatan->nama_jenis . ' ' . 'WILAYAH' . ' ' . $pengajuan->area->area);
