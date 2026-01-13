@@ -75,18 +75,18 @@
                         var rowPenyusutanPerbulan = parseFloat(row.penyusutan_perbulan ||
                             0);
                         var rowPenyusutanAwal = parseFloat(row.total_penyusutan_awal || 0);
-                        var rowJanuari = parseFloat(row['2025-01'] || 0);
-                        var rowFebruari = parseFloat(row['2025-02'] || 0);
-                        var rowMaret = parseFloat(row['2025-03'] || 0);
-                        var rowApril = parseFloat(row['2025-04'] || 0);
-                        var rowMei = parseFloat(row['2025-05'] || 0);
-                        var rowJuni = parseFloat(row['2025-06'] || 0);
-                        var rowJuli = parseFloat(row['2025-07'] || 0);
-                        var rowAgustus = parseFloat(row['2025-08'] || 0);
-                        var rowSeptember = parseFloat(row['2025-09'] || 0);
-                        var rowOktober = parseFloat(row['2025-10'] || 0);
-                        var rowNovember = parseFloat(row['2025-11'] || 0);
-                        var rowDesember = parseFloat(row['2025-12'] || 0);
+                        var rowJanuari = parseFloat(row['2026-01'] || 0);
+                        var rowFebruari = parseFloat(row['2026-02'] || 0);
+                        var rowMaret = parseFloat(row['2026-03'] || 0);
+                        var rowApril = parseFloat(row['2026-04'] || 0);
+                        var rowMei = parseFloat(row['2026-05'] || 0);
+                        var rowJuni = parseFloat(row['2026-06'] || 0);
+                        var rowJuli = parseFloat(row['2026-07'] || 0);
+                        var rowAgustus = parseFloat(row['2026-08'] || 0);
+                        var rowSeptember = parseFloat(row['2026-09'] || 0);
+                        var rowOktober = parseFloat(row['2026-10'] || 0);
+                        var rowNovember = parseFloat(row['2026-11'] || 0);
+                        var rowDesember = parseFloat(row['2026-12'] || 0);
                         var rowPenyusutanBerjalan = parseFloat(row
                             .total_penyusutan_berjalan || 0);
                         var rowAkumulasiPenyusutan = parseFloat(row.akumulasi_penyusutan ||
