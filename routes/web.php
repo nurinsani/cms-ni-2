@@ -167,6 +167,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('approval-mutasi-gol-2', [App\Http\Controllers\Akunting\ApprovalMutasiGol2Controller::class, 'index']);
         Route::get('approval-mutasi-gol-2/detail/{id}', [App\Http\Controllers\Akunting\ApprovalMutasiGol2Controller::class, 'show']);
         Route::post('approval-mutasi-gol-2/approve/{id}', [App\Http\Controllers\Akunting\ApprovalMutasiGol2Controller::class, 'approve']);
+        Route::post('approval-mutasi-gol-2/tolak/{id}', [App\Http\Controllers\Akunting\ApprovalMutasiGol2Controller::class, 'tolak']);
         
 
         Route::resources([
@@ -229,6 +230,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('approval-mutasi-gol-2', [ApprovalMutasiGol2Controller::class, 'index']);
         Route::get('approval-mutasi-gol-2/detail/{id}', [ApprovalMutasiGol2Controller::class, 'show']);
         Route::post('approval-mutasi-gol-2/approve/{id}', [ApprovalMutasiGol2Controller::class, 'approve']);
+        Route::post('approval-mutasi-gol-2/tolak/{id}', [ApprovalMutasiGol2Controller::class, 'tolak']);
+
 
         Route::resources([
             'lpj' => LpjAhController::class,
