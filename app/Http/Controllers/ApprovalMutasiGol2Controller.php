@@ -42,4 +42,24 @@ class ApprovalMutasiGol2Controller extends Controller
             return redirect()->back()->with('error', 'Data gagal diapprove');
         }
     }
+
+    public function tolak(Request $request, $id)
+    {
+        // dd($request->all());
+        try {
+            DB::beginTransaction();
+            $mutasi = PengajuanMutasiGol2::findOrfail($id);
+            $mutasi->status_approve = 'admin';
+            $mutasi->atasan_1 = auth()->user()->id;
+            $mutasi->update();
+
+            DB::commit();
+
+            return redirect()->back()->with('success', 'Data berhasil Ditolak');
+        } catch (\Throwable $th) {
+            DB::rollback();
+            Log::error($th->getMessage());
+            return redirect()->back()->with('error', 'Data gagal ditolak');
+        }
+    }
 }
