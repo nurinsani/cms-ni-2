@@ -42,15 +42,15 @@
                 <tr>
                     <th>NO</th>
                     <th>KODE INV</th>
-                    <th>IMEI</th>
                     <th>JENIS</th>
+                    <th>IMEI</th>
                     <th>HRG PEROLEHAN</th>
                     <th>AKM PENYUSUTAN</th>
                     <th>NILAI BUKU</th>
                     <th>PENGGUNA</th>
-                    {{-- <th>PENGGUNA LAMA</th> --}}
+                    <th>PENGGUNA LAMA</th>
                     <th>JABATAN</th>
-                    {{-- <th>JABATAN LAMA</th> --}}
+                    <th>JABATAN LAMA</th>
                 </tr>
             </thead>
             <tbody>
@@ -92,7 +92,7 @@
                                 data-old="{{ $inventaris->pengguna }}"
                                 value="{{ $inventaris->pengguna }}">
                         </td>
-                        {{-- <td>{{ $inventaris->old_pengguna }}</td> --}}
+                        <td>{{ $inventaris->old_pengguna }}</td>
 
 
                         <td>
@@ -103,7 +103,7 @@
                                 data-old="{{ $inventaris->jabatan }}"
                                 value="{{ $inventaris->jabatan }}">
                         </td>
-                        {{-- <td>{{ $inventaris->old_jabatan }}</td> --}}
+                        <td>{{ $inventaris->old_jabatan }}</td>
 
 
                     </tr>

@@ -100,7 +100,7 @@ class ApprovalMutasiGol2Controller extends Controller
 
             $transaksiKP = Transaksi::create([
                 'kode_branch' => 1010,
-                'kode_transaksi' => 'BU/1010/' . $kode_transaksi,
+                'kode_transaksi' => 'MT/1010/' . $kode_transaksi,
                 'kode_rekening' => '1010-' . $glBerkurang,
                 'tanggal_transaksi' => now(),
                 'jenis_transaksi' => 'Bukti SYSTEM',
@@ -141,7 +141,7 @@ class ApprovalMutasiGol2Controller extends Controller
 
             $transaksiKP = Transaksi::create([
                 'kode_branch' => 1010,
-                'kode_transaksi' => 'BU/1010/' . $kode_transaksi,
+                'kode_transaksi' => 'MT/1010/' . $kode_transaksi,
                 'kode_rekening' => '1010-' . $glBertambah,
                 'tanggal_transaksi' => now(),
                 'jenis_transaksi' => 'Bukti SYSTEM',
@@ -187,7 +187,7 @@ class ApprovalMutasiGol2Controller extends Controller
 
             $transaksiApAsal = Transaksi::create([
                 'kode_branch' => $mutasi->dari_cabang,
-                'kode_transaksi' => 'BU/'.$mutasi->dari_cabang.'/'.$kode_transaksi,
+                'kode_transaksi' => 'MT/'.$mutasi->dari_cabang.'/'.$kode_transaksi,
                 'kode_rekening' => '1674000',
                 'tanggal_transaksi' => now(),
                 'jenis_transaksi' => 'Bukti SYSTEM',
@@ -228,7 +228,7 @@ class ApprovalMutasiGol2Controller extends Controller
 
             $transaksiApAsal = Transaksi::create([
                 'kode_branch' => $mutasi->dari_cabang,
-                'kode_transaksi' => 'BU/'.$mutasi->dari_cabang.'/'.$kode_transaksi,
+                'kode_transaksi' => 'MT/'.$mutasi->dari_cabang.'/'.$kode_transaksi,
                 'kode_rekening' => '2500000',
                 'tanggal_transaksi' => now(),
                 'jenis_transaksi' => 'Bukti SYSTEM',
@@ -269,7 +269,7 @@ class ApprovalMutasiGol2Controller extends Controller
 
             $transaksiApAsal = Transaksi::create([
                 'kode_branch' => $mutasi->dari_cabang,
-                'kode_transaksi' => 'BU/'.$mutasi->dari_cabang.'/'.$kode_transaksi,
+                'kode_transaksi' => 'MT/'.$mutasi->dari_cabang.'/'.$kode_transaksi,
                 'kode_rekening' => '1654000',
                 'tanggal_transaksi' => now(),
                 'jenis_transaksi' => 'Bukti SYSTEM',
@@ -315,7 +315,7 @@ class ApprovalMutasiGol2Controller extends Controller
 
             $transaksiApTujuan = Transaksi::create([
                 'kode_branch' => $mutasi->ke_cabang,
-                'kode_transaksi' => 'BU/'.$mutasi->ke_cabang.'/'.$kode_transaksi,
+                'kode_transaksi' => 'MT/'.$mutasi->ke_cabang.'/'.$kode_transaksi,
                 'kode_rekening' => '1654000',
                 'tanggal_transaksi' => now(),
                 'jenis_transaksi' => 'Bukti SYSTEM',
@@ -356,7 +356,7 @@ class ApprovalMutasiGol2Controller extends Controller
 
             $transaksiApTujuan = Transaksi::create([
                 'kode_branch' => $mutasi->ke_cabang,
-                'kode_transaksi' => 'BU/'.$mutasi->ke_cabang.'/'.$kode_transaksi,
+                'kode_transaksi' => 'MT/'.$mutasi->ke_cabang.'/'.$kode_transaksi,
                 'kode_rekening' => '1674000',
                 'tanggal_transaksi' => now(),
                 'jenis_transaksi' => 'Bukti SYSTEM',
@@ -397,7 +397,7 @@ class ApprovalMutasiGol2Controller extends Controller
 
             $transaksiApTujuan = Transaksi::create([
                 'kode_branch' => $mutasi->ke_cabang,
-                'kode_transaksi' => 'BU/'.$mutasi->ke_cabang.'/'.$kode_transaksi,
+                'kode_transaksi' => 'MT/'.$mutasi->ke_cabang.'/'.$kode_transaksi,
                 'kode_rekening' => '2500000',
                 'tanggal_transaksi' => now(),
                 'jenis_transaksi' => 'Bukti SYSTEM',
