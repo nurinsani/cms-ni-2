@@ -18,61 +18,76 @@ class TempPengajuanDetailController extends Controller
     
     public function store(Request $request)
     {
-        
-        // dd($request->all());
-        $temp_pengajuan_detail = New TempPengajuanDetail;
-        $temp_pengajuan_detail->jenis_peralatan_id = $request->jenis_peralatan_id;
-        $temp_pengajuan_detail->rekening_id = $request->rekening_id;
-        $temp_pengajuan_detail->status_branch = $request->status_branch;
-        $temp_pengajuan_detail->kode_branch = $request->kode_branch;
-        $temp_pengajuan_detail->kode_area = $request->kode_area;
-        $temp_pengajuan_detail->kode_user = $request->kode_user;
-        $temp_pengajuan_detail->merk = $request->merk;
-        $temp_pengajuan_detail->type = $request->type;
-        $temp_pengajuan_detail->kuantitas = $request->kuantitas;
-        $temp_pengajuan_detail->harga = $request->harga;
-        $temp_pengajuan_detail->nama_toko = $request->nama_toko;
-        $temp_pengajuan_detail->no_telp = $request->no_telp;
-        $temp_pengajuan_detail->pengguna = $request->pengguna;
-        $temp_pengajuan_detail->moa = $request->moa;
-        $temp_pengajuan_detail->tanggal_pembelian = $request->tanggal_pembelian;
-        $temp_pengajuan_detail->struk_pembelian = $request->struk_pembelian;
-        $temp_pengajuan_detail->keterangan = $request->keterangan;
-        $temp_pengajuan_detail->umur = $request->umur;
-        $temp_pengajuan_detail->status_lpj = 'belum';
-        $temp_pengajuan_detail->user_id = auth()->user()->id;
+        $validated = $request->validate(
+        [
+            'jenis_peralatan_id' => 'required|integer',
+            'rekening_id'        => 'required|integer',
+            'merk'               => 'required|string|max:50',
+            'type'               => 'required|string|max:50',
+            'kuantitas'          => 'required|integer|min:1',
+            'harga'              => 'required|numeric|min:0',
+            'no_telp'            => 'nullable|string|max:20',
+            'keterangan'         => 'nullable|string',
 
-        if ($request->has('moa')) {
-            $file = $request->moa;
-            $namafile = time().'.'.$file->getClientOriginalExtension();
-            $file->move('files/moa', $namafile);
-            $temp_pengajuan_detail->moa = $namafile;
-        }
+            'moa'                => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+            'struk_pembelian'    => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
+        ],
+        [
+            'required' => ':attribute wajib diisi.',
+            'string'   => ':attribute harus berupa teks.',
+            'max.string' => ':attribute maksimal :max karakter.',
+            'numeric'  => ':attribute harus berupa angka.',
+            'integer'  => ':attribute harus berupa bilangan bulat.',
+            'date'     => ':attribute harus berupa tanggal.',
+            'min.numeric' => ':attribute minimal :min.',
+        ],
+        [
+            'jenis_peralatan_id' => 'Jenis Peralatan',
+            'rekening_id' => 'Rekening',
+            'merk' => 'Merk',
+            'type' => 'Tipe',
+            'kuantitas' => 'Kuantitas',
+            'harga' => 'Harga',
+            'no_telp' => 'No Telp',
+        ]);
 
-        if ($request->has('struk_pembelian')) {
-            $file = $request->struk_pembelian;
-            $namafile = time().'.'.$file->getClientOriginalExtension();
-            $file->move('files/struk_pembelian', $namafile);
-            $temp_pengajuan_detail->struk_pembelian = $namafile;
-        }
-
-
-        $temp_pengajuan_detail->save();
-        return redirect()->back()->with('success', 'Data berhasil dibuat');
+        DB::beginTransaction();
 
         try {
-            DB::beginTransaction();
+            $temp = new TempPengajuanDetail();
+            $temp->fill($validated);
 
+            $temp->status_lpj = 'belum';
+            $temp->user_id = auth()->id();
 
-            // DB::commit();
+            // Upload MOA
+            if ($request->hasFile('moa')) {
+                $file = $request->file('moa');
+                $filename = uniqid().'_moa.'.$file->getClientOriginalExtension();
+                $file->move(public_path('files/moa'), $filename);
+                $temp->moa = $filename;
+            }
 
+            // Upload Struk
+            if ($request->hasFile('struk_pembelian')) {
+                $file = $request->file('struk_pembelian');
+                $filename = uniqid().'_struk.'.$file->getClientOriginalExtension();
+                $file->move(public_path('files/struk_pembelian'), $filename);
+                $temp->struk_pembelian = $filename;
+            }
+
+            $temp->save();
+
+            DB::commit();
+            return redirect()->back()->with('success', 'Data berhasil dibuat');
 
         } catch (\Throwable $th) {
-            DB::rollback();
-            Log::error($th->getMessage());
+            DB::rollBack();
+            Log::error($th);
             return redirect()->back()->with('error', 'Data gagal disimpan');
         }
     }
+
 
     public function hapus($id)
     {
