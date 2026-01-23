@@ -28,6 +28,8 @@ class TempPengajuanDetailController extends Controller
             'harga'              => 'required|numeric|min:0',
             'no_telp'            => 'nullable|string|max:20',
             'keterangan'         => 'nullable|string',
+            'nama_toko'         => 'nullable|string',
+            'pengguna'         => 'nullable|string',
 
             'moa'                => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
             'struk_pembelian'    => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
