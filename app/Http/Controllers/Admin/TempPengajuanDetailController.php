@@ -30,6 +30,10 @@ class TempPengajuanDetailController extends Controller
             'keterangan'         => 'nullable|string',
             'nama_toko'         => 'nullable|string',
             'pengguna'         => 'nullable|string',
+            'kode_branch'        => 'required|string',
+            'kode_area'          => 'required|string',
+            'kode_user'          => 'required|string',
+
 
             'moa'                => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
             'struk_pembelian'    => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
