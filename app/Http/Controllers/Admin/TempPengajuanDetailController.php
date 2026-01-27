@@ -69,7 +69,7 @@ class TempPengajuanDetailController extends Controller
             if ($request->hasFile('moa')) {
                 $file = $request->file('moa');
                 $filename = uniqid().'_moa.'.$file->getClientOriginalExtension();
-                $file->move(public_path('files/moa'), $filename);
+                $file->move('files/moa', $filename);
                 $temp->moa = $filename;
             }
 
@@ -77,7 +77,7 @@ class TempPengajuanDetailController extends Controller
             if ($request->hasFile('struk_pembelian')) {
                 $file = $request->file('struk_pembelian');
                 $filename = uniqid().'_struk.'.$file->getClientOriginalExtension();
-                $file->move(public_path('files/struk_pembelian'), $filename);
+                $file->move('files/struk_pembelian', $filename);
                 $temp->struk_pembelian = $filename;
             }
 
