@@ -39,7 +39,7 @@
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ $data->nomor }}</td>
-                                <td>{{ $data->area->area }}</td>
+                                <td>{{ $data->area->area ?? '' }}</td>
                                 <td>
                                     <ul class="p-0" style="list-style: none">
                                         @foreach ($data->pengajuan_details as $item)
