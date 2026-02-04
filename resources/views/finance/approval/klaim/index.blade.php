@@ -36,7 +36,7 @@
             <tr>
                 <td>{{ $loop->iteration }}</td>
                 <td>{{ $data->nomor }}</td>
-                <td>{{ $data->code_area }}</td>
+                <td>{{ $data->code_area ?? '' }}</td>
                 <td>
                     <ul class="p-0" style="list-style: none"> 
                         @foreach ($data->pengajuan_details as $item)
