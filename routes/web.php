@@ -113,7 +113,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('daftar-bdd', [PengajuanBddController::class, 'daftar_bdd'])->name('daftar-bdd');
         Route::get('sudah_approve_lpj/{id}', [LpjController::class, 'sudah_approve'])->name('sudah_approve');
         Route::get('buat-lpj-bdd/{id}', [PengajuanBddController::class, 'buat_lpj'])->name('buat-lpj');
-        // Route::get('registrasi-peralatan/qrcode/{id}', [RegistrasiPeralatanController::class, 'generate'])->name('generate');
         Route::get('jurnal-kp', [JurnalController::class, 'jurnal_kp']);
         Route::get('jurnal-ap', [JurnalController::class, 'jurnal_ap']);
 
@@ -133,8 +132,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('klaim/inventaris', [AdminKlaimController::class, 'klaim_inventaris']);
         Route::post('klaim/pembelian', [AdminKlaimController::class, 'klaim_store']);
 
-        // Route::get('pengajuan-mutasi-gol-2', [PengajuanMutasiGol2Controller::class, 'index'])->name('pengajuan-mutasi-gol-2.index');
-        // Route::get('pengajuan-mutasi-gol-2/detail/{id}', [PengajuanMutasiGol2Controller::class, 'show']);
     });
 
     Route::group(['prefix' => 'akunting', 'as' => 'akunting.', 'middleware' => 'role:akunting'], function () {
