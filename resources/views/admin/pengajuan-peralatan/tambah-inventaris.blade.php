@@ -39,8 +39,6 @@
                                         <th scope="col">TYPE</th>
                                         <th scope="col">QTY</th>
                                         <th scope="col">HARGA</th>
-                                        {{-- <th scope="col">Nama Toko</th> --}}
-                                        {{-- <th scope="col">No Telp</th> --}}
                                         <th scope="col">PENGGUNA</th>
                                         <th scope="col">AKSI</th>
                                     </tr>
@@ -54,8 +52,6 @@
                                         <td>{{ $item->type }}</td>
                                         <td>{{ $item->kuantitas }}</td>
                                         <td>Rp. {{ number_format($item->harga) }}</td>
-                                        {{-- <td>{{ $item->nama_toko }}</td> --}}
-                                        {{-- <td>{{ $item->no_telp }}</td> --}}
                                         <td>{{ $item->pengguna }}</td>
                                         <td>
                                             <a href="{{ url('admin/temp-pengajuan/'. $item->id) }}" onclick="hapus_data('#delete_form{{ $item->id }}')" class="btn btn-sm btn-danger">
@@ -172,8 +168,6 @@
                                             <option value="2206">AL Jateng 6</option>
                                             <option value="2207">AL Jateng 7</option>
                                             <option value="2208">AL Jateng 8</option>
-
-
                                     </select>
                                 </div>
     
@@ -249,63 +243,22 @@
         </div>
     </div>
 
-    @push('js')
-
+@push('js')
     <script>
         document.getElementById('select-option').addEventListener('change', function() {
             var selectedValue = this.value;
-    
+
             // Hide semua dropdown
             document.getElementById('select-ap').classList.add('d-none');
             document.getElementById('select-cabang').classList.add('d-none');
             // document.getElementById('select-region').classList.add('d-none');
-    
+
             // Show the corresponding dropdown based on selection
             if (selectedValue === 'ap') {
                 document.getElementById('select-ap').classList.remove('d-none');
             } else if (selectedValue === 'cabang') {
                 document.getElementById('select-cabang').classList.remove('d-none');
             }
-
-            // else if (selectedValue === 'region') {
-            //     document.getElementById('select-region').classList.remove('d-none');
-            // }
-        });
-    </script>
-
-    <script type="text/javascript">
-        var id = 0;
-        $('#tambah_peralatan').on('click', function() {
-            id++;
-            var input = $('#input_peralatan');
-            var elements = ['#nama_jenis', '#kode_branch', '#merk', '#type', '#kuantitas', '#harga', '#nama_toko',
-                '#no_telp', '#pengguna', '#moa'
-            ]
-            var item_peralatan = $('#item_peralatan').clone().attr('id', 'tr' + id).removeClass('d-none')
-            $.each(elements, function(index, element) {
-                var field = input.find(element).val()
-                // if (!field) {
-                //     alert('Semua input harus diisi')
-                //     return required;
-                // }
-                item_peralatan.find('#id').text(id)
-                item_peralatan.find('#label_' + element.replace('#', '')).text(field)
-                item_peralatan.find('#' + element.replace('#', '')).val(field)
-            });
-
-            // console.log(item_peralatan)
-            item_peralatan.find('#remove_btn').attr('onclick', 'remove_item("#tr' + id + '")')
-            $('#base_peralatan').append(item_peralatan)
-            input.find('#kode_branch').val('')
-            input.find('#merk').val('')
-            input.find('#type').val('')
-            input.find('#kuantitas').val('')
-            input.find('#harga').val('')
-            input.find('#nama_toko').val('')
-            input.find('#no_telp').val('')
-            input.find('#pengguna').val('')
-            input.find('#moa').val('')
-
         });
 
         $(document).ready(function() {
@@ -313,7 +266,6 @@
                 var jenis_peralatan_id = $(this).val()
                 if (jenis_peralatan_id) {
                     $.ajax({
-                        // url: '/jenis-peralatan-dropdown/' + jenis_peralatan_id,
                         url: "{{ url('jenis-peralatan-dropdown') }}" + "/" + jenis_peralatan_id,
                         type: "GET",
                         data: {
@@ -343,15 +295,10 @@
                 }
             })
         })
-
-        function remove_item(tr_id) {
-            $(tr_id).remove()
-        }
-        
     </script>
-    @endpush
+
+@endpush
 
 @include('sweetalert::alert')
-@endsection
 
-<!-- ini komen -->
+@endsection
