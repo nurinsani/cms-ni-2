@@ -35,7 +35,7 @@
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ $data->nomor }}</td>
-                                <td>{{ $data->area->area }}</td>
+                                <td>{{ $data->area->area ?? ''}}</td>
                                 <td>{{ $data->tanggal_pengajuan->format('d-M-Y') }}</td>
                                 <td>
                                     <ul class="p-0" style="list-style: none">
