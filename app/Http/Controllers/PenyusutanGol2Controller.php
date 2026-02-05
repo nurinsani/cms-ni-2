@@ -245,18 +245,6 @@ class PenyusutanGol2Controller extends Controller
         }
     
         return redirect()->back()->with('success', 'Proses penyusutan berhasil dijalankan.');
-
-        // // Cek apakah penyusutan sudah dilakukan di bulan ini
-        // $penyusutanSudahAda = Penyusutan::whereMonth('tanggal_penyusutan', date('m'))
-        // ->whereYear('tanggal_penyusutan', date('Y'))
-        // ->exists(); // Menggunakan exists() untuk pengecekan cepat
-
-        // if ($penyusutanSudahAda) {
-        // // Jika sudah ada penyusutan di bulan ini, tampilkan alert error ini geis
-        // return redirect()->back()->with('error', 'Proses penyusutan untuk bulan ini sudah dilakukan.');
-        // } else {
-        // }
-        // // cek tanggal nya juga, hanya bisa di akses hanya di tanggal 15
     }
 
     public function jalankanJurnalPembebananGol2(Request $request)

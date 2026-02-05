@@ -15,11 +15,6 @@
 @endsection
 
 @section('content')
-<a href="{{ route('pembebanan-gol-2.proses') }}" 
-   class="btn btn-primary"
-   onclick="return confirm('Jalankan proses pembebanan penyusutan bulan ini?')">
-   Proses Pembebanan Penyusutan
-</a>
     <div class="card shadow-sm">
         {{-- <div class="card-header bg-primary text-white">
             <h5 class="card-title">Proses Penyusutan dan Jurnal Pembebanan</h5>
@@ -35,10 +30,10 @@
                     <span class="step-number">2</span>
                     <span class="step-title">Jalankan Jurnal Penyusutan</span>
                 </div>
-                <div class="step" id="step3" data-step="3">
+                {{-- <div class="step" id="step3" data-step="3">
                     <span class="step-number">3</span>
                     <span class="step-title">Jalankan Jurnal Pembebanan</span>
-                </div>
+                </div> --}}
             </div>
 
             <!-- Stepper Content -->
@@ -58,10 +53,10 @@
                     <button type="submit" class="btn btn-warning w-100">Jalankan Jurnal Pembebanan Gol 2</button>
                 </form> --}}
 
-                <a href="{{ route('pembebanan-gol-2.proses') }}" class="btn btn-warning w-100 step-form" id="form-step3"
+                {{-- <a href="{{ route('pembebanan-gol-2.proses') }}" class="btn btn-warning w-100 step-form" id="form-step3"
                 onclick="return confirm('Jalankan jurnal pembebanan bulan ini?')">
                 Jalankan Jurnal Pembebanan
-                </a>
+                </a> --}}
             </div>
 
             <!-- Stepper Navigation Buttons -->
@@ -82,20 +77,13 @@
                 Upload Jurnal Penyusutan Gol 2
             </button>
 
-            <button type="button" class="btn btn-primary w-100 mb-3" id="pembebananKpGol2">
+            {{-- <button type="button" class="btn btn-primary w-100 mb-3" id="pembebananKpGol2">
                 Upload Jurnal Pembebanan KP Gol 2
-            </button>
+            </button> --}}
 
-            <button type="button" class="btn btn-primary w-100 mb-3" id="pembebananApGol2">
+            {{-- <button type="button" class="btn btn-primary w-100 mb-3" id="pembebananApGol2">
                 Upload Jurnal Pembebanan AP Gol 2
-            </button>
-
-            {{-- @if ($transaksiAp->status == "uploaded")
-                <button type="button" class="btn btn-primary w-100 mb-3" id="" disabled>
-                    Data Pembebanan KP Sudah diupload.
-                </button>
-            @else
-            @endif --}}
+            </button> --}}
 
         </div>
     </div>
@@ -145,7 +133,7 @@
         // JavaScript for Stepper Functionality
         document.addEventListener('DOMContentLoaded', function () {
             let currentStep = 1;
-            const totalSteps = 3;
+            const totalSteps = 2;
 
             const showStep = (step) => {
                 // Update step number and content
