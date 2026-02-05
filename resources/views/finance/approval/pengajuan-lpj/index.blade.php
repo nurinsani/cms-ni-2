@@ -25,7 +25,7 @@
                             <th>No</th>
                             <th>No. Pengajuan</th>
                             <th>Area</th>
-                            <th>Tanggal Pembelian</th>
+                            <th>Tgl Pembelian</th>
                             <th>Nama Peralatan</th>
                             <th>Aksi</th>
                         </tr>
