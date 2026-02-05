@@ -27,7 +27,7 @@
                 <th>COA</th>
                 <th>Keterangan</th>
                 <th>Nominal</th>
-                <th>Tanggal Pengajuan</th>
+                <th>Tgl Pengajuan</th>
                 <th>Aksi</th>
             </tr>
             </thead>
