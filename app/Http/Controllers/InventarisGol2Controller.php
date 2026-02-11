@@ -157,8 +157,8 @@ class InventarisGol2Controller extends Controller
                 'nilai_buku_terakhir' => $nilaiBukuTerakhir,
                 'penyusutan_ke' => $penyusutanKe,
                 'nip' => $item->nip,
-                'pengguna' => $item->pengguna,
-                'jabatan' => $item->jabatan,
+                'pengguna' => $item->old_pengguna ?? $item->pengguna,
+                'jabatan'  => $item->old_jabatan ?? $item->jabatan,
             ];
         
             foreach ($monthlyDepreciation as $month => $depreciationSum) {
