@@ -88,7 +88,7 @@ class PenyusutanController extends Controller
                     
                         $branch = Branch::where('kode_branch', $kode_branch)->first();
                     
-                        if ($tanggal_sekarang == 1) {
+                        if ($tanggal_sekarang == 12) {
                         // if ($tanggal_sekarang == date('d')) {
                             if ($value->penyusutan_ke + count($value->susut) !== 48) {
                                 // Tambahkan logika untuk penyusutan dua kali jika tanggal perolehan antara 16-31 dan penyusutan awal 0
@@ -458,13 +458,22 @@ class PenyusutanController extends Controller
 
                                 $debet = round(($credit / (count($otherBranches) + 1)));
                                 
-                            } elseif ($status_branch == '9998') {
-                                $otherBranches = Branch::whereIn('code_region', ['3333', '2222'])
+                            } elseif ($status_branch == '9901') { // QAL jateng 1 khusus
+                                $otherBranches = Branch::whereIn('kode_branch', ['2003', '2002', '2001', '2025'])
                                     ->where('kode_branch', '<>', $row->kode_branch)
                                     ->where('status_aktif', 'aktif')
                                     ->get();
 
                                 $debet = round(($credit / (count($otherBranches) + 1)));
+
+                            } elseif ($status_branch == '9902') { // QAL jateng 2 khusus
+                                $otherBranches = Branch::whereIn('kode_branch', ['2003', '2002', '2001', '2025'])
+                                    ->where('kode_branch', '<>', $row->kode_branch)
+                                    ->where('status_aktif', 'aktif')
+                                    ->get();
+
+                                $debet = round(($credit / (count($otherBranches) + 1)));
+
                             } else {
                                 if ($isArea != 0) {
                                     $debet = round(($credit / $isArea));
