@@ -90,6 +90,14 @@ class PembebananService
             $others = Branch::whereIn('code_area', ['2203', '2211', '2204', '2210', '2212'])
                 ->where('kode_branch', '<>', $row->kode_branch)
                 ->where('status_aktif', 'aktif')->get();
+        } elseif ($status_branch == '9901') {
+            $others = Branch::whereIn('kode_branch', ['2003', '2002', '2001', '2025'])
+                ->where('kode_branch', '<>', $row->kode_branch)
+                ->where('status_aktif', 'aktif')->get();
+        } elseif ($status_branch == '9902') {
+            $others = Branch::whereIn('kode_branch', ['2007', '2004', '2027', '2006'])
+                ->where('kode_branch', '<>', $row->kode_branch)
+                ->where('status_aktif', 'aktif')->get();
         }
 
         foreach ($others as $b) $push($b);
