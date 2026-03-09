@@ -356,7 +356,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('peralatan/klaim', [ItKlaimController::class, 'klaim_peralatan']);
         Route::get('inventaris/klaim', [ItKlaimController::class, 'klaim_inventaris']);
         Route::post('klaim', [ItKlaimController::class, 'klaim_store']);
-        // Route::post('temp-pengajuan', [TempPengajuanDetailController::class, 'store']);
 
     });
 
