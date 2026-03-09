@@ -354,8 +354,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('klaim', [ItKlaimController::class, 'index']);
         Route::get('klaim/{id}', [ItKlaimController::class, 'detail']);
         Route::get('peralatan/klaim', [ItKlaimController::class, 'klaim_peralatan']);
-        Route::get('klaim/inventaris', [ItKlaimController::class, 'klaim_inventaris']);
+        Route::get('inventaris/klaim', [ItKlaimController::class, 'klaim_inventaris']);
         Route::post('klaim', [ItKlaimController::class, 'klaim_store']);
+        // Route::post('temp-pengajuan', [TempPengajuanDetailController::class, 'store']);
+
     });
 
     Route::group(['prefix' => 'atasan-akunting', 'as' => 'atasan-akunting.', 'middleware' => 'role:atasan-akunting'], function () {

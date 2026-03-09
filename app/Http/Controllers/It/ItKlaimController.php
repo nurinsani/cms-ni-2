@@ -37,6 +37,19 @@ class ItKlaimController extends Controller
         return view('it.klaim.tambah-klaim', $data);
     }   
 
+    public function klaim_inventaris()
+    {
+        $data['title'] = 'Pengajuan Inventaris';
+        $data['temp_pengajuan'] = TempPengajuanDetail::all();
+        $data['jenis_peralatan'] = JenisPeralatan::all();
+        $data['rekening'] = Rekening::all();
+        $data['param_peralatan'] = ParamPeralatan::whereHas('param_peralatan', function($query) {
+            $query->where('group_inventaris', 'ya');
+        })->get();
+        $data['branch'] = Branch::where('code_area', auth()->user()->code_area)->get();
+        return view('it.klaim.tambah_inventaris', $data);
+    }   
+
     public function klaim_store(Request $request)
     {
         
