@@ -20,7 +20,7 @@
             <a href="{{ url('it/peralatan/klaim') }}" class="btn btn-sm btn-success mr-1">
                 <i class="fas fa-plus"></i> Klaim Peralatan
             </a>
-            <a href="{{ url('it/klaim/inventaris') }}" class="btn btn-sm btn-warning">
+            <a href="{{ url('it/inventaris/klaim') }}" class="btn btn-sm btn-warning">
                 <i class="fas fa-plus"></i> Klaim Inventaris
             </a>
         </div>
