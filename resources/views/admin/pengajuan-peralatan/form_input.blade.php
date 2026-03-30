@@ -2,7 +2,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title">Tambah Pengajuan sss</h4>
+                    <h4 class="modal-title">Tambah Pengajuan</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -81,7 +81,7 @@
 
                                 <div class="form-group">
                                     <label for="" class="form-label">Merk</label>
-                                    <input type="text" name="merk" class="form-control @error('merk') is-invalid @enderror" placeholder="Masukan Merk" required>
+                                    <input type="text" name="merk" class="form-control @error('merk') is-invalid @enderror" placeholder="Contoh: Informa" required>
                                     @error('merk')
                                     <div class="invalid-feedback">
                                         merk maksimal 50 karakter
@@ -92,7 +92,7 @@
                             
                                 <div class="form-group">
                                     <label for="" class="form-label">Type</label>
-                                    <input type="text" name="type" id="type" class="form-control @error('type') is-invalid @enderror" placeholder="Masukan Type" required>
+                                    <input type="text" name="type" id="type" class="form-control @error('type') is-invalid @enderror" placeholder="Contoh: Informa G Neo" required>
                                     @error('type')
                                     <div class="invalid-feedback">
                                         tipe maksimal 50 karakter
@@ -100,24 +100,36 @@
                                     @enderror
                                 </div>
 
-                                <div class="form-group">
-                                    <label for="" class="form-label">Kuantitas</label>
-                                    <input type="number" name="kuantitas" id="kuantitas" class="form-control @error('kuantitas') is-invalid @enderror" placeholder="Masukan Kuantitas" required>
-                                    @error('kuantitas')
-                                    <div class="invalid-feedback">
-                                        {{ $message }}
-                                    </div>
-                                    @enderror
-                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="" class="form-label">Kuantitas</label>
+                                            <input type="number" name="kuantitas" id="kuantitas" class="form-control @error('kuantitas') is-invalid @enderror" placeholder="" required>
+                                            @error('kuantitas')
+                                            <div class="invalid-feedback">
+                                                {{ $message }}
+                                            </div>
+                                            @enderror
+                                        </div>
 
-                                <div class="form-group">
-                                    <label for="harga" class="form-label">Harga</label>
-                                    <input type="number" name="harga" id="harga" class="form-control @error('harga') is-invalid @enderror" placeholder="Masukkan harga" required>
-                                    @error('harga')
-                                    <div class="invalid-feedback">
-                                        {{ $message }}
                                     </div>
-                                    @enderror
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="harga" class="form-label">Harga</label>
+
+                                            <!-- input tampilan -->
+                                            <input type="text" id="harga_view" class="form-control" placeholder="Rp 0">
+
+                                            <!-- nilai asli yang dikirim -->
+                                            <input type="hidden" name="harga" id="harga">
+
+                                            @error('harga')
+                                            <div class="invalid-feedback d-block">
+                                                {{ $message }}
+                                            </div>
+                                            @enderror
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
@@ -125,24 +137,24 @@
     
                                 <div class="form-group">
                                     <label for="" class="form-label">Nama Toko</label>
-                                    <input type="text" name="nama_toko" id="nama_toko" class="form-control @error('nama_toko') is-invalid @enderror" placeholder="Masukan Nama Toko" required>
+                                    <input type="text" name="nama_toko" id="nama_toko" class="form-control @error('nama_toko') is-invalid @enderror" placeholder="" required>
                                 </div>
     
                                 <div class="form-group">
                                     <label for="" class="form-label">No Telp</label>
-                                    <input type="number" name="no_telp" id="no_telp" class="form-control @error('no_telp') is-invalid @enderror" placeholder="Masukan No. Telp"
+                                    <input type="number" name="no_telp" id="no_telp" class="form-control @error('no_telp') is-invalid @enderror" placeholder=""
                                         required>
                                 </div>
     
                                 <div class="form-group">
                                     <label for="" class="form-label">Penguna</label>
                                     <input type="text" name="pengguna" id="pengguna" class="form-control @error('pengguna') is-invalid @enderror"
-                                        placeholder="Masukan Nama Pengguna" required>
+                                        placeholder="" required>
                                 </div>
 
                                 <div class="form-group">
                                     <label for="" class="form-label">Upload MOA</label>
-                                    <input type="file" name="moa" id="moa" class="form-control" placeholder="Masukan MOA">
+                                    <input type="file" name="moa" id="moa" class="form-control" placeholder="">
                                 </div>
 
                                 <div class="form-group">
@@ -158,7 +170,7 @@
 
                                 <div class="form-group">
                                     <label for="" class="form-label">Keterangan</label>
-                                    <textarea name="keterangan" class="form-control" id="keterangan" cols="5" rows="3" placeholder="UM Pembelian ..." required></textarea>
+                                    <textarea name="keterangan" class="form-control" id="keterangan" cols="5" rows="3" placeholder="Contoh: Pembelian peralatan kantor" required></textarea>
                                 </div>
 
                             </div>

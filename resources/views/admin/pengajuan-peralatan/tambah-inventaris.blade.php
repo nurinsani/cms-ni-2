@@ -16,21 +16,25 @@
 @endsection
 
 @section('content')
-    <div class="card">
-        <div class="card-body">
-            <form action="{{ route('admin.pengajuan.store') }}" method="post">
-                @csrf
+    <form action="{{ route('admin.pengajuan.store') }}" method="post">
+        @csrf
+        <div class="card">
+            <div class="card-body">
+                <a href="{{ url('admin/pengajuan') }}" class="btn btn-danger mr-1">
+                    <i class="fas fa-arrow-left"></i> Kembali
+                </a>
+                <button type="button" class="btn btn-success" data-toggle="modal" data-target="#modal-inventaris">
+                    <i class="fas fa-plus"></i> Tambah Pengajuan
+                </button>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
                 <div class="row">
                     <div class="col-12 col-md-12">
-                        <a href="{{ url('admin/pengajuan') }}" class="btn btn-sm btn-danger mb-3 mr-1">
-                            <i class="fas fa-arrow-left"></i> Kembali
-                        </a>
-                        <button type="button" class="btn btn-sm btn-success mb-3" data-toggle="modal"
-                            data-target="#modal-inventaris">
-                            <i class="fas fa-plus"></i> Tambah Pengajuan
-                        </button>
                         <div class="table-sm table-responsive">
-                            <table class="table table-hover table-bordered">
+                            <table id="example2" class="table table-hover table-bordered">
                                 <thead>
                                     <tr>
                                         <th scope="col">NAMA JENIS</th>
@@ -45,20 +49,22 @@
                                 </thead>
                                 <tbody id="base_peralatan">
                                     @foreach ($temp_pengajuan as $item)
-                                    <tr>
-                                        <td>{{ $item->jenis_peralatan->nama_jenis }}</td>
-                                        <td>{{ $item->ap->unit ?? $item->area->area}}</td>
-                                        <td>{{ $item->merk }}</td>
-                                        <td>{{ $item->type }}</td>
-                                        <td>{{ $item->kuantitas }}</td>
-                                        <td>Rp. {{ number_format($item->harga) }}</td>
-                                        <td>{{ $item->pengguna }}</td>
-                                        <td>
-                                            <a href="{{ url('admin/temp-pengajuan/'. $item->id) }}" onclick="hapus_data('#delete_form{{ $item->id }}')" class="btn btn-sm btn-danger">
-                                                <i class="fas fa-trash"></i>
-                                            </a>
-                                        </td>
-                                    </tr>
+                                        <tr>
+                                            <td>{{ $item->jenis_peralatan->nama_jenis }}</td>
+                                            <td>{{ $item->ap->unit ?? $item->area->area }}</td>
+                                            <td>{{ $item->merk }}</td>
+                                            <td>{{ $item->type }}</td>
+                                            <td>{{ $item->kuantitas }}</td>
+                                            <td>Rp. {{ number_format($item->harga) }}</td>
+                                            <td>{{ $item->pengguna }}</td>
+                                            <td>
+                                                <a href="{{ url('admin/temp-pengajuan/' . $item->id) }}"
+                                                    onclick="hapus_data('#delete_form{{ $item->id }}')"
+                                                    class="btn btn-sm btn-danger">
+                                                    <i class="fas fa-trash"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
                                     @endforeach
                                 </tbody>
                             </table>
@@ -67,238 +73,89 @@
                     </div>
 
                 </div>
-                <div class="row mb-2">
-                    <div class="col-md">
-                        <button type="submit" class="btn btn-sm btn-primary">Ajukan Inventaris</button>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <div class="modal fade" id="modal-inventaris">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">Tambah Inventaris</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-    
-                <form action="{{ url('admin/temp-pengajuan') }}" method="post" enctype="multipart/form-data">
-                    @csrf
-                    <div class="modal-body">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="" class="form-label">Peralatan</label>
-                                    <select id="nama_peralatan" class="form-control select2bs4" required>
-                                        <option value="" hidden>-- Pilih Peralatan --</option>
-                                        @foreach ($param_peralatan as $data)
-                                            <option value="{{ $data->id }}">{{ $data->nama }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-    
-                                <div class="form-group">
-                                    <label for="" class="form-label">Jenis Peralatan</label>
-                                    <select name="jenis_peralatan_id" class="form-control jenis_peralatan" id="nama_jenis"
-                                        class="form-control">
-                                    </select>
-                                </div>
-    
-                                <div class="form-group">
-                                    <label for="" class="form-label">Pilih Branch</label>
-                                    <select id="select-option" class="form-control">
-                                        <option value="" hidden>-- Pilih Branch --</option>
-                                        <option value="ap">Unit</option>
-                                        <option value="cabang">Area</option>
-                                    </select>
-                                </div>
-                                
-                                <div id="select-ap" class="form-group d-none">
-                                    <label for="" class="form-label">Pilih Unit</label>
-                                    <select name="kode_branch" id="kode_branch" class="form-control select2bs4">
-                                        <option value="">-- Pilih Unit --</option>
-                                        @foreach ($branch as $item)
-                                            <option value="{{ $item->kode_branch }}">{{ $item->unit }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                
-                                <div id="select-cabang" class="form-group d-none">
-                                    <label for="" class="form-label">Pilih Area</label>
-                                    <select name="kode_area" id="kode_area" class="form-control">
-                                        <option value="">-- Pilih Area --</option>
-                                        @foreach ($branch as $item)
-                                        @endforeach
-                                        <option value="{{ $item->code_area }}">{{ $item->area }}</option>
-                                    </select>
-                                </div>
-                                
-                                <div id="select-region" class="form-group d-none">
-                                    <label for="" class="form-label">Pilih Region</label>
-                                    <select name="kode_region" id="kode_region" class="form-control">
-                                        <option value="" hidden>-- Pilih Region --</option>
-                                        @foreach ($branch as $item)
-                                            <option value="{{ $item->code_region }}">{{ $item->region }}</option>
-                                        @endforeach
-                                    </select>
-                                    <small class="text-danger">* pilih salah satu AP atau Cabang, jangan pilih dua2 nya. <br> 
-                                        jika ingin pengajuan untuk Wilayah pilih ini!
-                                    </small>
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="" class="form-label">Pilih Pengguna</label>
-                                    <select name="kode_user" id="kode_area" class="form-control">
-                                        <option value="">-- Pilih Pengguna --</option>
-                                            <option value="9999">Business Head</option>
-                                            <option value="9999">QA</option>
-                                            <option value="2200">BM Jateng 1</option>
-                                            <option value="8888">AM Area 2</option>
-                                            <option value="1101">AL Jabar 1</option>
-                                            <option value="1102">AL Jabar 2</option>
-                                            <option value="2200">AL Jateng 1</option>
-                                            <option value="2205">AL Jateng 2</option>
-                                            <option value="2203">AL Jateng 3</option>
-                                            <option value="2204">AL Jateng 4</option>
-                                            <option value="2202">AL Jateng 5</option>
-                                            <option value="2206">AL Jateng 6</option>
-                                            <option value="2207">AL Jateng 7</option>
-                                            <option value="2208">AL Jateng 8</option>
-                                    </select>
-                                </div>
-    
-                                <div class="form-group">
-                                    <label for="" class="form-label">Merk</label>
-                                    <input type="text" name="merk" id="merk" class="form-control" placeholder="Masukan Merk" required>
-                                </div>
-    
-                                <div class="form-group">
-                                    <label for="" class="form-label">Type</label>
-                                    <input type="text" name="type" id="type" class="form-control" placeholder="Masukan Type" required>
-                                </div>
-    
-                                <div class="form-group">
-                                    <label for="" class="form-label">Kuantitas</label>
-                                    <input type="number" name="kuantitas" id="kuantitas" class="form-control" placeholder="Masukan Kuantitas" required>
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="harga" class="form-label">Harga</label>
-                                    <input type="text" name="harga" id="harga" class="form-control" placeholder="Masukkan harga" required>
-                                </div>
-                            </div>
-
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="" class="form-label">Nama Toko</label>
-                                    <input type="text" name="nama_toko" id="nama_toko" class="form-control" placeholder="Masukan Nama Toko" required>
-                                </div>
-    
-                                <div class="form-group">
-                                    <label for="" class="form-label">No Telp</label>
-                                    <input type="number" name="no_telp" id="no_telp" class="form-control" placeholder="Masukan No. Telp"
-                                        required>
-                                </div>
-    
-                                <div class="form-group">
-                                    <label for="" class="form-label">Penguna</label>
-                                    <input type="text" name="pengguna" id="pengguna" class="form-control"
-                                        placeholder="Masukan Nama Pengguna" required>
-                                </div>
-    
-                                <div class="form-group">
-                                    <label for="" class="form-label">Upload MOA</label>
-                                    <input type="file" name="moa" id="moa" class="form-control" placeholder="Masukan MOA">
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="" class="form-label">Rekening</label>
-                                    <select name="rekening_id" id="" class="form-control select2bs4">
-                                        <option value="">-- Pilih Rekening Tujuan --</option>
-                                        @foreach ($rekening as $item)
-                                        <option value="{{ $item->id }}">{{ $item->no_rek }} - {{ $item->nama_bank }} - {{ $item->atas_nama }}</option>
-                                        @endforeach
-                                    </select>
-                                    <small class="text-red">*isi jika ingin menggunakan rekening lain, jika tidak diisi maka akan menggunakan rekening pembuat</small>
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="" class="form-label">Keterangan</label>
-                                    <textarea name="keterangan" class="form-control" id="keterangan" cols="5" rows="3" required></textarea>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-    
-                    <div class="modal-footer justify-content-between">
-                        <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal">Kembali</button>
-                        <button type="submit" class="btn btn-sm btn-primary">Tambah</button>
-                    </div>
-                </form>
             </div>
         </div>
-    </div>
 
-@push('js')
-    <script>
-        document.getElementById('select-option').addEventListener('change', function() {
-            var selectedValue = this.value;
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane mr-1"></i> Ajukan
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
 
-            // Hide semua dropdown
-            document.getElementById('select-ap').classList.add('d-none');
-            document.getElementById('select-cabang').classList.add('d-none');
-            // document.getElementById('select-region').classList.add('d-none');
+    @include('admin.pengajuan-peralatan.form_input_inventaris')
 
-            // Show the corresponding dropdown based on selection
-            if (selectedValue === 'ap') {
-                document.getElementById('select-ap').classList.remove('d-none');
-            } else if (selectedValue === 'cabang') {
-                document.getElementById('select-cabang').classList.remove('d-none');
-            }
-        });
+    @push('js')
+        <script>
+            document.getElementById('select-option').addEventListener('change', function() {
+                var selectedValue = this.value;
 
-        $(document).ready(function() {
-            $('#nama_peralatan').on('change', function() {
-                var jenis_peralatan_id = $(this).val()
-                if (jenis_peralatan_id) {
-                    $.ajax({
-                        url: "{{ url('jenis-peralatan-dropdown') }}" + "/" + jenis_peralatan_id,
-                        type: "GET",
-                        data: {
-                            "_token": "{{ csrf_token() }}"
-                        },
-                        dataType: "json",
-                        success: function(data) {
-                            // console.log(data)
-                            if (data) {
-                                $('.jenis_peralatan').empty()
-                                $('.jenis_peralatan').append(
-                                    '<option hidden>-- Pilih Jenis Peralatan --</option>')
-                                $.each(data, function(key, jenis_peralatan) {
-                                    // console.log()
-                                    $('.jenis_peralatan').append('<option value="' +
-                                        jenis_peralatan.id + '">' +
-                                        jenis_peralatan.nama_jenis + '</option>')
-                                    // console.log(data)
-                                })
-                            } else {
-                                $('.jenis_peralatan').empty()
-                            }
-                        }
-                    })
-                } else {
-                    $('.jenis_peralatan').empty()
+                // Hide semua dropdown
+                document.getElementById('select-ap').classList.add('d-none');
+                document.getElementById('select-cabang').classList.add('d-none');
+                // document.getElementById('select-region').classList.add('d-none');
+
+                // Show the corresponding dropdown based on selection
+                if (selectedValue === 'ap') {
+                    document.getElementById('select-ap').classList.remove('d-none');
+                } else if (selectedValue === 'cabang') {
+                    document.getElementById('select-cabang').classList.remove('d-none');
                 }
+            });
+
+            $(document).ready(function() {
+                $('#nama_peralatan').on('change', function() {
+                    var jenis_peralatan_id = $(this).val()
+                    if (jenis_peralatan_id) {
+                        $.ajax({
+                            url: "{{ url('jenis-peralatan-dropdown') }}" + "/" + jenis_peralatan_id,
+                            type: "GET",
+                            data: {
+                                "_token": "{{ csrf_token() }}"
+                            },
+                            dataType: "json",
+                            success: function(data) {
+                                // console.log(data)
+                                if (data) {
+                                    $('.jenis_peralatan').empty()
+                                    $('.jenis_peralatan').append(
+                                        '<option hidden>-- Pilih Jenis Peralatan --</option>')
+                                    $.each(data, function(key, jenis_peralatan) {
+                                        // console.log()
+                                        $('.jenis_peralatan').append('<option value="' +
+                                            jenis_peralatan.id + '">' +
+                                            jenis_peralatan.nama_jenis + '</option>')
+                                        // console.log(data)
+                                    })
+                                } else {
+                                    $('.jenis_peralatan').empty()
+                                }
+                            }
+                        })
+                    } else {
+                        $('.jenis_peralatan').empty()
+                    }
+                })
             })
-        })
-    </script>
 
-@endpush
+            document.getElementById('harga_view').addEventListener('input', function(e) {
 
-@include('sweetalert::alert')
+                let angka = e.target.value.replace(/[^0-9]/g, '');
 
+                document.getElementById('harga').value = angka;
+
+                let rupiah = new Intl.NumberFormat('id-ID').format(angka);
+
+                e.target.value = angka ? 'Rp ' + rupiah : '';
+            });
+        </script>
+    @endpush
+
+    @include('sweetalert::alert')
 @endsection

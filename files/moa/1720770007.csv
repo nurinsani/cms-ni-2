@@ -1,3 +1,0 @@
-id,kode_branch,kode_transaksi,kode_rekening,tanggal_transaksi,jenis_transaksi,keterangan,debet,kredit,created_at,updated_at
-354,1010,BU/1010/07605744,1010-1929000,2024-07-10,"Bukti SYSTEM",Pembelian,246000,0,"2024-07-10 13:42:27","2024-07-10 13:42:27"
-355,1010,BU/1010/07605744,1010-1312000,2024-07-10,"Bukti SYSTEM",Pembelian,0,246000,"2024-07-10 13:42:27","2024-07-10 13:42:27"
