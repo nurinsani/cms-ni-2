@@ -21,10 +21,10 @@
         <div class="card mb-3">
             <div class="card-body">
                 <div class="d-flex flex-wrap align-items-center">
-                    <a href="{{ url('admin/pengajuan') }}" class="btn btn-danger mb-2 mr-2">
+                    <a href="{{ url('admin/pengajuan') }}" class="btn btn-danger mr-2">
                         <i class="fas fa-arrow-left"></i> Kembali
                     </a>
-                    <button type="button" class="btn btn-success mb-2" data-toggle="modal" data-target="#modal-peralatan">
+                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#modal-peralatan">
                         <i class="fas fa-plus"></i> Tambah Pengajuan
                     </button>
                 </div>
@@ -77,10 +77,12 @@
 
         <div class="card">
             <div class="card-body">
-                <div class="col-md">
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-paper-plane mr-1"></i> Ajukan
-                    </button>
+                <div class="row">
+                    <div class="col-md">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane mr-1"></i> Ajukan
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -104,6 +106,10 @@
                     document.getElementById('select-cabang').classList.remove('d-none');
                 }
             });
+
+            $('.select2bs4').select2({
+                theme: 'bootstrap4'
+            });
         </script>
 
         <script type="text/javascript">
@@ -113,7 +119,6 @@
                     var jenis_peralatan_id = $(this).val()
                     if (jenis_peralatan_id) {
                         $.ajax({
-                            // url: '/jenis-peralatan-dropdown/' + jenis_peralatan_id,
                             url: "{{ url('jenis-peralatan-dropdown') }}" + "/" + jenis_peralatan_id,
                             type: "GET",
                             data: {
@@ -147,6 +152,17 @@
             function remove_item(tr_id) {
                 $(tr_id).remove()
             }
+
+            document.getElementById('harga_view').addEventListener('input', function (e) {
+
+                let angka = e.target.value.replace(/[^0-9]/g, '');
+                
+                document.getElementById('harga').value = angka;
+
+                let rupiah = new Intl.NumberFormat('id-ID').format(angka);
+
+                e.target.value = angka ? 'Rp ' + rupiah : '';
+            });
         </script>
     @endpush
 
