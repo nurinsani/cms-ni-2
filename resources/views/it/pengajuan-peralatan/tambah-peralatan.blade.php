@@ -88,7 +88,7 @@
                     </button>
                 </div>
     
-                <form action="{{ url('it/temp-pengajuan') }}" method="post">
+                <form action="{{ url('it/temp-pengajuan') }}" method="post" enctype="multipart/form-data">
                     @csrf
                     <div class="modal-body">
                         <div class="row">
@@ -166,6 +166,11 @@
                                     <label for="" class="form-label">Penguna</label>
                                     <input type="text" name="pengguna" id="pengguna" class="form-control"
                                         placeholder="Masukan Nama Pengguna" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="" class="form-label">Upload MOA</label>
+                                    <input type="file" name="moa" id="moa" class="form-control" placeholder="Masukan MOA" required>
                                 </div>
 
                                 <div class="form-group">

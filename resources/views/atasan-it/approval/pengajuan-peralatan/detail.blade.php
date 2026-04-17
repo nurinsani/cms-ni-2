@@ -70,9 +70,7 @@
                         <th scope="col">Jumlah</th>
                         <th scope="col">Total</th>
                         @foreach ($pengajuan->pengajuan_details as $item)
-                        @if ($item->jenis_peralatan->group_inventaris == 'ya')
                         <th scope="col">MOA</th>
-                        @endif
                         @endforeach
                         <th scope="col">Keterangan</th>
                     </tr>
@@ -121,15 +119,19 @@
                                 @endforeach
                             </ul>
                         </td>
-                        @if ($item->jenis_peralatan->group_inventaris == 'ya')
                         <td>
-                            <ul class="p-0" style="list-style: none">
-                                @foreach ($pengajuan->pengajuan_details as $item)
-                                <a href="" onclick="window.open('{{ asset('files/moa/'.$item->moa) }}')">{{ $item->moa }}</a>
-                                @endforeach
-                            </ul>
-                        </td>
-                        @endif
+                                <ul class="p-0" style="width: 180px; list-style: none">
+                                    @foreach ($pengajuan->pengajuan_details as $item)
+                                    <li>
+                                        @if ($item->moa == null)
+                                        (tidak ada berkas)
+                                        @else
+                                        <a href="" onclick="window.open('{{ url('files/moa/'.$item->moa) }}')">{{ $item->moa }}</a>
+                                        @endif
+                                    </li>
+                                    @endforeach
+                                </ul>
+                            </td>
                         <td>
                             @if ($item->rekening_id == NULL)
                             Transfer ke <br>{{ $item->pengajuan->user->nama_bank }} {{ $item->pengajuan->user->no_rek }}
