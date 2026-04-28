@@ -52,7 +52,7 @@ class klaimController extends Controller
             if ($history_approve == null) {
                 $nomor_urut = '0001';
             } else {
-                $nomor_urut = substr($history_approve->barcode, 24, 4) + 1;
+                $nomor_urut = (int) substr($history_approve->barcode, 24, 4) + 1;
                 $nomor_urut = str_pad($nomor_urut, 4, "0", STR_PAD_LEFT);
             }
             
@@ -66,7 +66,7 @@ class klaimController extends Controller
             if ($history_approve == null) {
                 $nomor_urut = '0001';
             } else {
-                $nomor_urut = substr($history_approve->barcode, 24, 4) + 1;
+                $nomor_urut = (int) substr($history_approve->barcode, 24, 4) + 1;
                 $nomor_urut = str_pad($nomor_urut, 4, "0", STR_PAD_LEFT);
             }
 

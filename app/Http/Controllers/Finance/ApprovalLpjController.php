@@ -44,7 +44,7 @@ class ApprovalLpjController extends Controller
             if ($history_approve == null) {
                 $nomor_urut = '0001';
             } else {
-                $nomor_urut = substr($history_approve->barcode, 24, 4) + 1;
+                $nomor_urut = (int) substr($history_approve->barcode, 24, 4) + 1;
                 $nomor_urut = str_pad($nomor_urut, 4, "0", STR_PAD_LEFT);
             }
 
@@ -58,7 +58,7 @@ class ApprovalLpjController extends Controller
             if ($history_approve == null) {
                 $nomor_urut = '0001';
             } else {
-                $nomor_urut = substr($history_approve->barcode, 24, 4) + 1;
+                $nomor_urut = (int) substr($history_approve->barcode, 24, 4) + 1;
                 $nomor_urut = str_pad($nomor_urut, 4, "0", STR_PAD_LEFT);
             }
 
@@ -101,17 +101,17 @@ class ApprovalLpjController extends Controller
             // jurnal untuk KP
             foreach ($pengajuan->pengajuan_details as $row) {
 
-                if ($uniqueKodeArea > 1) {
-                    $keterangan = strtoupper('LPJ PEMBELIAN' . ' ' . $row->jenis_peralatan->nama_jenis . ' ' . 'WILAYAH' . ' ' . $pengajuan->area->area);
+                if ($uniqueKodeArea == 1) {
+                    $keterangan = strtoupper('UM PEMBELIAN' . ' ' . $row->jenis_peralatan->nama_jenis . ' ' . 'WILAYAH' . ' ' . $pengajuan->area->area);
                 } elseif ($row->kode_branch == '1010') {
-                    $keterangan = strtoupper('LPJ PEMBELIAN' . ' ' . $row->jenis_peralatan->nama_jenis . ' ' . 'KANTOR PUSAT');
-                } else {
-                    $keterangan = strtoupper('LPJ PEMBELIAN' . ' ' . $row->jenis_peralatan->nama_jenis . ' ' . 'AP' . ' ' .  $row->ap->unit);
+                    $keterangan = strtoupper('UM PEMBELIAN' . ' ' . $row->jenis_peralatan->nama_jenis . ' ' . 'KANTOR PUSAT');
+                } elseif ($uniqueKodeArea > 1 ) {
+                    $keterangan = strtoupper('UM PEMBELIAN' . ' ' . $row->jenis_peralatan->nama_jenis . ' ' . 'AP' . ' ' . $row->ap->unit);
                 }
 
-                $url_api = 'http://127.0.0.1:8000/api/transaksi'; // URL API lokal
+                // $url_api = 'http://127.0.0.1:8000/api/transaksi'; // URL API lokal
                 // $url_api = 'http://36.64.7.130:7117/nurinsani/api/transaksi_cms.php?function=insert_transaksi'; // URL API test
-                // $url_api = 'http://192.168.88.4/nurinsani/api/transaksi_cms.php?function=insert_transaksi';// URL API production
+                $url_api = 'http://192.168.88.4/nurinsani/api/transaksi_cms.php?function=insert_transaksi';// URL API production
 
                 $kode_transaksi_kp = date('m') . random_int(100000, 999999);
 

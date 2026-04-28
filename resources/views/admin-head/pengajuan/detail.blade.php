@@ -84,7 +84,7 @@
                             <td>
                                 <ul class="p-0" style="list-style: none">
                                     @foreach ($pengajuan->pengajuan_details as $item)
-                                        <li>{{ $item->ap->unit ?? $item->area->area }}</li>
+                                        <li>{{ $item->ap->unit ?? $item->area->area ?? '-' }}</li>
                                     @endforeach
                                 </ul>
                             </td>
