@@ -42,11 +42,16 @@ class InventarisGol2Controller extends Controller
     public function fetchData(Request $request)
     {
         $currentYear = 2026;
+        $currentYear = $request->input('tahun', date('Y'));
         $selectedBranch = $request->input('kode_branch');
         $area = $request->input('area');
         $region = $request->input('region');
     
         $query = InventarisGol2::with('penyusutans');
+
+        if ($request->filled('tahun')) {
+            $query->whereYear('tanggal_perolehan', $currentYear);
+        }
     
         $pivotData = [];
         $areas = [];
@@ -178,6 +183,7 @@ class InventarisGol2Controller extends Controller
             'pivotData' => $pivotData,
             'areas' => $areas,
             'branches' => $branches,
+            'selectedYear' => $currentYear,
         ]);
     }
 
