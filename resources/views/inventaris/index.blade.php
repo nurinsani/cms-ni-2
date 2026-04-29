@@ -89,11 +89,28 @@
                             </select>
                         </div>
                     </div>
+                    
                     <div class="col-md-4">
                         <div class="form-group">
                             <label for="" class="form-label">Pilih Wilayah</label>
                             <select name="kode_branch" id="kode_branch" class="form-control">
-                                <option value="">-- Pilih wilayah --</option>
+                                <option value="">-- Pilih Wilayah --</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="tahun" class="form-label">Pilih Tahun</label>
+                            <select name="tahun" id="tahun" class="form-control">
+                                <option value="">-- Pilih Tahun --</option>
+                                @php
+                                    $tahunSekarang = date('Y');
+                                    $tahunAwal = $tahunSekarang - 5; // Mengambil 5 tahun ke belakang
+                                @endphp
+                                @for ($i = $tahunSekarang; $i >= $tahunAwal; $i--)
+                                    <option value="{{ $i }}">{{ $i }}</option>
+                                @endfor
                             </select>
                         </div>
                     </div>
@@ -205,5 +222,7 @@
     <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
     <!-- JSZip for Excel export -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.0/jszip.min.js"></script>
+
     @include('inventaris.script')
+    
 @endsection

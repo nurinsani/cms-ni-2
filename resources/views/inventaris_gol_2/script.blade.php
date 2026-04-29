@@ -17,6 +17,7 @@
                     region: $('#region').val(),
                     area: $('#area').val(),
                     kode_branch: $('#kode_branch').val(),
+                    tahun: $('#tahun').val()
                 },
                 success: function(response) {
                     var table = $('#inventaris-table').DataTable();
@@ -68,28 +69,28 @@
                     var totalPenyusutanKe = 0;
                     var totalPengguna = 0;
 
+                    var selectedYear = $('#tahun').val() || '2026';
+
                     // Populate table rows
                     response.pivotData.forEach(function(row) {
                         var rowHarga = parseFloat(row.harga_perolehan || 0);
-                        var rowPenyusutanPerbulan = parseFloat(row.penyusutan_perbulan ||
-                            0);
+                        var rowPenyusutanPerbulan = parseFloat(row.penyusutan_perbulan || 0);
                         var rowPenyusutanAwal = parseFloat(row.total_penyusutan_awal || 0);
-                        var rowJanuari = parseFloat(row['2026-01'] || 0);
-                        var rowFebruari = parseFloat(row['2026-02'] || 0);
-                        var rowMaret = parseFloat(row['2026-03'] || 0);
-                        var rowApril = parseFloat(row['2026-04'] || 0);
-                        var rowMei = parseFloat(row['2026-05'] || 0);
-                        var rowJuni = parseFloat(row['2026-06'] || 0);
-                        var rowJuli = parseFloat(row['2026-07'] || 0);
-                        var rowAgustus = parseFloat(row['2026-08'] || 0);
-                        var rowSeptember = parseFloat(row['2026-09'] || 0);
-                        var rowOktober = parseFloat(row['2026-10'] || 0);
-                        var rowNovember = parseFloat(row['2026-11'] || 0);
-                        var rowDesember = parseFloat(row['2026-12'] || 0);
+                        var rowJanuari = parseFloat(row[selectedYear + '-01'] || 0);
+                        var rowFebruari = parseFloat(row[selectedYear + '-02'] || 0);
+                        var rowMaret = parseFloat(row[selectedYear + '-03'] || 0);
+                        var rowApril = parseFloat(row[selectedYear + '-04'] || 0);
+                        var rowMei = parseFloat(row[selectedYear + '-05'] || 0);
+                        var rowJuni = parseFloat(row[selectedYear + '-06'] || 0);
+                        var rowJuli = parseFloat(row[selectedYear + '-07'] || 0);
+                        var rowAgustus = parseFloat(row[selectedYear + '-08'] || 0);
+                        var rowSeptember = parseFloat(row[selectedYear + '-09'] || 0);
+                        var rowOktober = parseFloat(row[selectedYear + '-10'] || 0);
+                        var rowNovember = parseFloat(row[selectedYear + '-11'] || 0);
+                        var rowDesember = parseFloat(row[selectedYear + '-12'] || 0);
                         var rowPenyusutanBerjalan = parseFloat(row
                             .total_penyusutan_berjalan || 0);
-                        var rowAkumulasiPenyusutan = parseFloat(row.akumulasi_penyusutan ||
-                            0);
+                        var rowAkumulasiPenyusutan = parseFloat(row.akumulasi_penyusutan || 0);
                         var rowNilaiBukuTerakhir = parseFloat(row.nilai_buku_terakhir || 0);
                         var rowPenyusutanKe = parseFloat(row.penyusutan_ke || 0);
                         var rowPengguna = parseFloat(row.pengguna || 0);
@@ -267,8 +268,6 @@
             ]
         });
 
-
-
         // Initial fetch
         fetchData();
 
@@ -290,6 +289,10 @@
         });
 
         $('#kode_branch').change(function() {
+            fetchData();
+        });
+
+        $('#tahun').on('change', function() {
             fetchData();
         });
     });

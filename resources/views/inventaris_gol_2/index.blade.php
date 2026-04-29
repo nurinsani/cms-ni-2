@@ -88,6 +88,7 @@
                             </select>
                         </div>
                     </div>
+                    
                     <div class="col-md-4">
                         <div class="form-group">
                             <label for="" class="form-label">Pilih Wilayah</label>
@@ -96,6 +97,23 @@
                             </select>
                         </div>
                     </div>
+
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="tahun" class="form-label">Pilih Tahun</label>
+                            <select name="tahun" id="tahun" class="form-control">
+                                <option value="">-- Pilih Tahun --</option>
+                                @php
+                                    $tahunSekarang = date('Y');
+                                    $tahunAwal = $tahunSekarang - 5; // Mengambil 5 tahun ke belakang
+                                @endphp
+                                @for ($i = $tahunSekarang; $i >= $tahunAwal; $i--)
+                                    <option value="{{ $i }}">{{ $i }}</option>
+                                @endfor
+                            </select>
+                        </div>
+                    </div>
+
                 </div>
                 @endif
 

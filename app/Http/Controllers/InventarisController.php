@@ -40,12 +40,18 @@ class InventarisController extends Controller
 
     public function fetchData(Request $request)
     {
-        $currentYear = 2026;
+        // $currentYear = 2026;
+        $currentYear = $request->input('tahun', date('Y'));
         $selectedBranch = $request->input('kode_branch');
         $area = $request->input('area');
         $region = $request->input('region');
     
         $query = Inventaris::with('penyusutans', 'branch');
+
+        // --- TAMBAHKAN FILTER TAHUN PEROLEHAN DI SINI ---
+        if ($request->filled('tahun')) {
+            $query->whereYear('tanggal_perolehan', $currentYear);
+        }
     
         $pivotData = [];
         $areas = [];
@@ -174,6 +180,7 @@ class InventarisController extends Controller
             'pivotData' => $pivotData,
             'areas' => $areas,
             'branches' => $branches,
+            'selectedYear' => $currentYear,
         ]);
     }
 
