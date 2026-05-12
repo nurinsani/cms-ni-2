@@ -94,9 +94,15 @@ class ApprovalLpjController extends Controller
             $pengajuan->status_approve = 'selesai';
             $pengajuan->save();
 
+            $nomorCari = "INV-NI-" . $pengajuan->nomor;
+
+            DB::table('inventaris')
+                ->where('kode_peralatan', $nomorCari)
+                ->update([
+                    'tanggal_perolehan' => $pengajuan->updated_at
+                ]);
 
             $uniqueKodeArea = $pengajuan->pengajuan_details->pluck('kode_branch')->unique()->count();
-
 
             // jurnal untuk KP
             foreach ($pengajuan->pengajuan_details as $row) {
