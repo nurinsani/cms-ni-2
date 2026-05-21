@@ -40,8 +40,8 @@ class InventarisController extends Controller
 
     public function fetchData(Request $request)
     {
-        // $currentYear = 2026;
-        $currentYear = $request->input('tahun', date('Y'));
+        $currentYear = 2026;
+        // $currentYear = $request->input('tahun', date('Y'));
         $selectedBranch = $request->input('kode_branch');
         $area = $request->input('area');
         $region = $request->input('region');
