@@ -50,57 +50,8 @@ class DataUserController extends Controller
     {
         $data['title'] = 'Tambah User';
         $data['roles'] = Role::all();
-        $data['code_area'] = Branch::all();
+        $data['branch'] = Branch::where('status_aktif', 'aktif')->get();
         return view('it.data-user.create', $data);
-    }
-
-    public function getBranches(Request $request)
-    {
-        if ($request->has('code_area')) {
-            $data = DB::table('branch')
-                ->where('area', $request->code_area)
-                ->orderBy('unit')
-                ->get();
-
-            return response()->json([
-                'data'          => $data,
-                'status'        => true
-            ]);
-        }
-
-        $role_id = DB::table('roles')
-            ->where('name', $request->level)
-            ->first()
-            ->id;
-
-        $areas = [];
-        $regions = [];
-
-        $bridge = DB::table('bridge')
-            ->where('role_id', $role_id)
-            ->get();
-
-        foreach ($bridge as $row) {
-            if ($row->code_area) {
-                $areas[]    = $row->code_area;
-            }
-
-            if ($row->code_region) {
-                $regions[] = $row->code_region;
-            }
-        }
-
-        $data = DB::table('branch')
-            ->whereIn('code_area', $areas)
-            ->orWhere(function ($query) use ($regions) {
-                $query->whereIn('code_region', $regions);
-            })
-            ->get();
-
-        return response()->json([
-            'data'          => $data,
-            'status'        => true
-        ]);
     }
 
     /**
@@ -156,6 +107,7 @@ class DataUserController extends Controller
         $data['roles'] = Role::all();
         $data['user'] = User::findOrFail($id);
         $data['cabang'] = Branch::all();
+        
         return view('it.data-user.edit', $data);
     }
 
