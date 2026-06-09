@@ -90,6 +90,8 @@
                                             <option value="2206">AL Jateng 6</option>
                                             <option value="2207">AL Jateng 7</option>
                                             <option value="2208">AL Jateng 8</option>
+                                            <option value="2208">MM Pedurungan</option>
+                                            <option value="2208">MM Semarang Timur</option>
                                     </select>
                                 </div>
     

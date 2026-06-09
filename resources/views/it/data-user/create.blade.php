@@ -79,48 +79,39 @@
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="" class="form-label">Level</label>
-                            <select id="level" class="form-control @error('role') is-invalid @enderror" name="role"
-                                id="">
+                            <label for="role" class="form-label">Level</label>
+                            <select class="form-control @error('role') is-invalid @enderror" name="role" id="role" required>
                                 <option value="" hidden>-- Pilih Level --</option>
                                 @foreach ($roles as $role)
-                                    <option value="{{ $role->name }}"
-                                        {{ old('role') == $role->name ? 'selected' : '' }}>{{ ucfirst($role->name) }}
+                                    <option value="{{ $role->name }}" 
+                                        {{ $user->hasRole($role->name) ? 'selected' : '' }}>
+                                        {{ ucfirst($role->name) }}
                                     </option>
                                 @endforeach
                             </select>
-                            @error('role')
-                                <small class="text-danger">{{ $message }}</small>
-                            @enderror
+                            @error('role') <small class="text-danger">{{ $message }}</small> @enderror
                         </div>
 
                         <div class="form-group">
                             <label for="" class="form-label">Cabang</label>
                             <select id="code_area" class="form-control select2bs4 @error('code_area') is-invalid @enderror"
-                                name="code_area" disabled>
+                                name="code_area">
                                 <option value="" hidden>-- Pilih Branch --</option>
+                                @foreach ($branch as $b)
+                                    <option value="{{ $b->code_area }}" {{ old('code_area') == $b->code_area ? 'selected' : '' }}>
+                                        {{ $b->unit }}
+                                    </option>
+                                @endforeach
                             </select>
                             @error('code_area')
                                 <small class="text-danger">{{ $message }}</small>
                             @enderror
                         </div>
 
-                        {{-- <div class="form-group">
-                        <label for="" class="form-label">Branch</label>
-                        <select class="form-control select2bs4 @error('code_region') is-invalid @enderror" name="code_region">
-                            <option value="" hidden>-- Pilih Branch --</option>
-                            <option value="1111">JABAR</option>
-                            <option value="2222">JATUT</option>
-                            <option value="3333">JATUT</option>
-
-                        </select>
-                        @error('code_area') <small class="text-danger">{{ $message }}</small> @enderror
-                    </div> --}}
-
                         <div class="form-group">
                             <label for="" class="form-label">Password</label>
                             <input type="password" class="form-control @error('password') is-invalid @enderror"
-                                value="{{ old('password') }}" name="password" placeholder="Masukan Nama User">
+                                value="{{ old('password') }}" name="password" placeholder="Masukan Password">
                             @error('password')
                                 <small class="text-danger">{{ $message }}</small>
                             @enderror
@@ -135,60 +126,3 @@
         </div>
     </div>
 @endsection
-@push('js')
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
-    <script>
-        $(function() {
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                }
-            });
-
-            $('#level').change(function(e) {
-                e.preventDefault();
-
-                level = $(this).val();
-
-                Swal.fire({
-                    title: 'Please Wait!',
-                    showConfirmButton: false,
-                    allowOutsideClick: false,
-                    willOpen: () => {
-                        Swal.showLoading()
-                    },
-                });
-
-                $.ajax({
-                    type: "POST",
-                    url: '/cms-ni/it/get-branches',
-                    dataType: "JSON",
-                    data: {
-                        level
-                    },
-                    success: function(response) {
-                        $('#code_area').attr("disabled", "disabled");
-
-                        $('#code_area').html('');
-
-                        if (response.status) {
-                            $('#code_area').removeAttr("disabled");
-
-                            $('#code_area').append(`
-                                <option value="" hidden>-- Pilih Branch --</option>
-                            `);
-
-                            $.each(response.data, function(i, data) {
-                                $('#code_area').append(`
-                                    <option value="${data.code_area}">${data.unit} - ${data.area}</option>
-                                `);
-                            });
-                        }
-
-                        swal.close();
-                    }
-                });
-            });
-        });
-    </script>
-@endpush
