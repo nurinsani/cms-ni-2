@@ -51,10 +51,16 @@ class InventarisGol2Controller extends Controller
 
         if ($selectedMonth) {
             $cutoffDate = Carbon::createFromDate($currentYear, (int)$selectedMonth, 1)->endOfMonth()->toDateString();
-            $query->whereDate('tanggal_perolehan', '<=', $cutoffDate);
-        } else {
+            $query->where(function($q) use ($cutoffDate) {
+                $q->whereDate('tanggal_perolehan', '<=', $cutoffDate)
+                  ->orWhereNull('tanggal_perolehan');
+            });
+        } elseif ($request->filled('tahun')) {
             $cutoffDate = Carbon::createFromDate($currentYear, 12, 31)->toDateString();
-            $query->whereDate('tanggal_perolehan', '<=', $cutoffDate);
+            $query->where(function($q) use ($cutoffDate) {
+                $q->whereDate('tanggal_perolehan', '<=', $cutoffDate)
+                  ->orWhereNull('tanggal_perolehan');
+            });
         }
     
         $pivotData = [];
