@@ -48,8 +48,12 @@ class InventarisController extends Controller
     
         $query = Inventaris::with('penyusutans', 'branch');
 
-        if ($request->filled('tahun')) {
-            $query->whereYear('tanggal_perolehan', '<=', $currentYear);
+        if ($selectedMonth) {
+            $cutoffDate = Carbon::createFromDate($currentYear, (int)$selectedMonth, 1)->endOfMonth()->toDateString();
+            $query->whereDate('tanggal_perolehan', '<=', $cutoffDate);
+        } else {
+            $cutoffDate = Carbon::createFromDate($currentYear, 12, 31)->toDateString();
+            $query->whereDate('tanggal_perolehan', '<=', $cutoffDate);
         }
     
         $pivotData = [];
