@@ -159,10 +159,14 @@
                         tr += '<td>' + row.jabatan + '</td>';
                         tr += '</tr>';
 
-                        rowsToDraw.push($(tr));
+                        rowsToDraw.push(tr);
                     });
 
-                    table.rows.add(rowsToDraw).draw();
+                    if (rowsToDraw.length > 0) {
+                        table.rows.add($(rowsToDraw.join(''))).draw();
+                    } else {
+                        table.draw();
+                    }
 
                     // Update total in tfoot
                     $('#total-harga').text(formatRupiah(
