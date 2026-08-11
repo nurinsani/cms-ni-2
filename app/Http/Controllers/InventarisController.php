@@ -142,13 +142,11 @@ class InventarisController extends Controller
         
             // Tambahkan akumulasi penyusutan dari item yang status_branch-nya AUDIT
             if ($item->status_branch === 'AUDIT') {
-                $akumulasiPenyusutan += $item->akumulasi_penyusutan;
+                $auditAkumulasi = floatval($item->getRawOriginal('akumulasi_penyusutan') ?? 0);
+                $akumulasiPenyusutan += $auditAkumulasi;
             }
         
-            $nilaiBukuTerakhir = null;
-            if ($item->status_branch !== 'AUDIT') {
-                $nilaiBukuTerakhir = $item->harga_perolehan - $akumulasiPenyusutan;
-            }
+            $nilaiBukuTerakhir = max(0, $item->harga_perolehan - $akumulasiPenyusutan);
         
             $pivotRow = [
                 'kode_branch' => $item->kode_branch,
