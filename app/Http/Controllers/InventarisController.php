@@ -40,17 +40,16 @@ class InventarisController extends Controller
 
     public function fetchData(Request $request)
     {
-        $currentYear = 2026;
-        // $currentYear = $request->input('tahun', date('Y'));
+        $currentYear = $request->input('tahun') ? (int)$request->input('tahun') : 2026;
+        $selectedMonth = $request->input('bulan');
         $selectedBranch = $request->input('kode_branch');
         $area = $request->input('area');
         $region = $request->input('region');
     
         $query = Inventaris::with('penyusutans', 'branch');
 
-        // --- TAMBAHKAN FILTER TAHUN PEROLEHAN DI SINI ---
         if ($request->filled('tahun')) {
-            $query->whereYear('tanggal_perolehan', $currentYear);
+            $query->whereYear('tanggal_perolehan', '<=', $currentYear);
         }
     
         $pivotData = [];
@@ -103,7 +102,8 @@ class InventarisController extends Controller
         foreach ($inventaris as $item) {
             $totalPenyusutanTahunSebelumnya = 0;
             $penyusutanBerjalan = 0;
-            $penyusutanPerBulan = $item->harga_perolehan / 48;
+            $countPenyusutanPosisi = 0;
+            $penyusutanPerBulan = $item->harga_perolehan > 0 ? $item->harga_perolehan / 48 : 0;
         
             // Array untuk menyimpan penyusutan per bulan berdasarkan tanggal
             $monthlyDepreciation = [];
@@ -111,24 +111,27 @@ class InventarisController extends Controller
             foreach ($item->penyusutans as $penyusutan) {
                 $penyusutanDate = Carbon::parse($penyusutan->tanggal_penyusutan);
                 $penyusutanYear = $penyusutanDate->year;
+                $penyusutanMonth = $penyusutanDate->month;
                 $month = $penyusutanDate->format('Y-m');
             
-                // Menjumlahkan penyusutan jika terjadi lebih dari satu kali di bulan yang sama
-                if (!isset($monthlyDepreciation[$month])) {
-                    $monthlyDepreciation[$month] = 0;
-                }
-                $monthlyDepreciation[$month] += $penyusutan->penyusutan_per_bulan;
-            
-                // Menambahkan logika untuk tahun sebelumnya
+                // Logika penyusutan berdasarkan posisi bulan & tahun
                 if ($penyusutanYear < $currentYear) {
                     $totalPenyusutanTahunSebelumnya += $penyusutan->penyusutan_per_bulan;
+                    $countPenyusutanPosisi++;
                 } elseif ($penyusutanYear == $currentYear) {
-                    // Data penyusutan untuk tahun lalu
-                    $penyusutanBerjalan += $penyusutan->penyusutan_per_bulan;
+                    if (!$selectedMonth || $penyusutanMonth <= (int)$selectedMonth) {
+                        $penyusutanBerjalan += $penyusutan->penyusutan_per_bulan;
+                        $countPenyusutanPosisi++;
+
+                        if (!isset($monthlyDepreciation[$month])) {
+                            $monthlyDepreciation[$month] = 0;
+                        }
+                        $monthlyDepreciation[$month] += $penyusutan->penyusutan_per_bulan;
+                    }
                 }
             }
             
-            $penyusutanKe = count($item->penyusutans) + $item->penyusutan_ke;
+            $penyusutanKe = $countPenyusutanPosisi + $item->penyusutan_ke;
             $totalPenyusutanAwal = $totalPenyusutanTahunSebelumnya + $item->total_penyusutan_awal;
             $totalPenyusutanBerjalan = $penyusutanBerjalan;
             $akumulasiPenyusutan = $totalPenyusutanAwal + $totalPenyusutanBerjalan;
@@ -145,7 +148,7 @@ class InventarisController extends Controller
         
             $pivotRow = [
                 'kode_branch' => $item->kode_branch,
-                'unit' => $item->branch->unit,
+                'unit' => optional($item->branch)->unit ?? '',
                 'kode_peralatan' => $item->kode_peralatan,
                 'jenis' => $item->jenis,
                 'type' => $item->type,
