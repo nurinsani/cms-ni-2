@@ -17,9 +17,16 @@
                     region: $('#region').val(),
                     area: $('#area').val(),
                     kode_branch: $('#kode_branch').val(),
-                    tahun: $('#tahun').val()
+                    tahun: $('#tahun').val(),
+                    bulan: $('#bulan').val()
                 },
                 success: function(response) {
+                    var currentMonth = $('#bulan').val();
+                    $('.month-header').removeClass('active-month');
+                    if (currentMonth) {
+                        $('.month-header[data-month="' + currentMonth + '"]').addClass('active-month');
+                    }
+
                     var table = $('#inventaris-table').DataTable();
 
                     if (response.areas.length > 0) {
@@ -293,6 +300,22 @@
         // Trigger fetchData ketika filter tahun berubah
         $('#tahun').on('change', function() {
             fetchData();
+        });
+
+        // Trigger fetchData ketika filter bulan berubah
+        $('#bulan').on('change', function() {
+            fetchData();
+        });
+
+        // Trigger filter bulan ketika th header bulan di-klik
+        $(document).on('click', '.month-header', function() {
+            var monthVal = $(this).attr('data-month');
+            if ($('#bulan').val() === monthVal) {
+                // Jika bulan yang sama di-klik lagi, reset (tampilkan semua bulan)
+                $('#bulan').val('').trigger('change');
+            } else {
+                $('#bulan').val(monthVal).trigger('change');
+            }
         });
     });
 </script>
