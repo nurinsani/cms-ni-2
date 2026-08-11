@@ -51,7 +51,7 @@
                         });
                     }
 
-                    table.clear().draw(); // Clear existing data
+                    table.clear();
 
                     var totalJumlah = 0;
                     var totalHarga = 0;
@@ -76,7 +76,8 @@
                     var totalPenyusutanKe = 0;
                     var totalPengguna = 0;
 
-                    var selectedYear = $('#tahun').val() || '2026';
+                    var selectedYear = $('#tahun').val() || response.selectedYear || '2026';
+                    var rowsToDraw = [];
 
                     // Populate table rows
                     response.pivotData.forEach(function(row) {
@@ -124,8 +125,6 @@
                         totalNilaiBukuTerakhir += rowNilaiBukuTerakhir;
                         totalPengguna += rowPengguna;
 
-                        console.log(totalPengguna);
-
                         var tr = '<tr>';
                         tr += '<td>' + row.kode_branch + '</td>';
                         tr += '<td>' + row.unit + '</td>';
@@ -135,13 +134,10 @@
                         tr += '<td>' + row.keterangan + '</td>';
                         tr += '<td>' + row.tanggal_perolehan + '</td>';
                         tr += '<td>' + row.jumlah + '</td>';
-                        tr += '<td>' + formatRupiah(rowHarga) +
-                            '</td>'; // Rupiah format for harga_perolehan
-                        tr += '<td>' + row.umur + '</td>'; // Format for umur
-                        tr += '<td>' + formatRupiah(rowPenyusutanPerbulan) +
-                            '</td>'; // Rupiah format for penyusutan_perbulan
-                        tr += '<td>' + formatRupiah(rowPenyusutanAwal) +
-                            '</td>'; // Rupiah format for total_penyusutan_awal
+                        tr += '<td>' + formatRupiah(rowHarga) + '</td>';
+                        tr += '<td>' + row.umur + '</td>';
+                        tr += '<td>' + formatRupiah(rowPenyusutanPerbulan) + '</td>';
+                        tr += '<td>' + formatRupiah(rowPenyusutanAwal) + '</td>';
                         tr += '<td>' + formatRupiah(rowJanuari) + '</td>';
                         tr += '<td>' + formatRupiah(rowFebruari) + '</td>';
                         tr += '<td>' + formatRupiah(rowMaret) + '</td>';
@@ -154,23 +150,19 @@
                         tr += '<td>' + formatRupiah(rowOktober) + '</td>';
                         tr += '<td>' + formatRupiah(rowNovember) + '</td>';
                         tr += '<td>' + formatRupiah(rowDesember) + '</td>';
-                        tr += '<td>' + formatRupiah(rowPenyusutanBerjalan) +
-                            '</td>'; // Rupiah format for total_penyusutan_berjalan
-                        tr += '<td>' + formatRupiah(rowAkumulasiPenyusutan) +
-                            '</td>'; // Rupiah format for akumulasi_penyusutan
-                        tr += '<td>' + formatRupiah(rowNilaiBukuTerakhir) +
-                            '</td>'; // Rupiah format for nilai_buku_terakhir
-                        tr += '<td>' + rowPenyusutanKe +
-                            '</td>'; // Rupiah format for penyusutan_ke
+                        tr += '<td>' + formatRupiah(rowPenyusutanBerjalan) + '</td>';
+                        tr += '<td>' + formatRupiah(rowAkumulasiPenyusutan) + '</td>';
+                        tr += '<td>' + formatRupiah(rowNilaiBukuTerakhir) + '</td>';
+                        tr += '<td>' + rowPenyusutanKe + '</td>';
                         tr += '<td>' + row.nip + '</td>';
-
                         tr += '<td>' + row.pengguna + '</td>';
                         tr += '<td>' + row.jabatan + '</td>';
-
                         tr += '</tr>';
 
-                        table.row.add($(tr)).draw();
+                        rowsToDraw.push($(tr));
                     });
+
+                    table.rows.add(rowsToDraw).draw();
 
                     // Update total in tfoot
                     $('#total-harga').text(formatRupiah(
