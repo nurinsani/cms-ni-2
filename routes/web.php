@@ -487,6 +487,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/inventaris-gol-2/update-inline', [InventarisGol2Controller::class, 'updateInline'])
     ->name('inventaris-gol-2.update.inline');
 
+    Route::post('/inventaris-gol-2/import', [InventarisGol2Controller::class, 'import'])
+        ->name('inventaris-gol-2.import');
+    Route::get('/inventaris-gol-2/template', [InventarisGol2Controller::class, 'downloadTemplate'])
+        ->name('inventaris-gol-2.template');
 
 });
 

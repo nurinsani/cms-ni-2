@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Branch;
 use App\Models\InventarisGol2;
+use App\Exports\InventarisGol2TemplateExport;
+use App\Imports\InventarisGol2Import;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -240,6 +243,30 @@ class InventarisGol2Controller extends Controller
         ]);
     }
 
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls|max:10240',
+        ], [
+            'file.required' => 'Silakan pilih file Excel terlebih dahulu.',
+            'file.mimes'    => 'Format file harus berupa Excel (.xlsx atau .xls).',
+            'file.max'      => 'Ukuran file maksimal adalah 10MB.',
+        ]);
 
+        try {
+            $import = new InventarisGol2Import();
+            Excel::import($import, $request->file('file'));
 
+            $count = $import->getImportedCount();
+
+            return redirect()->back()->with('success', "Berhasil mengimpor {$count} data Inventaris Gol 2.");
+        } catch (\Throwable $e) {
+            return redirect()->back()->with('error', 'Gagal mengimpor data: ' . $e->getMessage());
+        }
+    }
+
+    public function downloadTemplate()
+    {
+        return Excel::download(new InventarisGol2TemplateExport, 'Template_Import_Inventaris_Gol_2.xlsx');
+    }
 }
