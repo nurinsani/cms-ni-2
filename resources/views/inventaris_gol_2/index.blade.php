@@ -34,10 +34,32 @@
 @section('content')
     <div class="container-fluid">
         <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">Inventaris Gol 2 dan Penyusutan</h3>
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h3 class="card-title m-0">Inventaris Gol 2 dan Penyusutan</h3>
+                <div class="card-tools ml-auto">
+                    <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#importModal">
+                        <i class="fas fa-file-excel mr-1"></i> Import Excel
+                    </button>
+                </div>
             </div>
             <div class="card-body">
+                @if (session('success'))
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <i class="fas fa-check-circle mr-1"></i> {{ session('success') }}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                @endif
+
+                @if (session('error'))
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="fas fa-exclamation-triangle mr-1"></i> {{ session('error') }}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                @endif
                 @if (Auth::check() && Auth::user()->hasRole('admin'))
                     @if (Auth::user()->code_area !==1010)
                         <form id="filter-form" class="mb-4">
@@ -316,5 +338,42 @@
     <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
     <!-- JSZip for Excel export -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.0/jszip.min.js"></script>
+    <!-- Modal Import Excel -->
+    <div class="modal fade" id="importModal" tabindex="-1" role="dialog" aria-labelledby="importModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title" id="importModalLabel"><i class="fas fa-file-excel mr-2"></i>Import Data Inventaris Gol 2</h5>
+                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form action="{{ route('inventaris-gol-2.import') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <div class="modal-body">
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle mr-1"></i> <strong>Petunjuk:</strong>
+                            <p class="mb-1">1. Unduh contoh format Excel terlebih dahulu jika belum memiliki formatnya.</p>
+                            <p class="mb-0">2. Pastikan kolom seperti <code>kode_branch</code> dan <code>jenis</code> diisi dengan benar.</p>
+                        </div>
+                        <div class="form-group mb-3">
+                            <a href="{{ route('inventaris-gol-2.template') }}" class="btn btn-outline-primary btn-sm btn-block">
+                                <i class="fas fa-download mr-1"></i> Download Contoh Format Excel
+                            </a>
+                        </div>
+                        <div class="form-group">
+                            <label for="excel_file">Pilih File Excel (.xlsx / .xls)</label>
+                            <input type="file" name="file" id="excel_file" class="form-control-file" accept=".xlsx, .xls" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-success"><i class="fas fa-upload mr-1"></i> Upload & Import</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     @include('inventaris_gol_2.script')
 @endsection
