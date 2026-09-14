@@ -78,6 +78,16 @@
             </a>
         </li>
 
+        <li class="nav-item">
+            <a href="{{ route('akunting.approval-hapus-buku.index') }}"
+                class="nav-link {{ request()->is('akunting/approval-hapus-buku*') ? 'active' : '' }}">
+                <i class="nav-icon far fa-circle nav-icon"></i>
+                <p>
+                    Hapus Buku
+                </p>
+            </a>
+        </li>
+
     </ul>
 </li>
 

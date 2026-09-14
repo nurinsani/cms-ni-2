@@ -17,11 +17,14 @@ use App\Http\Controllers\Admin\PemutusanBddController;
 use App\Http\Controllers\Admin\PengajuanBddController;
 use App\Http\Controllers\Admin\JurnalPembelianController;
 use App\Http\Controllers\Admin\PengajuanMutasiController;
+use App\Http\Controllers\Admin\PengajuanHapusBukuController;
 use App\Http\Controllers\Admin\RekeningController;
 use App\Http\Controllers\Admin\TempPengajuanDetailController;
 use App\Http\Controllers\AdminHead\klaimController as AdminHeadKlaimController;
 use App\Http\Controllers\AdminHead\LpjAhController;
+use App\Http\Controllers\AdminHead\ApprovalHapusBukuController as AdminHeadApprovalHapusBukuController;
 use App\Http\Controllers\Akunting\AkuntingController;
+use App\Http\Controllers\Akunting\ApprovalHapusBukuController as AkuntingApprovalHapusBukuController;
 use App\Http\Controllers\Akunting\ParamPeralatanController;
 
 use App\Http\Controllers\Finance\FinanceController;
@@ -75,7 +78,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('pengajuan/peralatan', [PengajuanController::class, 'pengajuan_peralatan']);
         Route::get('pengajuan/inventaris', [PengajuanController::class, 'pengajuan_inventaris']);
         Route::post('temp-pengajuan', [TempPengajuanDetailController::class, 'store']);
-        Route::get('temp-pengajuan/{id}', [TempPengajuanDetailController::class, 'hapus']);
+        Route::get('pengajuan-hapus-buku/get-inventaris/{kodeBranch}', [PengajuanHapusBukuController::class, 'getInventaris']);
         Route::resources([
             'data-user' => DataUserController::class,
             'pengajuan' => PengajuanController::class,
@@ -88,6 +91,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             'peralatan' => PeralatanController::class,
             'pengajuan-mutasi' => PengajuanMutasiController::class,
             'pengajuan-mutasi-gol-2' => PengajuanMutasiGol2Controller::class,
+            'pengajuan-hapus-buku' => PengajuanHapusBukuController::class,
             'pemutusan-bdd' => PemutusanBddController::class,
             'rekening' => RekeningController::class,
         ]);
@@ -165,6 +169,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('approval-mutasi-gol-2/detail/{id}', [App\Http\Controllers\Akunting\ApprovalMutasiGol2Controller::class, 'show']);
         Route::post('approval-mutasi-gol-2/approve/{id}', [App\Http\Controllers\Akunting\ApprovalMutasiGol2Controller::class, 'approve']);
         Route::post('approval-mutasi-gol-2/tolak/{id}', [App\Http\Controllers\Akunting\ApprovalMutasiGol2Controller::class, 'tolak']);
+
+        Route::get('approval-hapus-buku', [AkuntingApprovalHapusBukuController::class, 'index'])->name('approval-hapus-buku.index');
+        Route::get('approval-hapus-buku/detail/{id}', [AkuntingApprovalHapusBukuController::class, 'show'])->name('approval-hapus-buku.show');
+        Route::post('approval-hapus-buku/approve/{id}', [AkuntingApprovalHapusBukuController::class, 'approve'])->name('approval-hapus-buku.approve');
+        Route::post('approval-hapus-buku/tolak/{id}', [AkuntingApprovalHapusBukuController::class, 'tolak'])->name('approval-hapus-buku.tolak');
         
 
         Route::resources([
@@ -228,6 +237,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('approval-mutasi-gol-2/detail/{id}', [ApprovalMutasiGol2Controller::class, 'show']);
         Route::post('approval-mutasi-gol-2/approve/{id}', [ApprovalMutasiGol2Controller::class, 'approve']);
         Route::post('approval-mutasi-gol-2/tolak/{id}', [ApprovalMutasiGol2Controller::class, 'tolak']);
+
+        Route::get('approval-hapus-buku', [AdminHeadApprovalHapusBukuController::class, 'index'])->name('approval-hapus-buku.index');
+        Route::get('approval-hapus-buku/detail/{id}', [AdminHeadApprovalHapusBukuController::class, 'show'])->name('approval-hapus-buku.show');
+        Route::post('approval-hapus-buku/approve/{id}', [AdminHeadApprovalHapusBukuController::class, 'approve'])->name('approval-hapus-buku.approve');
+        Route::post('approval-hapus-buku/tolak/{id}', [AdminHeadApprovalHapusBukuController::class, 'tolak'])->name('approval-hapus-buku.tolak');
 
 
         Route::resources([

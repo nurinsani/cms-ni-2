@@ -45,8 +45,7 @@
         </li>
 
         <li class="nav-item">
-            <a href="{{ route('admin.lpj.index') }}"
-                class="nav-link {{ request()->is('admin/lpj*') ? 'active' : '' }}">
+            <a href="{{ route('admin.lpj.index') }}" class="nav-link {{ request()->is('admin/lpj*') ? 'active' : '' }}">
                 <i class="nav-icon far fa-circle nav-icon"></i>
                 <p>
                     LPJ
@@ -95,7 +94,7 @@
         </li>
 
         <li class="nav-item">
-            <a href="#" class="nav-link {{ request()->is('admin/pengajuan-hapus-buku*') ? 'active' : '' }}">
+            <a href="{{ route('admin.pengajuan-hapus-buku.index') }}" class="nav-link {{ request()->is('admin/pengajuan-hapus-buku*') ? 'active' : '' }}">
                 <i class="nav-icon far fa-circle nav-icon"></i>
                 <p>
                     Hapus Buku
@@ -169,8 +168,7 @@
     <ul class="nav nav-treeview">
 
         <li class="nav-item">
-            <a href="{{ url('jurnal-kp') }}"
-                class="nav-link {{ request()->is('jurnal-kp*') ? 'active' : '' }}">
+            <a href="{{ url('jurnal-kp') }}" class="nav-link {{ request()->is('jurnal-kp*') ? 'active' : '' }}">
                 <i class="nav-icon far fa-circle nav-icon"></i>
                 <p>
                     Jurnal Pembelian KP
@@ -179,8 +177,7 @@
         </li>
 
         <li class="nav-item">
-            <a href="{{ url('jurnal-ap') }}"
-                class="nav-link {{ request()->is('jurnal-ap*') ? 'active' : '' }}">
+            <a href="{{ url('jurnal-ap') }}" class="nav-link {{ request()->is('jurnal-ap*') ? 'active' : '' }}">
                 <i class="nav-icon far fa-circle nav-icon"></i>
                 <p>
                     Jurnal Pembelian AP
@@ -241,7 +238,8 @@
     </a>
     <ul class="nav nav-treeview">
         <li class="nav-item">
-            <a href="{{ url('admin/rekening') }}" class="nav-link {{ request()->is('admin/rekening*') ? 'active' : '' }}">
+            <a href="{{ url('admin/rekening') }}"
+                class="nav-link {{ request()->is('admin/rekening*') ? 'active' : '' }}">
                 <i class="nav-icon far fa-circle nav-icon"></i>
                 <p>
                     Daftar Rekening
@@ -273,7 +271,8 @@
 </li>
 
 <li class="nav-item">
-    <a href="{{ url('/update-password') }}" class="nav-link {{ request()->is('/update-password') ? 'active' : '' }}">
+    <a href="{{ url('/update-password') }}"
+        class="nav-link {{ request()->is('/update-password') ? 'active' : '' }}">
         <i class="nav-icon fas fa-lock"></i>
         <p>
             Ganti Password
