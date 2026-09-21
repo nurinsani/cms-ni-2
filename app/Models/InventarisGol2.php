@@ -113,7 +113,7 @@ class InventarisGol2 extends Model
                     }
                 
                     $hasil_penyusutan = $harga_perolehan > 0 && $penyusutan > 0 ?
-                        $harga_perolehan / $penyusutan :
+                        (int) round($harga_perolehan / $penyusutan) :
                         0;
                 
                     $hasil_pembebanan = $hasil_penyusutan / $debet->count();

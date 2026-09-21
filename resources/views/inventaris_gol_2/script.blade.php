@@ -81,25 +81,25 @@
 
                     // Populate table rows
                     response.pivotData.forEach(function(row) {
-                        var rowHarga = parseFloat(row.harga_perolehan || 0);
-                        var rowPenyusutanPerbulan = parseFloat(row.penyusutan_perbulan || 0);
-                        var rowPenyusutanAwal = parseFloat(row.total_penyusutan_awal || 0);
-                        var rowJanuari = parseFloat(row[selectedYear + '-01'] || 0);
-                        var rowFebruari = parseFloat(row[selectedYear + '-02'] || 0);
-                        var rowMaret = parseFloat(row[selectedYear + '-03'] || 0);
-                        var rowApril = parseFloat(row[selectedYear + '-04'] || 0);
-                        var rowMei = parseFloat(row[selectedYear + '-05'] || 0);
-                        var rowJuni = parseFloat(row[selectedYear + '-06'] || 0);
-                        var rowJuli = parseFloat(row[selectedYear + '-07'] || 0);
-                        var rowAgustus = parseFloat(row[selectedYear + '-08'] || 0);
-                        var rowSeptember = parseFloat(row[selectedYear + '-09'] || 0);
-                        var rowOktober = parseFloat(row[selectedYear + '-10'] || 0);
-                        var rowNovember = parseFloat(row[selectedYear + '-11'] || 0);
-                        var rowDesember = parseFloat(row[selectedYear + '-12'] || 0);
-                        var rowPenyusutanBerjalan = parseFloat(row
-                            .total_penyusutan_berjalan || 0);
-                        var rowAkumulasiPenyusutan = parseFloat(row.akumulasi_penyusutan || 0);
-                        var rowNilaiBukuTerakhir = parseFloat(row.nilai_buku_terakhir || 0);
+                        var rowHarga = Math.round(parseFloat(row.harga_perolehan || 0));
+                        var rowPenyusutanPerbulan = Math.round(parseFloat(row.penyusutan_perbulan || 0));
+                        var rowPenyusutanAwal = Math.round(parseFloat(row.total_penyusutan_awal || 0));
+                        var rowJanuari = Math.round(parseFloat(row[selectedYear + '-01'] || 0));
+                        var rowFebruari = Math.round(parseFloat(row[selectedYear + '-02'] || 0));
+                        var rowMaret = Math.round(parseFloat(row[selectedYear + '-03'] || 0));
+                        var rowApril = Math.round(parseFloat(row[selectedYear + '-04'] || 0));
+                        var rowMei = Math.round(parseFloat(row[selectedYear + '-05'] || 0));
+                        var rowJuni = Math.round(parseFloat(row[selectedYear + '-06'] || 0));
+                        var rowJuli = Math.round(parseFloat(row[selectedYear + '-07'] || 0));
+                        var rowAgustus = Math.round(parseFloat(row[selectedYear + '-08'] || 0));
+                        var rowSeptember = Math.round(parseFloat(row[selectedYear + '-09'] || 0));
+                        var rowOktober = Math.round(parseFloat(row[selectedYear + '-10'] || 0));
+                        var rowNovember = Math.round(parseFloat(row[selectedYear + '-11'] || 0));
+                        var rowDesember = Math.round(parseFloat(row[selectedYear + '-12'] || 0));
+                        var rowPenyusutanBerjalan = Math.round(parseFloat(row
+                            .total_penyusutan_berjalan || 0));
+                        var rowAkumulasiPenyusutan = Math.round(parseFloat(row.akumulasi_penyusutan || 0));
+                        var rowNilaiBukuTerakhir = Math.round(parseFloat(row.nilai_buku_terakhir || 0));
                         var rowPenyusutanKe = parseFloat(row.penyusutan_ke || 0);
                         var rowPengguna = parseFloat(row.pengguna || 0);
 

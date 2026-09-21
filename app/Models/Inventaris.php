@@ -44,6 +44,11 @@ class Inventaris extends Model
         return $this->belongsTo(Branch::class, 'kode_branch', 'kode_branch');
     }
 
+    public function pengajuan_hapus_buku()
+    {
+        return $this->belongsToMany(PengajuanHapusBuku::class, 'pengajuan_hapus_buku_detail', 'inventaris_id', 'pengajuan_hapus_buku_id');
+    }
+
     public function akumulasi_penyusutan_awal()
     {
         // Log::info($this->susut()->whereYear('tanggal_penyusutan', 2023)->get());
