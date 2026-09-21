@@ -116,7 +116,8 @@ class InventarisGol2Controller extends Controller
             $totalPenyusutanTahunSebelumnya = 0;
             $penyusutanBerjalan = 0;
             $countPenyusutanPosisi = 0;
-            $penyusutanPerBulan = $item->harga_perolehan > 0 ? $item->harga_perolehan / 24 : 0;
+            $umur = $item->umur > 0 ? (int)$item->umur : 24;
+            $penyusutanPerBulan = $item->harga_perolehan > 0 ? (int) round($item->harga_perolehan / $umur) : 0;
         
             // Array untuk menyimpan penyusutan per bulan berdasarkan tanggal
             $monthlyDepreciation = [];
@@ -126,33 +127,34 @@ class InventarisGol2Controller extends Controller
                 $penyusutanYear = $penyusutanDate->year;
                 $penyusutanMonth = $penyusutanDate->month;
                 $month = $penyusutanDate->format('Y-m');
+                $nominalPenyusutan = (int) round($penyusutan->penyusutan_per_bulan);
             
                 // Logika penyusutan berdasarkan posisi bulan & tahun
                 if ($penyusutanYear < $currentYear) {
-                    $totalPenyusutanTahunSebelumnya += $penyusutan->penyusutan_per_bulan;
+                    $totalPenyusutanTahunSebelumnya += $nominalPenyusutan;
                     $countPenyusutanPosisi++;
                 } elseif ($penyusutanYear == $currentYear) {
                     if (!$selectedMonth || $penyusutanMonth <= (int)$selectedMonth) {
-                        $penyusutanBerjalan += $penyusutan->penyusutan_per_bulan;
+                        $penyusutanBerjalan += $nominalPenyusutan;
                         $countPenyusutanPosisi++;
 
                         if (!isset($monthlyDepreciation[$month])) {
                             $monthlyDepreciation[$month] = 0;
                         }
-                        $monthlyDepreciation[$month] += $penyusutan->penyusutan_per_bulan;
+                        $monthlyDepreciation[$month] += $nominalPenyusutan;
                     }
                 }
             }
             
             $penyusutanKe = $countPenyusutanPosisi + $item->penyusutan_ke;
-            $totalPenyusutanAwal = $totalPenyusutanTahunSebelumnya + $item->total_penyusutan_awal;
+            $totalPenyusutanAwal = $totalPenyusutanTahunSebelumnya + (int) round($item->total_penyusutan_awal);
             $totalPenyusutanBerjalan = $penyusutanBerjalan;
             $akumulasiPenyusutan = $totalPenyusutanAwal + $totalPenyusutanBerjalan;
         
             // Tambahkan akumulasi penyusutan dari item yang status_branch-nya AUDIT
             if ($item->status_branch === 'AUDIT') {
                 $auditAkumulasi = floatval($item->getRawOriginal('akumulasi_penyusutan') ?? 0);
-                $akumulasiPenyusutan += $auditAkumulasi;
+                $akumulasiPenyusutan += (int) round($auditAkumulasi);
             }
         
             $nilaiBukuTerakhir = max(0, $item->harga_perolehan - $akumulasiPenyusutan);
