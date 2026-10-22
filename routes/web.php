@@ -174,7 +174,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('approval-hapus-buku/detail/{id}', [AkuntingApprovalHapusBukuController::class, 'show'])->name('approval-hapus-buku.show');
         Route::post('approval-hapus-buku/approve/{id}', [AkuntingApprovalHapusBukuController::class, 'approve'])->name('approval-hapus-buku.approve');
         Route::post('approval-hapus-buku/tolak/{id}', [AkuntingApprovalHapusBukuController::class, 'tolak'])->name('approval-hapus-buku.tolak');
-        
+
+        Route::get('log-penghapusan-barang', [App\Http\Controllers\Akunting\LogPenghapusanBarangController::class, 'index'])->name('log-penghapusan-barang.index');
+        Route::get('log-penghapusan-barang/{id}', [App\Http\Controllers\Akunting\LogPenghapusanBarangController::class, 'show'])->name('log-penghapusan-barang.show');
 
         Route::resources([
             'jenis-peralatan' => JenisPeralatanController::class,
@@ -506,8 +508,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/inventaris-gol-2/template', [InventarisGol2Controller::class, 'downloadTemplate'])
         ->name('inventaris-gol-2.template');
 
-});
+    Route::get('/log-penghapusan-barang', function () {
+        return redirect()->route('akunting.log-penghapusan-barang.index');
+    });
 
+});
 
 Route::get('jenis-peralatan-dropdown/{id}', [JenisPeralatanController::class, 'dropdown'])->name('jenis-peralatan-dropdown');
 

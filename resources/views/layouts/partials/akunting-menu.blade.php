@@ -144,8 +144,7 @@
 
     <ul class="nav nav-treeview">
         <li class="nav-item">
-            <a href="{{ url('penyusutan') }}"
-                class="nav-link {{ request()->is('penyusutan') ? 'active' : '' }}">
+            <a href="{{ url('penyusutan') }}" class="nav-link {{ request()->is('penyusutan') ? 'active' : '' }}">
                 <i class="nav-icon far fa-circle nav-icon"></i>
                 <p>
                     Proses Penyusutan
@@ -162,8 +161,7 @@
             </a>
         </li>
         <li class="nav-item">
-            <a href="{{ url('jurnal-kp') }}"
-                class="nav-link {{ request()->is('jurnal-kp*') ? 'active' : '' }}">
+            <a href="{{ url('jurnal-kp') }}" class="nav-link {{ request()->is('jurnal-kp*') ? 'active' : '' }}">
                 <i class="nav-icon far fa-circle nav-icon"></i>
                 <p>
                     Jurnal Pembelian KP
@@ -172,8 +170,7 @@
         </li>
 
         <li class="nav-item">
-            <a href="{{ url('jurnal-ap') }}"
-                class="nav-link {{ request()->is('jurnal-ap*') ? 'active' : '' }}">
+            <a href="{{ url('jurnal-ap') }}" class="nav-link {{ request()->is('jurnal-ap*') ? 'active' : '' }}">
                 <i class="nav-icon far fa-circle nav-icon"></i>
                 <p>
                     Jurnal Pembelian AP
@@ -264,8 +261,10 @@
 </li>
 {{-- end menu LPJ --}}
 
-<li class="nav-item has-treeview {{ request()->is('akunting/param-peralatan*') || request()->is('akunting/jenis-peralatan*') ? 'menu-open' : '' }}">
-    <a href="#" class="nav-link {{ request()->is('akunting/param-peralatan*') || request()->is('akunting/jenis-peralatan*') ? 'active' : '' }}">
+<li
+    class="nav-item has-treeview {{ request()->is('akunting/param-peralatan*') || request()->is('akunting/jenis-peralatan*') ? 'menu-open' : '' }}">
+    <a href="#"
+        class="nav-link {{ request()->is('akunting/param-peralatan*') || request()->is('akunting/jenis-peralatan*') ? 'active' : '' }}">
         <i class="nav-icon fas fa-tools"></i>
         <p>
             Master Data
@@ -311,6 +310,16 @@
 </li> --}}
 
 <li class="nav-item">
+    <a href="{{ url('/log-penghapusan-barang') }}"
+        class="nav-link {{ request()->is('log-penghapusan-barang*') ? 'active' : '' }}">
+        <i class="nav-icon fas fa-trash-alt"></i>
+        <p>
+            Log Penghapusan Barang
+        </p>
+    </a>
+</li>
+
+<li class="nav-item">
     <a href="{{ url('/update-password') }}" class="nav-link {{ request()->is('update-password') ? 'active' : '' }}">
         <i class="nav-icon fas fa-fingerprint"></i>
         <p>
@@ -318,4 +327,3 @@
         </p>
     </a>
 </li>
-

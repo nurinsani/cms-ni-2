@@ -46,7 +46,13 @@ class Inventaris extends Model
 
     public function pengajuan_hapus_buku()
     {
-        return $this->belongsToMany(PengajuanHapusBuku::class, 'pengajuan_hapus_buku_detail', 'inventaris_id', 'pengajuan_hapus_buku_id');
+        return $this->belongsToMany(PengajuanHapusBuku::class, 'pengajuan_hapus_buku_detail', 'inventaris_id', 'pengajuan_hapus_buku_id')
+                    ->withPivot('id', 'foto', 'kondisi');
+    }
+
+    public function pengajuan_hapus_buku_detail()
+    {
+        return $this->hasMany(PengajuanHapusBukuDetail::class, 'inventaris_id');
     }
 
     public function akumulasi_penyusutan_awal()

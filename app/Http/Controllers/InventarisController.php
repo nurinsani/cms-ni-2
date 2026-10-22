@@ -46,7 +46,8 @@ class InventarisController extends Controller
         $area = $request->input('area');
         $region = $request->input('region');
     
-        $query = Inventaris::with('penyusutans', 'branch');
+        $query = Inventaris::with('penyusutans', 'branch')
+            ->where('status', 'aktif');
 
         if ($selectedMonth) {
             $cutoffDate = Carbon::createFromDate($currentYear, (int)$selectedMonth, 1)->endOfMonth()->toDateString();
