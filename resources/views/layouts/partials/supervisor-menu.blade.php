@@ -146,10 +146,19 @@
         </li>
 
         <li class="nav-item">
-            <a href="{{ route('admin-head.approval-hapus-buku.index') }}" class="nav-link {{ request()->is('admin-head/approval-hapus-buku*') ? 'active' : '' }}">
+            <a href="{{ route('admin-head.approval-hapus-buku.index') }}" class="nav-link {{ request()->is('admin-head/approval-hapus-buku') || (request()->is('admin-head/approval-hapus-buku/*') && !request()->is('admin-head/approval-hapus-buku-gol-2*')) ? 'active' : '' }}">
                 <i class="nav-icon far fa-circle nav-icon"></i>
                 <p>
                     Hapus Buku
+                </p>
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a href="{{ route('admin-head.approval-hapus-buku-gol-2.index') }}" class="nav-link {{ request()->is('admin-head/approval-hapus-buku-gol-2*') ? 'active' : '' }}">
+                <i class="nav-icon far fa-circle nav-icon"></i>
+                <p>
+                    Hapus Buku Gol 2
                 </p>
             </a>
         </li>

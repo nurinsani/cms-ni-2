@@ -80,10 +80,20 @@
 
         <li class="nav-item">
             <a href="{{ route('akunting.approval-hapus-buku.index') }}"
-                class="nav-link {{ request()->is('akunting/approval-hapus-buku*') ? 'active' : '' }}">
+                class="nav-link {{ request()->is('akunting/approval-hapus-buku') || (request()->is('akunting/approval-hapus-buku/*') && !request()->is('akunting/approval-hapus-buku-gol-2*')) ? 'active' : '' }}">
                 <i class="nav-icon far fa-circle nav-icon"></i>
                 <p>
                     Hapus Buku
+                </p>
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a href="{{ route('akunting.approval-hapus-buku-gol-2.index') }}"
+                class="nav-link {{ request()->is('akunting/approval-hapus-buku-gol-2*') ? 'active' : '' }}">
+                <i class="nav-icon far fa-circle nav-icon"></i>
+                <p>
+                    Hapus Buku Gol 2
                 </p>
             </a>
         </li>
@@ -309,14 +319,36 @@
     </a>
 </li> --}}
 
-<li class="nav-item">
-    <a href="{{ url('/log-penghapusan-barang') }}"
-        class="nav-link {{ request()->is('log-penghapusan-barang*') ? 'active' : '' }}">
+<li
+    class="nav-item has-treeview {{ request()->is('akunting/log-penghapusan-barang*') || request()->is('log-penghapusan-barang*') ? 'menu-open' : '' }}">
+    <a href="#"
+        class="nav-link {{ request()->is('akunting/log-penghapusan-barang*') || request()->is('log-penghapusan-barang*') ? 'active' : '' }}">
         <i class="nav-icon fas fa-trash-alt"></i>
         <p>
-            Log Penghapusan Barang
+            Log Hapus Buku
+            <i class="right fas fa-angle-left"></i>
         </p>
     </a>
+    <ul class="nav nav-treeview">
+        <li class="nav-item">
+            <a href="{{ route('akunting.log-penghapusan-barang.index', ['gol' => '1']) }}"
+                class="nav-link {{ (request()->is('akunting/log-penghapusan-barang*') || request()->is('log-penghapusan-barang*')) && request('gol', '1') == '1' ? 'active' : '' }}">
+                <i class="far fa-circle nav-icon"></i>
+                <p>
+                    Inventaris Gol 1
+                </p>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{{ route('akunting.log-penghapusan-barang.index', ['gol' => '2']) }}"
+                class="nav-link {{ (request()->is('akunting/log-penghapusan-barang*') || request()->is('log-penghapusan-barang*')) && request('gol') == '2' ? 'active' : '' }}">
+                <i class="far fa-circle nav-icon"></i>
+                <p>
+                    Inventaris Gol 2
+                </p>
+            </a>
+        </li>
+    </ul>
 </li>
 
 <li class="nav-item">

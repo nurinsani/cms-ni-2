@@ -219,13 +219,39 @@
     <!-- Page specific script -->
     <script>
         $(function() {
+            var defaultExportOptions = {
+                columns: function(idx, data, node) {
+                    var thText = $(node).text().trim().toLowerCase();
+                    return thText !== 'aksi' && !$(node).hasClass('no-export');
+                }
+            };
+
+            if ($.fn.dataTable && $.fn.dataTable.ext && $.fn.dataTable.ext.buttons) {
+                if ($.fn.dataTable.ext.buttons.excelHtml5) {
+                    $.fn.dataTable.ext.buttons.excelHtml5.exportOptions = defaultExportOptions;
+                }
+                if ($.fn.dataTable.ext.buttons.csvHtml5) {
+                    $.fn.dataTable.ext.buttons.csvHtml5.exportOptions = defaultExportOptions;
+                }
+                if ($.fn.dataTable.ext.buttons.pdfHtml5) {
+                    $.fn.dataTable.ext.buttons.pdfHtml5.exportOptions = defaultExportOptions;
+                }
+                if ($.fn.dataTable.ext.buttons.print) {
+                    $.fn.dataTable.ext.buttons.print.exportOptions = defaultExportOptions;
+                }
+            }
+
             $("#example1").DataTable({
                 "responsive": false,
                 "lengthChange": false,
                 "autoWidth": false,
                 "ordering": false,
                 "destroy" : true,
-                "buttons": ["csv", "excel", "pdf"]
+                "buttons": [
+                    { extend: "csv", exportOptions: defaultExportOptions },
+                    { extend: "excel", exportOptions: defaultExportOptions },
+                    { extend: "pdf", exportOptions: defaultExportOptions }
+                ]
             }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
 
             $('#example2').DataTable({
@@ -234,7 +260,13 @@
                 "searching": true,
                 "ordering": false,
                 "autoWidth": false,
-                "buttons": ["copy", "csv", "excel", "pdf", "print"]
+                "buttons": [
+                    { extend: "copy", exportOptions: defaultExportOptions },
+                    { extend: "csv", exportOptions: defaultExportOptions },
+                    { extend: "excel", exportOptions: defaultExportOptions },
+                    { extend: "pdf", exportOptions: defaultExportOptions },
+                    { extend: "print", exportOptions: defaultExportOptions }
+                ]
             }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
 
             $('.myTable').DataTable({

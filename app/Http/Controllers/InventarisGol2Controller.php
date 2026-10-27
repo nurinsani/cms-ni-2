@@ -50,7 +50,11 @@ class InventarisGol2Controller extends Controller
         $area = $request->input('area');
         $region = $request->input('region');
     
-        $query = InventarisGol2::with('penyusutans', 'branch');
+        $query = InventarisGol2::with('penyusutans', 'branch')
+            ->where(function ($q) {
+                $q->whereNull('status')
+                  ->orWhere('status', '!=', 'hapus_buku');
+            });
 
         if ($selectedMonth) {
             $cutoffDate = Carbon::createFromDate($currentYear, (int)$selectedMonth, 1)->endOfMonth()->toDateString();
