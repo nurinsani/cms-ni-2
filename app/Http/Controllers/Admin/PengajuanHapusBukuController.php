@@ -114,7 +114,7 @@ class PengajuanHapusBukuController extends Controller
             if ($request->hasFile('surat_moa')) {
                 $fileMoa = $request->file('surat_moa');
                 $namaMoa = time() . '_moa_' . uniqid() . '.' . $fileMoa->getClientOriginalExtension();
-                $pathMoa = public_path('images/hapus-buku/moa');
+                $pathMoa = base_path('files/hapus_buku/moa');
                 if (!File::isDirectory($pathMoa)) {
                     File::makeDirectory($pathMoa, 0755, true, true);
                 }
@@ -132,7 +132,7 @@ class PengajuanHapusBukuController extends Controller
                 'status_approve' => 'admin-head',
             ]);
 
-            $pathKondisi = public_path('images/hapus-buku/kondisi');
+            $pathKondisi = base_path('files/hapus_buku/kondisi');
             if (!File::isDirectory($pathKondisi)) {
                 File::makeDirectory($pathKondisi, 0755, true, true);
             }
@@ -215,14 +215,22 @@ class PengajuanHapusBukuController extends Controller
                 return redirect()->back()->with('error', 'Pengajuan yang sudah disetujui selesai tidak dapat dihapus.');
             }
 
-            // Hapus file foto
-            if ($pengajuan->surat_moa && File::exists(public_path('images/hapus-buku/moa/' . $pengajuan->surat_moa))) {
-                File::delete(public_path('images/hapus-buku/moa/' . $pengajuan->surat_moa));
+            // Hapus file foto & dokumen
+            if ($pengajuan->surat_moa) {
+                if (File::exists(base_path('files/hapus_buku/moa/' . $pengajuan->surat_moa))) {
+                    File::delete(base_path('files/hapus_buku/moa/' . $pengajuan->surat_moa));
+                } elseif (File::exists(public_path('images/hapus-buku/moa/' . $pengajuan->surat_moa))) {
+                    File::delete(public_path('images/hapus-buku/moa/' . $pengajuan->surat_moa));
+                }
             }
 
             foreach ($pengajuan->details as $detail) {
-                if ($detail->foto && File::exists(public_path('images/hapus-buku/kondisi/' . $detail->foto))) {
-                    File::delete(public_path('images/hapus-buku/kondisi/' . $detail->foto));
+                if ($detail->foto) {
+                    if (File::exists(base_path('files/hapus_buku/kondisi/' . $detail->foto))) {
+                        File::delete(base_path('files/hapus_buku/kondisi/' . $detail->foto));
+                    } elseif (File::exists(public_path('images/hapus-buku/kondisi/' . $detail->foto))) {
+                        File::delete(public_path('images/hapus-buku/kondisi/' . $detail->foto));
+                    }
                 }
             }
 

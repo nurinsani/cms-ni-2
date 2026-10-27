@@ -74,10 +74,15 @@
                     </div>
 
                     @if ($pengajuan->surat_moa)
+                        @php
+                            $moaUrl = file_exists(base_path('files/hapus_buku/moa/' . $pengajuan->surat_moa))
+                                ? url('files/hapus_buku/moa/' . $pengajuan->surat_moa)
+                                : asset('images/hapus-buku/moa/' . $pengajuan->surat_moa);
+                        @endphp
                         <div class="border-top pt-2">
                             <label class="font-weight-bold text-dark mb-1">Dokumen Lampiran (MOA):</label>
                             <div>
-                                <a href="{{ asset('images/hapus-buku/moa/' . $pengajuan->surat_moa) }}" target="_blank"
+                                <a href="{{ $moaUrl }}" target="_blank"
                                     class="btn btn-primary btn-sm btn-block">
                                     <i class="fas fa-file-pdf mr-1"></i> Lihat / Unduh Dokumen
                                 </a>
@@ -158,10 +163,20 @@
                             <div class="col-md-4 col-sm-6 mb-4">
                                 <div class="card h-100 border text-center">
                                     <div class="p-2" style="background-color: #f8f9fa;">
-                                        @if ($detail->foto && file_exists(public_path('images/hapus-buku/kondisi/' . $detail->foto)))
-                                            <a href="{{ asset('images/hapus-buku/kondisi/' . $detail->foto) }}"
+                                        @php
+                                            $fotoUrl = null;
+                                            if ($detail->foto) {
+                                                if (file_exists(base_path('files/hapus_buku/kondisi/' . $detail->foto))) {
+                                                    $fotoUrl = url('files/hapus_buku/kondisi/' . $detail->foto);
+                                                } elseif (file_exists(public_path('images/hapus-buku/kondisi/' . $detail->foto))) {
+                                                    $fotoUrl = asset('images/hapus-buku/kondisi/' . $detail->foto);
+                                                }
+                                            }
+                                        @endphp
+                                        @if ($fotoUrl)
+                                            <a href="{{ $fotoUrl }}"
                                                 target="_blank">
-                                                <img src="{{ asset('images/hapus-buku/kondisi/' . $detail->foto) }}"
+                                                <img src="{{ $fotoUrl }}"
                                                     alt="{{ $inv->kode_peralatan ?? 'Foto Barang' }}"
                                                     class="img-fluid rounded"
                                                     style="height: 220px; width: 100%; object-fit: cover;">

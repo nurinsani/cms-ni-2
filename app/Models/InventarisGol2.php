@@ -43,6 +43,17 @@ class InventarisGol2 extends Model
         return $this->belongsTo(Branch::class, 'kode_branch', 'kode_branch');
     }
 
+    public function pengajuan_hapus_buku()
+    {
+        return $this->belongsToMany(PengajuanHapusBukuGol2::class, 'pengajuan_hapus_buku_detail_gol_2', 'inventaris_gol_2_id', 'pengajuan_hapus_buku_id')
+                    ->withPivot('id', 'foto', 'kondisi');
+    }
+
+    public function pengajuan_hapus_buku_details()
+    {
+        return $this->hasMany(PengajuanHapusBukuDetailGol2::class, 'inventaris_gol_2_id');
+    }
+
     public function akumulasi_penyusutan_awal()
     {
         // Log::info($this->susut()->whereYear('tanggal_penyusutan', 2023)->get());
