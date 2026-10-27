@@ -39,29 +39,23 @@ class ApprovalLpjController extends Controller
         $data['title'] = 'Detail Cetak LPJ';
         $data['lpj'] = $lpj = Pengajuan::findOrFail($id);
 
-        if ($lpj->approval1) {
-            $history_approve = HistoryApprove::latest()->first();
-            if ($history_approve == null) {
-                $nomor_urut = '0001';
-            } else {
-                $nomor_urut = (int) substr($history_approve->barcode, 24, 4) + 1;
-                $nomor_urut = str_pad($nomor_urut, 4, "0", STR_PAD_LEFT);
-            }
+        $history_approve = HistoryApprove::latest()->first();
+        if ($history_approve == null || empty($history_approve->barcode)) {
+            $nomor_urut = '0001';
+        } else {
+            $barcodeParts = explode('/', $history_approve->barcode);
+            $lastPart = end($barcodeParts);
+            $lastNumber = is_numeric($lastPart) ? (int) $lastPart : 0;
+            $nomor_urut = str_pad($lastNumber + 1, 4, "0", STR_PAD_LEFT);
+        }
 
+        if ($lpj->approval1) {
             $data['diajukan'] = $lpj->id . '/' . $lpj->updated_at->format('Y-m-d-Hid') . '/' . $lpj->user->id . '/' . $nomor_urut;
             $data['kode_approve1'] = ($lpj->id ?? '') . '/' . $lpj->updated_at->format('Y-m-d-Hid') . '/' . ($lpj->approval1?->id ?? '') . '/' . $nomor_urut;
             $data['kode_approve2'] = $lpj->id . '/' . $lpj->updated_at->format('Y-m-d-Hid') . '/' . $lpj->approval2->id . '/' . $nomor_urut;
             $data['kode_approve3'] = $lpj->id . '/' . $lpj->updated_at->format('Y-m-d-Hid') . '/' . $lpj->approval3->id . '/' . $nomor_urut;
             $data['kode_approve4'] = $kode_approve4 = $lpj->id . '/' . $lpj->updated_at->format('Y-m-d-Hid') . '/' . $lpj->approval4->id . '/' . $nomor_urut;
         } else {
-            $history_approve = HistoryApprove::latest()->first();
-            if ($history_approve == null) {
-                $nomor_urut = '0001';
-            } else {
-                $nomor_urut = (int) substr($history_approve->barcode, 24, 4) + 1;
-                $nomor_urut = str_pad($nomor_urut, 4, "0", STR_PAD_LEFT);
-            }
-
             $data['diajukan'] = $lpj->id . '/' . $lpj->updated_at->format('Y-m-d-Hid') . '/' . $lpj->user->id . '/' . $nomor_urut;
             $data['kode_approve3'] = $lpj->id . '/' . $lpj->updated_at->format('Y-m-d-Hid') . '/' . $lpj->approval3->id . '/' . $nomor_urut;
             $data['kode_approve2'] = $lpj->id . '/' . $lpj->updated_at->format('Y-m-d-Hid') . '/' . $lpj->approval2->id . '/' . $nomor_urut;
