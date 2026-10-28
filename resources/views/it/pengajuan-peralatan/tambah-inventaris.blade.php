@@ -22,7 +22,7 @@
                 @csrf
                 <div class="row">
                     <div class="col-12 col-md-12">
-                        
+
                         <button type="button" class="btn btn-primary mb-3" data-toggle="modal"
                             data-target="#modal-inventaris">
                             + Tambah Pengajuan
@@ -45,22 +45,24 @@
                                 </thead>
                                 <tbody id="base_peralatan">
                                     @foreach ($temp_pengajuan as $item)
-                                    <tr>
-                                        <td>{{ $item->jenis_peralatan->nama_jenis }}</td>
-                                        <td>{{ $item->jenis_peralatan->param_peralatan->coa }}</td>
-                                        <td>{{ $item->merk }}</td>
-                                        <td>{{ $item->type }}</td>
-                                        <td>{{ $item->kuantitas }}</td>
-                                        <td>Rp. {{ number_format($item->harga) }}</td>
-                                        <td>{{ $item->nama_toko }}</td>
-                                        <td>{{ $item->no_telp }}</td>
-                                        <td>{{ $item->pengguna }}</td>
-                                        <td>
-                                            <a href="{{ url('it/temp-pengajuan/'. $item->id) }}" onclick="hapus_data('#delete_form{{ $item->id }}')" class="btn btn-sm btn-danger">
-                                                <i class="fas fa-trash"></i>
-                                            </a>
-                                        </td>
-                                    </tr>
+                                        <tr>
+                                            <td>{{ $item->jenis_peralatan->nama_jenis }}</td>
+                                            <td>{{ $item->ap->unit ?? ($item->area->area ?? $item->kode_branch) }}</td>
+                                            <td>{{ $item->merk }}</td>
+                                            <td>{{ $item->type }}</td>
+                                            <td>{{ $item->kuantitas }}</td>
+                                            <td>Rp. {{ number_format($item->harga) }}</td>
+                                            <td>{{ $item->nama_toko }}</td>
+                                            <td>{{ $item->no_telp }}</td>
+                                            <td>{{ $item->pengguna }}</td>
+                                            <td>
+                                                <a href="{{ url('it/temp-pengajuan/' . $item->id) }}"
+                                                    onclick="hapus_data('#delete_form{{ $item->id }}')"
+                                                    class="btn btn-sm btn-danger">
+                                                    <i class="fas fa-trash"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
                                     @endforeach
                                 </tbody>
                             </table>
@@ -87,7 +89,7 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-    
+
                 <form action="{{ url('it/temp-pengajuan') }}" method="post" enctype="multipart/form-data">
                     @csrf
                     <div class="modal-body">
@@ -102,88 +104,112 @@
                                         @endforeach
                                     </select>
                                 </div>
-    
+
                                 <div class="form-group">
                                     <label for="" class="form-label">Jenis Peralatan</label>
                                     <select name="jenis_peralatan_id" class="form-control jenis_peralatan" id="nama_jenis"
                                         class="form-control">
                                     </select>
                                 </div>
-    
+
                                 <div class="form-group">
-                                    <label for="" class="form-label">Nama AP</label>
-                                    <select name="kode_branch" id="kode_branch" class="form-control">
-                                        @foreach ($branch as $item)
-                                            <option value="" hidden>-- Pilih AP --</option>
-                                            <option value="{{ $item->kode_branch }}">{{ $item->unit }}</option>
+                                    <label for="kode_area" class="form-label">Cabang / Area</label>
+                                    <select name="kode_area" id="kode_area" class="form-control" required>
+                                        <option value="" hidden>-- Pilih Cabang / Area --</option>
+                                        @foreach ($area as $item)
+                                            <option value="{{ $item->code_area }}">{{ $item->area }}
+                                                ({{ $item->code_area }})
+                                            </option>
                                         @endforeach
                                     </select>
                                 </div>
-    
+
                                 <div class="form-group">
-                                    <label for="" class="form-label">Merk</label>
-                                    <input type="text" name="merk" id="merk" class="form-control" placeholder="Masukan Merk" required>
-                                </div>
-    
-                                <div class="form-group">
-                                    <label for="" class="form-label">Type</label>
-                                    <input type="text" name="type" id="type" class="form-control" placeholder="Masukan Type" required>
-                                </div>
-    
-                                <div class="form-group">
-                                    <label for="" class="form-label">Kuantitas</label>
-                                    <input type="number" name="kuantitas" id="kuantitas" class="form-control" placeholder="Masukan Kuantitas" required>
+                                    <label for="kode_branch" class="form-label">Nama AP</label>
+                                    <select name="kode_branch" id="kode_branch" class="form-control" required>
+                                        <option value="" hidden>-- Pilih AP --</option>
+                                    </select>
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="" class="form-label">Harga</label>
-                                    <input type="number" name="harga" id="harga" class="form-control" placeholder="Masukan harga" required>
+                                    <label for="" class="form-label">Merk</label>
+                                    <input type="text" name="merk" id="merk" class="form-control"
+                                        placeholder="Masukan Merk" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="" class="form-label">Type</label>
+                                    <input type="text" name="type" id="type" class="form-control"
+                                        placeholder="Masukan Type" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="" class="form-label">Kuantitas</label>
+                                    <input type="number" name="kuantitas" id="kuantitas" class="form-control"
+                                        placeholder="Masukan Kuantitas" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="harga" class="form-label">Harga</label>
+                                    <input type="number" name="harga" id="harga" class="form-control"
+                                        placeholder="Masukan harga" required>
+                                    <div class="mt-1">
+                                        <small class="text-muted" id="preview_harga">Rp 0</small>
+                                        <small class="text-muted" id="preview_total_harga"
+                                            style="display: none;"></small>
+                                    </div>
                                 </div>
                             </div>
 
                             <div class="col-md-6">
-    
+
                                 <div class="form-group">
                                     <label for="" class="form-label">Nama Toko</label>
-                                    <input type="text" name="nama_toko" id="nama_toko" class="form-control" placeholder="Masukan Nama Toko" required>
+                                    <input type="text" name="nama_toko" id="nama_toko" class="form-control"
+                                        placeholder="Masukan Nama Toko" required>
                                 </div>
-    
+
                                 <div class="form-group">
                                     <label for="" class="form-label">No Telp</label>
-                                    <input type="number" name="no_telp" id="no_telp" class="form-control" placeholder="Masukan No. Telp"
-                                        required>
+                                    <input type="number" name="no_telp" id="no_telp" class="form-control"
+                                        placeholder="Masukan No. Telp" required>
                                 </div>
-    
+
                                 <div class="form-group">
                                     <label for="" class="form-label">Penguna</label>
                                     <input type="text" name="pengguna" id="pengguna" class="form-control"
                                         placeholder="Masukan Nama Pengguna" required>
                                 </div>
-    
+
                                 <div class="form-group">
                                     <label for="" class="form-label">Upload MOA</label>
-                                    <input type="file" name="moa" id="moa" class="form-control" placeholder="Masukan MOA" required>
+                                    <input type="file" name="moa" id="moa" class="form-control"
+                                        placeholder="Masukan MOA" required>
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="" class="form-label">Rekening</label>
-                                    <select name="rekening_id" id="" class="form-control">
+                                    <label for="rekening_id" class="form-label">Rekening</label>
+                                    <select name="rekening_id" id="rekening_id" class="form-control select2bs4"
+                                        style="width: 100%;">
                                         <option value="">-- Pilih Rekening Tujuan --</option>
                                         @foreach ($rekening as $item)
-                                        <option value="{{ $item->id }}">{{ $item->no_rek }} - {{ $item->nama_bank }} - {{ $item->atas_nama }}</option>
+                                            <option value="{{ $item->id }}">{{ $item->no_rek }} -
+                                                {{ $item->nama_bank }} - {{ $item->atas_nama }}</option>
                                         @endforeach
                                     </select>
-                                    <small class="text-red">*isi jika ingin menggunakan rekening lain, jika tidak diisi maka akan menggunakan rekening pembuat</small>
+                                    <small class="text-danger">*isi jika ingin menggunakan rekening lain, jika tidak diisi
+                                        maka akan menggunakan rekening pembuat</small>
                                 </div>
 
                                 <div class="form-group">
                                     <label for="" class="form-label">Keterangan</label>
-                                    <textarea name="keterangan" class="form-control" id="keterangan" cols="5" rows="3" placeholder="Tulis keterangan! misal : pembelian laptop IT" required></textarea>
+                                    <textarea name="keterangan" class="form-control" id="keterangan" cols="5" rows="3"
+                                        placeholder="Tulis keterangan! misal : pembelian laptop IT" required></textarea>
                                 </div>
                             </div>
                         </div>
                     </div>
-    
+
                     <div class="modal-footer justify-content-between">
                         <button type="button" class="btn btn-danger" data-dismiss="modal">Kembali</button>
                         <button type="submit" class="btn btn-primary">Tambah</button>
@@ -229,7 +255,81 @@
 
             });
 
+            var allBranches = @json($branch);
+
             $(document).ready(function() {
+                // Preview format Rupiah untuk input Harga
+                function updateHargaPreview() {
+                    var harga = parseFloat($('#harga').val()) || 0;
+                    var kuantitas = parseInt($('#kuantitas').val()) || 1;
+
+                    if (harga > 0) {
+                        $('#preview_harga').text('Rp ' + harga.toLocaleString('id-ID'));
+                        if (kuantitas > 1) {
+                            var total = harga * kuantitas;
+                            $('#preview_total_harga').text('(Total: Rp ' + total.toLocaleString('id-ID') + ')').show();
+                        } else {
+                            $('#preview_total_harga').hide();
+                        }
+                    } else {
+                        $('#preview_harga').text('Rp 0');
+                        $('#preview_total_harga').hide();
+                    }
+                }
+
+                $('#harga, #kuantitas').on('input keyup change', updateHargaPreview);
+
+                // Select2 Rekening dengan dropdownParent agar modal fokus tidak memblokir input pencarian
+                $('#rekening_id').select2({
+                    theme: 'bootstrap4',
+                    dropdownParent: $('#modal-inventaris'),
+                    placeholder: '-- Pilih Rekening Tujuan --',
+                    allowClear: true,
+                    width: '100%'
+                });
+
+                $('#modal-inventaris').on('shown.bs.modal', function() {
+                    $('#rekening_id').select2({
+                        theme: 'bootstrap4',
+                        dropdownParent: $('#modal-inventaris'),
+                        placeholder: '-- Pilih Rekening Tujuan --',
+                        allowClear: true,
+                        width: '100%'
+                    });
+                    $('#nama_peralatan').select2({
+                        theme: 'bootstrap4',
+                        dropdownParent: $('#modal-inventaris'),
+                        width: '100%'
+                    });
+                });
+
+                $('#modal-inventaris').on('hidden.bs.modal', function() {
+                    $('#preview_harga').text('Rp 0');
+                    $('#preview_total_harga').hide();
+                });
+                $('#kode_area').on('change', function() {
+                    var selectedArea = $(this).val();
+                    var $apSelect = $('#kode_branch');
+
+                    $apSelect.empty();
+                    $apSelect.append('<option value="" hidden>-- Pilih AP --</option>');
+
+                    if (selectedArea) {
+                        var filteredBranches = allBranches.filter(function(branch) {
+                            return branch.code_area == selectedArea;
+                        });
+
+                        $.each(filteredBranches, function(index, item) {
+                            $apSelect.append('<option value="' + item.kode_branch + '">' + item.unit +
+                                '</option>');
+                        });
+                    }
+
+                    if ($apSelect.hasClass('select2-hidden-accessible')) {
+                        $apSelect.trigger('change');
+                    }
+                });
+
                 $('#nama_peralatan').on('change', function() {
                     var jenis_peralatan_id = $(this).val()
                     if (jenis_peralatan_id) {
@@ -268,7 +368,6 @@
             function remove_item(tr_id) {
                 $(tr_id).remove()
             }
-            
         </script>
     @endpush
 
