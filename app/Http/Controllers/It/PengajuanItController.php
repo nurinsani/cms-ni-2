@@ -50,7 +50,18 @@ class PengajuanItController extends Controller
         $data['param_peralatan'] = ParamPeralatan::whereHas('param_peralatan', function($query) {
             $query->where('group_inventaris', 'ya');
         })->get();
-        $data['branch'] = Branch::where('code_area', auth()->user()->code_area)->get();
+        $data['branch'] = Branch::whereNotNull('code_area')
+            ->where('code_area', '!=', '')
+            ->orderBy('unit', 'asc')
+            ->get();
+        $data['area'] = Branch::whereNotNull('code_area')
+            ->where('code_area', '!=', '')
+            ->where('area', '!=', '')
+            ->where('area', '!=', '0000')
+            ->select('code_area', 'area')
+            ->distinct()
+            ->orderBy('area', 'asc')
+            ->get();
         return view('it.pengajuan-peralatan.tambah-inventaris', $data);
     }
 
