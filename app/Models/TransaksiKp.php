@@ -12,5 +12,7 @@ class TransaksiKp extends Model
     protected $guarded = ['id'];
 
     protected $table = 'transaksi_kp';
-    protected $dates = ['tanggal_transaksi'];
+    protected $casts = [
+        'tanggal_transaksi' => 'datetime',
+    ];
 }

@@ -12,5 +12,7 @@ class TransaksiAp extends Model
     protected $guarded = ['id'];
 
     protected $table = 'transaksi_ap';
-    protected $dates = ['tanggal_transaksi'];
+    protected $casts = [
+        'tanggal_transaksi' => 'datetime',
+    ];
 }
