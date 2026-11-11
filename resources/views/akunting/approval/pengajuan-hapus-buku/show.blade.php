@@ -8,7 +8,8 @@
         <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
                 <li class="breadcrumb-item"><a href="{{ route('akunting.dashboard') }}">Home</a></li>
-                <li class="breadcrumb-item"><a href="{{ route('akunting.approval-hapus-buku.index') }}">Approval Hapus Buku</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('akunting.approval-hapus-buku.index') }}">Approval Hapus
+                        Buku</a></li>
                 <li class="breadcrumb-item active">{{ $title }}</li>
             </ol>
         </div>
@@ -82,8 +83,7 @@
                         <div class="border-top pt-2">
                             <label class="font-weight-bold text-dark mb-1">Dokumen Lampiran (MOA):</label>
                             <div>
-                                <a href="{{ $moaUrl }}" target="_blank"
-                                    class="btn btn-primary btn-sm btn-block">
+                                <a href="{{ $moaUrl }}" target="_blank" class="btn btn-primary btn-sm btn-block">
                                     <i class="fas fa-file-pdf mr-1"></i> Lihat / Unduh Dokumen
                                 </a>
                             </div>
@@ -102,9 +102,11 @@
                     </div>
                     <div class="card-body">
                         <!-- Form Approve Akunting -->
-                        <form action="{{ route('akunting.approval-hapus-buku.approve', $pengajuan->id) }}" method="POST" class="mb-3">
+                        <form action="{{ route('akunting.approval-hapus-buku.approve', $pengajuan->id) }}" method="POST"
+                            class="mb-3">
                             @csrf
-                            <button type="submit" class="btn btn-success btn-block" onclick="return confirm('Apakah Anda yakin menyetujui hapus buku ini? Status inventaris akan diperbarui menjadi Hapus Buku.');">
+                            <button type="submit" class="btn btn-success btn-block"
+                                onclick="return confirm('Apakah Anda yakin menyetujui hapus buku ini? Status inventaris akan diperbarui menjadi Hapus Buku.');">
                                 <i class="fas fa-check-double mr-1"></i> Setujui Hapus Buku
                             </button>
                         </form>
@@ -114,7 +116,8 @@
                         <!-- Form Tolak Akunting -->
                         <form action="{{ route('akunting.approval-hapus-buku.tolak', $pengajuan->id) }}" method="POST">
                             @csrf
-                            <button type="submit" class="btn btn-outline-danger btn-block" onclick="return confirm('Apakah Anda yakin ingin menolak pengajuan ini?');">
+                            <button type="submit" class="btn btn-outline-danger btn-block"
+                                onclick="return confirm('Apakah Anda yakin ingin menolak pengajuan ini?');">
                                 <i class="fas fa-times-circle mr-1"></i> Tolak Pengajuan
                             </button>
                         </form>
@@ -142,16 +145,21 @@
                                         @php
                                             $fotoUrl = null;
                                             if ($detail->foto) {
-                                                if (file_exists(base_path('files/hapus_buku/kondisi/' . $detail->foto))) {
+                                                if (
+                                                    file_exists(base_path('files/hapus_buku/kondisi/' . $detail->foto))
+                                                ) {
                                                     $fotoUrl = url('files/hapus_buku/kondisi/' . $detail->foto);
-                                                } elseif (file_exists(public_path('images/hapus-buku/kondisi/' . $detail->foto))) {
+                                                } elseif (
+                                                    file_exists(
+                                                        public_path('images/hapus-buku/kondisi/' . $detail->foto),
+                                                    )
+                                                ) {
                                                     $fotoUrl = asset('images/hapus-buku/kondisi/' . $detail->foto);
                                                 }
                                             }
                                         @endphp
                                         @if ($fotoUrl)
-                                            <a href="{{ $fotoUrl }}"
-                                                target="_blank">
+                                            <a href="{{ $fotoUrl }}" target="_blank">
                                                 <img src="{{ $fotoUrl }}"
                                                     alt="{{ $inv->kode_peralatan ?? 'Foto Barang' }}"
                                                     class="img-fluid rounded"
@@ -242,6 +250,102 @@
                                     </td>
                                     <td class="text-right">Rp. {{ number_format($totalNilaiBuku, 0, ',', '.') }}</td>
                                 </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    {{-- Preview Jurnal Hapus Buku --}}
+                    <h6 class="font-weight-bold text-dark mt-4 mb-2">
+                        Jurnal Hapus Buku (Golongan 1)
+                    </h6>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-sm">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th width="15%">Kode Rekening</th>
+                                    <th>Keterangan</th>
+                                    <th class="text-right" width="18%">Debet</th>
+                                    <th class="text-right" width="18%">Kredit</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @php
+                                    $totalDebetJurnal = 0;
+                                    $totalKreditJurnal = 0;
+                                @endphp
+                                @forelse ($pengajuan->details as $detail)
+                                    @php
+                                        $inv = $detail->inventaris;
+                                        if (!$inv) {
+                                            continue;
+                                        }
+
+                                        $harga = intval($inv->harga_perolehan ?? 0);
+                                        $akumDariPenyusutan = $inv->penyusutans()->sum('penyusutan_per_bulan');
+                                        $penyusutanAwal = floatval($inv->total_penyusutan_awal ?? 0);
+                                        $auditAkum =
+                                            $inv->status_branch === 'AUDIT'
+                                                ? floatval($inv->getRawOriginal('akumulasi_penyusutan') ?? 0)
+                                                : 0;
+
+                                        $akum = $penyusutanAwal + $akumDariPenyusutan + $auditAkum;
+                                        $nb = max(0, $harga - $akum);
+                                        $ketJurnal = 'Hapus Buku Inventaris 1 - ' . ($inv->keterangan ?? '-');
+                                    @endphp
+                                    <tr class="bg-light">
+                                        <td colspan="4" class="font-weight-bold text-dark">
+                                            {{ $loop->iteration }}. {{ $inv->kode_peralatan ?? '-' }} —
+                                            {{ $inv->jenis ?? '-' }} ({{ $inv->merk ?? '-' }})
+                                        </td>
+                                    </tr>
+                                    @if ($nb > 0)
+                                        @php
+                                            $totalDebetJurnal += $nb;
+                                            $totalKreditJurnal += $nb;
+                                        @endphp
+                                        <tr>
+                                            <td class="font-monospace">58114</td>
+                                            <td>{{ $ketJurnal }}</td>
+                                            <td class="text-right">Rp. {{ number_format($nb, 0, ',', '.') }}</td>
+                                            <td class="text-right">-</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="font-monospace">1672000</td>
+                                            <td>{{ $ketJurnal }}</td>
+                                            <td class="text-right">-</td>
+                                            <td class="text-right">Rp. {{ number_format($nb, 0, ',', '.') }}</td>
+                                        </tr>
+                                    @endif
+                                    @php
+                                        $totalDebetJurnal += $harga;
+                                        $totalKreditJurnal += $harga;
+                                    @endphp
+                                    <tr>
+                                        <td class="font-monospace">1672000</td>
+                                        <td>{{ $ketJurnal }}</td>
+                                        <td class="text-right">Rp. {{ number_format($harga, 0, ',', '.') }}</td>
+                                        <td class="text-right">-</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-monospace">1652000</td>
+                                        <td>{{ $ketJurnal }}</td>
+                                        <td class="text-right">-</td>
+                                        <td class="text-right">Rp. {{ number_format($harga, 0, ',', '.') }}</td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="4" class="text-center text-muted py-3">Tidak ada data jurnal.</td>
+                                    </tr>
+                                @endforelse
+                                @if ($pengajuan->details->count() > 0)
+                                    <tr class="font-weight-bold bg-light">
+                                        <td colspan="2" class="text-right"></td>
+                                        <td class="text-right">Rp. {{ number_format($totalDebetJurnal, 0, ',', '.') }}
+                                        </td>
+                                        <td class="text-right">Rp. {{ number_format($totalKreditJurnal, 0, ',', '.') }}
+                                        </td>
+                                    </tr>
+                                @endif
                             </tbody>
                         </table>
                     </div>
