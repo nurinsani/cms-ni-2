@@ -12,7 +12,6 @@ use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Models\ApModel;
 use App\Models\Branch;
-use Laravolt\Indonesia\Models\Kecamatan;
 use Illuminate\Support\Facades\Validator;
 use PHPUnit\TextUI\XmlConfiguration\Logging\Logging;
 
