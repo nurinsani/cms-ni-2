@@ -18,56 +18,92 @@ class ItKlaimController extends Controller
     public function index()
     {
         $data['title'] = 'Klaim Pembelian';
-        $data['pengajuan'] = Pengajuan::where('code_area', 1010)
-        ->where('status_approve', 'klaim-akunting-it')
-        ->get();
+        $data['pengajuan'] = Pengajuan::with(['area', 'pengajuan_details.jenis_peralatan.param_peralatan'])
+            ->where('code_area', auth()->user()->code_area ?? 1010)
+            ->where('status_approve', 'like', 'klaim%')
+            ->latest('id')
+            ->get();
         return view('it.klaim.index', $data);
     }
 
     public function klaim_peralatan()
     {
-        $data['title'] = 'Pengajuan Peralatan';
-        $data['temp_pengajuan'] = TempPengajuanDetail::all();
+        $data['title'] = 'Tambah Klaim Peralatan';
+        $data['temp_pengajuan'] = TempPengajuanDetail::with(['jenis_peralatan.param_peralatan', 'ap', 'area'])
+            ->where(function ($q) {
+                $q->where('user_id', auth()->id())->orWhereNull('user_id');
+            })
+            ->get();
         $data['jenis_peralatan'] = JenisPeralatan::all();
         $data['rekening'] = Rekening::all();
         $data['param_peralatan'] = ParamPeralatan::whereHas('param_peralatan', function($query) {
             $query->where('group_inventaris', 'tidak');
         })->get();
-        $data['branch'] = Branch::where('code_area', auth()->user()->code_area)->get();
+        $data['branch'] = Branch::whereNotNull('code_area')
+            ->where('code_area', '!=', '')
+            ->orderBy('unit', 'asc')
+            ->get();
+        $data['area'] = Branch::whereNotNull('code_area')
+            ->where('code_area', '!=', '')
+            ->where('area', '!=', '')
+            ->where('area', '!=', '0000')
+            ->select('code_area', 'area')
+            ->distinct()
+            ->orderBy('area', 'asc')
+            ->get();
         return view('it.klaim.tambah-klaim', $data);
     }   
 
     public function klaim_inventaris()
     {
-        $data['title'] = 'Pengajuan Inventaris';
-        $data['temp_pengajuan'] = TempPengajuanDetail::all();
+        $data['title'] = 'Tambah Klaim Inventaris';
+        $data['temp_pengajuan'] = TempPengajuanDetail::with(['jenis_peralatan.param_peralatan', 'ap', 'area'])
+            ->where(function ($q) {
+                $q->where('user_id', auth()->id())->orWhereNull('user_id');
+            })
+            ->get();
         $data['jenis_peralatan'] = JenisPeralatan::all();
         $data['rekening'] = Rekening::all();
         $data['param_peralatan'] = ParamPeralatan::whereHas('param_peralatan', function($query) {
             $query->where('group_inventaris', 'ya');
         })->get();
-        $data['branch'] = Branch::where('code_area', auth()->user()->code_area)->get();
+        $data['branch'] = Branch::whereNotNull('code_area')
+            ->where('code_area', '!=', '')
+            ->orderBy('unit', 'asc')
+            ->get();
+        $data['area'] = Branch::whereNotNull('code_area')
+            ->where('code_area', '!=', '')
+            ->where('area', '!=', '')
+            ->where('area', '!=', '0000')
+            ->select('code_area', 'area')
+            ->distinct()
+            ->orderBy('area', 'asc')
+            ->get();
         return view('it.klaim.tambah_inventaris', $data);
     }   
 
     public function klaim_store(Request $request)
     {
-        
+        $temp_pengajuan = TempPengajuanDetail::where(function ($q) {
+            $q->where('user_id', auth()->id())->orWhereNull('user_id');
+        })->get();
+
+        if ($temp_pengajuan->isEmpty()) {
+            return redirect()->back()->with('error', 'Tambahkan minimal 1 item terlebih dahulu sebelum mengajukan klaim.');
+        }
+
         $pengajuan = Pengajuan::latest()->first();
         $kode_branch = auth()->user()->code_area;
         $kode_tahun = date('Y');
         $kode_bulan = date('m');
         $kode_tanggal = date('d');
-        // dd($kode_tanggal);
 
         if ($pengajuan == null) {
             $nomor_urut = '0001';
         } else {
-            $nomor_urut = substr($pengajuan->nomor, 16, 4) + 1;
-            // $nomor_urut = strval(substr($pengajuan->nomor, 18, 4) + 1);
-            // $nomor_urut = substr($pengajuan->nomor, 18, 4) + 1;
-            $nomor_urut = "000". $nomor_urut;
-            // $nomor_urut = str_pad($nomor_urut, 4, "0", STR_PAD_LEFT);
+            $lastSegment = strrchr($pengajuan->nomor, '/');
+            $lastNum = $lastSegment !== false ? (int) substr($lastSegment, 1) : (int) substr($pengajuan->nomor, 16, 4);
+            $nomor_urut = str_pad($lastNum + 1, 4, '0', STR_PAD_LEFT);
         }
 
         $data['nomor'] = $kode_branch.'/'.$kode_tanggal.$kode_bulan.$kode_tahun.'/'.$nomor_urut;
@@ -81,7 +117,6 @@ class ItKlaimController extends Controller
             $data['status_approve'] = 'klaim-admin-head';
         }
         
-        $temp_pengajuan = TempPengajuanDetail::all();
         $pengajuan = Pengajuan::create($data);
         
         foreach ($temp_pengajuan as $item) {
@@ -104,15 +139,17 @@ class ItKlaimController extends Controller
             $pengajuan_detail->save();
         }
         
-        TempPengajuanDetail::query()->delete();
-        return redirect('it/klaim')->with('success', 'Data berhasil dibuat');
+        TempPengajuanDetail::where(function ($q) {
+            $q->where('user_id', auth()->id())->orWhereNull('user_id');
+        })->delete();
+        return redirect('it/klaim')->with('success', 'Data klaim berhasil dibuat.');
     }
 
     public function detail($id)
     {
-        $title = 'Detail';
+        $title = 'Detail Klaim Pembelian';
         $klaim = Pengajuan::findOrFail($id);
         $branch = Branch::where('code_area', 'kode_area')->get();
-        return view('admin.klaim-pembelian.detail', compact('title', 'klaim'));
+        return view('it.klaim.detail', compact('title', 'klaim'));
     }
 }

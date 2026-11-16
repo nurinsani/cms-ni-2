@@ -87,11 +87,8 @@ class ItLpjController extends Controller
                 $gambar = $request->struk_pembelian;
                 $namafile = time().'.'.$gambar->getClientOriginalExtension();
                 $gambar->move('images/lpj/struk_pembelian', $namafile);
-
-                // $data['struk_pembelian'] = $this->upload_file($request->file('struk_pembelian'), 'lpj/struk-pembelian');
+                $data['struk_pembelian'] = $namafile;
             }
-
-            $data['struk_pembelian'] = $namafile;
 
             DB::beginTransaction();
             $lpj = PengajuanDetail::find($data['pengajuan_detail_id']);
@@ -117,11 +114,9 @@ class ItLpjController extends Controller
             $gambar = $request->bukti_pengembalian;
             $namafile = time().'.'.$gambar->getClientOriginalExtension();
             $gambar->move('images/lpj/bukti_pengembalian', $namafile);
-
-            // $data['struk_pembelian'] = $this->upload_file($request->file('struk_pembelian'), 'lpj/struk-pembelian');
+            $lpj->bukti_pengembalian = $namafile;
         }
 
-        $lpj->bukti_pengembalian = $namafile;
         $lpj->update();
         return redirect()->back()->with('success', 'Data berhasil diubah');
 
@@ -138,11 +133,9 @@ class ItLpjController extends Controller
             $gambar = $request->bukti_kurang;
             $namafile = time().'.'.$gambar->getClientOriginalExtension();
             $gambar->move('images/lpj/bukti_kurang', $namafile);
-
-            // $data['struk_pembelian'] = $this->upload_file($request->file('struk_pembelian'), 'lpj/struk-pembelian');
+            $lpj->bukti_kurang = $namafile;
         }
 
-        $lpj->bukti_kurang = $namafile;
         $lpj->update();
         return redirect()->back()->with('success', 'Data berhasil diubah');
 

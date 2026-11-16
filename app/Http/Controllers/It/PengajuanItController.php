@@ -20,31 +20,52 @@ class PengajuanItController extends Controller
 {
     public function index()
     {
-        $data['title'] = 'Pengajuan Pembelian';
-        $data['pengajuan'] = Pengajuan::where('code_area', auth()->user()->code_area)
-        ->where('user_id', 2)
-        ->get();
+        $data['title'] = 'Pengajuan Pembelian (Uang Muka)';
+        $data['pengajuan'] = Pengajuan::with(['area', 'pengajuan_details.jenis_peralatan.param_peralatan'])
+            ->where('code_area', auth()->user()->code_area)
+            ->where('user_id', auth()->id())
+            ->latest('id')
+            ->get();
 
         return view('it.pengajuan-peralatan.index', $data);
     }
 
     public function pengajuan_peralatan()
     {
-        $data['title'] = 'Pengajuan Peralatan';
-        $data['temp_pengajuan'] = TempPengajuanDetail::all();
+        $data['title'] = 'Tambah Pengajuan Peralatan';
+        $data['temp_pengajuan'] = TempPengajuanDetail::with(['jenis_peralatan.param_peralatan', 'ap', 'area'])
+            ->where(function ($q) {
+                $q->where('user_id', auth()->id())->orWhereNull('user_id');
+            })
+            ->get();
         $data['jenis_peralatan'] = JenisPeralatan::all();
         $data['rekening'] = Rekening::all();
         $data['param_peralatan'] = ParamPeralatan::whereHas('param_peralatan', function($query) {
             $query->where('group_inventaris', 'tidak');
         })->get();
-        $data['branch'] = Branch::where('code_area', auth()->user()->code_area)->get();
+        $data['branch'] = Branch::whereNotNull('code_area')
+            ->where('code_area', '!=', '')
+            ->orderBy('unit', 'asc')
+            ->get();
+        $data['area'] = Branch::whereNotNull('code_area')
+            ->where('code_area', '!=', '')
+            ->where('area', '!=', '')
+            ->where('area', '!=', '0000')
+            ->select('code_area', 'area')
+            ->distinct()
+            ->orderBy('area', 'asc')
+            ->get();
         return view('it.pengajuan-peralatan.tambah-peralatan', $data);
     }
 
     public function pengajuan_inventaris()
     {
-        $data['title'] = 'Pengajuan';
-        $data['temp_pengajuan'] = TempPengajuanDetail::all();
+        $data['title'] = 'Tambah Pengajuan Inventaris';
+        $data['temp_pengajuan'] = TempPengajuanDetail::with(['jenis_peralatan.param_peralatan', 'ap', 'area'])
+            ->where(function ($q) {
+                $q->where('user_id', auth()->id())->orWhereNull('user_id');
+            })
+            ->get();
         $data['jenis_peralatan'] = JenisPeralatan::all();
         $data['rekening'] = Rekening::all();
         $data['param_peralatan'] = ParamPeralatan::whereHas('param_peralatan', function($query) {
@@ -67,21 +88,26 @@ class PengajuanItController extends Controller
 
     public function store(Request $request)
     {
+        $temp_pengajuan = TempPengajuanDetail::where(function ($q) {
+            $q->where('user_id', auth()->id())->orWhereNull('user_id');
+        })->get();
+
+        if ($temp_pengajuan->isEmpty()) {
+            return redirect()->back()->with('error', 'Tambahkan minimal 1 item terlebih dahulu sebelum mengajukan.');
+        }
+
         $pengajuan = Pengajuan::latest()->first();
         $kode_branch = auth()->user()->code_area;
         $kode_tahun = date('Y');
         $kode_bulan = date('m');
         $kode_tanggal = date('d');
-        // dd($kode_tanggal);
 
         if ($pengajuan == null) {
             $nomor_urut = '0001';
         } else {
-            $nomor_urut = substr($pengajuan->nomor, 16, 4) + 1;
-            // $nomor_urut = strval(substr($pengajuan->nomor, 18, 4) + 1);
-            // $nomor_urut = substr($pengajuan->nomor, 18, 4) + 1;
-            $nomor_urut = "000". $nomor_urut;
-            // $nomor_urut = str_pad($nomor_urut, 4, "0", STR_PAD_LEFT);
+            $lastSegment = strrchr($pengajuan->nomor, '/');
+            $lastNum = $lastSegment !== false ? (int) substr($lastSegment, 1) : (int) substr($pengajuan->nomor, 16, 4);
+            $nomor_urut = str_pad($lastNum + 1, 4, '0', STR_PAD_LEFT);
         }
 
         $data['nomor'] = $kode_branch.'/'.$kode_tanggal.$kode_bulan.$kode_tahun.'/'.$nomor_urut;
@@ -92,7 +118,6 @@ class PengajuanItController extends Controller
         $data['status_approve'] = 'atasan-it';
         $data['approval_1'] = auth()->user()->id;
         
-        $temp_pengajuan = TempPengajuanDetail::all();
         $pengajuan = Pengajuan::create($data);
         
         foreach ($temp_pengajuan as $item) {
@@ -116,8 +141,10 @@ class PengajuanItController extends Controller
             $pengajuan_detail->save();
         }
         
-        TempPengajuanDetail::query()->delete();
-        return redirect()->route('it.pengajuan.index')->with('success', 'Data berhasil dibuat');
+        TempPengajuanDetail::where(function ($q) {
+            $q->where('user_id', auth()->id())->orWhereNull('user_id');
+        })->delete();
+        return redirect()->route('it.pengajuan.index')->with('success', 'Data pengajuan berhasil dibuat.');
     }
 
     /**
@@ -163,7 +190,7 @@ class PengajuanItController extends Controller
             $pengajuan->delete();
             DB::commit();
 
-            return redirect()->route('admin.pengajuan.index')->with('success', 'Data berhasil dihapus');
+            return redirect()->route('it.pengajuan.index')->with('success', 'Data berhasil dihapus');
         } catch (\Throwable $th) {
             DB::rollback();
             Log::error($th->getMessage());

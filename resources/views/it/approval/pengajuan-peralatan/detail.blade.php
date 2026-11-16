@@ -1,116 +1,118 @@
 @extends('layouts.main')
 
 @section('head-content')
-<div class="row mb-2">
-    <div class="col-sm-6">
-      <h1 class="m-0">{{ $title }}</h1>
-    </div><!-- /.col -->
-    <div class="col-sm-6">
-      <ol class="breadcrumb float-sm-right">
-        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
-        <li class="breadcrumb-item active">{{ $title }}</li>
-      </ol>
-    </div><!-- /.col -->
-  </div><!-- /.row -->
+    <div class="row mb-2 align-items-center d-print-none">
+        <div class="col-sm-6">
+            <h1 class="m-0 font-weight-bold">
+                {{ $title }}
+            </h1>
+        </div>
+        <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right bg-transparent p-0 m-0">
+                <li class="breadcrumb-item"><a href="{{ route('it.dashboard') }}">Home</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('it.pengajuan_peralatan') }}">Approval Peralatan</a></li>
+                <li class="breadcrumb-item active">{{ $title }}</li>
+            </ol>
+        </div>
+    </div>
 @endsection
 
 @section('content')
-
-@push('css')
-  <style>
-    @media print {
-        .d-print-none {
-            display: none;
-        }
-
-    .main-footer {
-        display: none !important;
-    }
-
-    @page {
-        margin-left: 0.5in;
-        margin-right: 0.5in;
-        margin-top: 0;
-        margin-bottom: 0;
-      }
-    }
-  </style>
-@endpush
-
-<div class="card">
-    <!-- /.card-header -->
-    <div class="card-body">
-        <ul class="p-0" style="list-style: none">
-            <li>Nomor : {{ $pengajuan->nomor }}</li>
-            <li>Kepada : Ketua dan Pengurus KSPPS Nur Insani</li>
-            <li>Dari : {{ $pengajuan->user->name }}</li>
-            {{-- <li>Bagian : -</li> --}}
-            <li>Tanggal : {{ $pengajuan->tanggal_pengajuan }}</li>
-        </ul>
-
-        <div class="table-responsive">
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th scope="col">No</th>
-                        <th scope="col">Keperluan</th>
-                        <th scope="col">Kuantitas</th>
-                        <th scope="col">Jumlah</th>
-                        <th scope="col">Total</th>
-                        <th scope="col">Keterangan</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr class="">
-                        <td>1</td>
-                        <td>
-                            <ul class="p-0" style="list-style: none">
-                                @foreach ($pengajuan->jenis_peralatans as $item)
-                                    <li>{{ $item->nama_jenis }}</li>
-                                @endforeach
-                            </ul>
-                        </td>
-                        <td>
-                            <ul class="p-0" style="list-style: none">
-                                @foreach ($pengajuan->jenis_peralatans as $item)
-                                    <li>{{ $item->kuantitas }}</li>
-                                @endforeach
-                            </ul>
-                        </td>
-                        <td>
-                            <ul class="p-0" style="list-style: none">
-                                @foreach ($pengajuan->jenis_peralatans as $item)
-                                    <li>Rp. {{ number_format($item->harga) }}</li>
-                                @endforeach
-                            </ul>
-                        </td>
-                        <td>
-                            <ul class="p-0" style="list-style: none">
-                                @foreach ($pengajuan->jenis_peralatans as $item)
-                                    <li>Rp. {{ number_format($item->harga * $item->kuantitas) }}</li>
-                                @endforeach
-                            </ul>
-                        </td>
-                        <td>
-                            {{ $pengajuan->keterangan }}<br>
-                            {{ $pengajuan->branch->unit }}, {{ $pengajuan->user->name }}, {{ $pengajuan->user->no_rek }}, {{ $pengajuan->user->nama_bank }}
-                        </td>
-                    </tr>
-                </tbody>
-                <tfoot>
-                    <tr>
-                        <td colspan="3"><strong>Subtotal</strong></td>
-                        <td colspan="3"><strong>Rp. {{ number_format($pengajuan->subtotal())}}</strong></td>
-                    </tr>
-                </tfoot>
-            </table>
+    <div class="card card-outline card-primary shadow-sm">
+        <div class="card-header d-print-none">
+            <h3 class="card-title font-weight-bold">
+                Nomor Pengajuan: <span class="text-primary">{{ $pengajuan->nomor }}</span>
+            </h3>
+            <div class="card-tools">
+                <a href="{{ route('it.pengajuan_peralatan') }}" class="btn btn-sm btn-secondary">
+                    <i class="fas fa-arrow-left mr-1"></i> Kembali
+                </a>
+            </div>
         </div>
 
-        @if ($pengajuan->status_uji == 'selesai')
-        <button type="button" onclick="window.print()" class="btn btn-primary mt-5 d-print-none">Print</button>
-        @endif
-        
+        <div class="card-body">
+            <div class="row mb-3 p-3 bg-light rounded border mx-0">
+                <div class="col-md-6">
+                    <table class="table table-sm table-borderless mb-0">
+                        <tr>
+                            <td style="width: 130px;" class="text-muted font-weight-bold">Nomor Surat</td>
+                            <td style="width: 15px;">:</td>
+                            <td class="font-weight-bold">{{ $pengajuan->nomor }}</td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted font-weight-bold">Kepada</td>
+                            <td>:</td>
+                            <td>Ketua dan Pengurus KSPPS Nur Insani</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="col-md-6">
+                    <table class="table table-sm table-borderless mb-0">
+                        <tr>
+                            <td style="width: 130px;" class="text-muted font-weight-bold">Dari (Pemohon)</td>
+                            <td style="width: 15px;">:</td>
+                            <td>{{ $pengajuan->user?->name ?? '-' }}</td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted font-weight-bold">Tanggal</td>
+                            <td>:</td>
+                            <td>{{ $pengajuan->tanggal_pengajuan?->format('d-M-Y') ?? '-' }}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped table-hover mb-0">
+                    <thead class="bg-light">
+                        <tr>
+                            <th class="text-center" style="width: 45px;">No</th>
+                            <th>Lokasi (AP / Cabang)</th>
+                            <th>Keperluan</th>
+                            <th class="text-center" style="width: 75px;">Kuantitas</th>
+                            <th class="text-right">Harga Satuan</th>
+                            <th class="text-right">Total</th>
+                            <th>Keterangan & Rekening</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($pengajuan->pengajuan_details as $item)
+                            <tr>
+                                <td class="text-center align-middle">{{ $loop->iteration }}</td>
+                                <td class="align-middle">{{ $item->ap?->unit ?? ($item->area?->area ?? '-') }}</td>
+                                <td class="align-middle font-weight-bold">
+                                    {{ $item->jenis_peralatan?->nama_jenis ?? '-' }}
+                                    @if ($item->merk || $item->type)
+                                        <br><small class="text-muted font-weight-normal">{{ $item->merk }} {{ $item->type }}</small>
+                                    @endif
+                                </td>
+                                <td class="text-center align-middle">{{ $item->kuantitas }}</td>
+                                <td class="text-right align-middle">Rp {{ number_format($item->harga, 0, ',', '.') }}</td>
+                                <td class="text-right align-middle font-weight-bold">Rp {{ number_format($item->harga * $item->kuantitas, 0, ',', '.') }}</td>
+                                <td class="align-middle small">
+                                    @if ($item->keterangan)
+                                        <div>{{ $item->keterangan }}</div>
+                                    @endif
+                                    <span class="text-muted">
+                                        {{ $pengajuan->user?->name }}, {{ $pengajuan->user?->no_rek }} ({{ $pengajuan->user?->nama_bank }})
+                                    </span>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="7" class="text-center text-muted py-3">Tidak ada rincian item pengajuan.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                    <tfoot class="bg-light">
+                        <tr>
+                            <td colspan="5" class="text-right"><strong>Subtotal</strong></td>
+                            <td class="text-right text-primary"><strong>Rp {{ number_format($pengajuan->subtotal(), 0, ',', '.') }}</strong></td>
+                            <td></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
     </div>
-    <!-- /.card-body -->
-  </div>
 @endsection

@@ -14,7 +14,9 @@ class Pengajuan extends Model
     use HasFactory;
 
     protected $guarded = ['id'];
-    protected $dates = ['tanggal_pengajuan'];
+    protected $casts = [
+        'tanggal_pengajuan' => 'datetime',
+    ];
 
     public function pengajuan_details()
     {

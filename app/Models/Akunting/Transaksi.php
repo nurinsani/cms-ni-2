@@ -12,7 +12,9 @@ class Transaksi extends Model
     protected $guarded = ['id'];
 
     protected $table = 'transaksi';
-    protected $dates = ['tanggal_transaksi'];
+    protected $casts = [
+        'tanggal_transaksi' => 'datetime',
+    ];
 
     public function transaksis()
     {

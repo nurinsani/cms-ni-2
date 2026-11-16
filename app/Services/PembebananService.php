@@ -42,7 +42,7 @@ class PembebananService
             ->where('status_aktif', 'aktif')
             ->where(function ($q) {
                 $q->whereNull('status_pembebanan')
-                  ->orWhere('status_pembebanan', '!=', 'no');
+                    ->orWhere('status_pembebanan', '!=', 'no');
             })->count();
 
         $isArea = Branch::where('code_area', $status_branch)
@@ -98,6 +98,10 @@ class PembebananService
             $others = Branch::whereIn('kode_branch', ['2007', '2004', '2027', '2006'])
                 ->where('kode_branch', '<>', $row->kode_branch)
                 ->where('status_aktif', 'aktif')->get();
+        } elseif ($status_branch == '9903') {
+            $others = Branch::whereIn('code_area', ['2205', '2200'])
+                ->where('kode_branch', '<>', $row->kode_branch)
+                ->where('status_aktif', 'aktif')->get();
         }
 
         foreach ($others as $b) $push($b);
@@ -124,22 +128,22 @@ class PembebananService
             // AP entry
             TransaksiPembebananAp::create([
                 'kode_branch' => $row->kode_branch,
-                'kode_transaksi' => 'BU/'.$row->kode_branch.'/'.$kode_ap,
+                'kode_transaksi' => 'BU/' . $row->kode_branch . '/' . $kode_ap,
                 'kode_rekening' => '57202',
                 'tanggal_transaksi' => date('Y-m-d'),
                 'jenis_transaksi' => 'Bukti SYSTEM',
-                'keterangan' => 'Jurnal Pembebanan Inventaris '.$row->keterangan.' '.date('M Y'),
+                'keterangan' => 'Jurnal Pembebanan Inventaris ' . $row->keterangan . ' ' . date('M Y'),
                 'debet' => 0,
                 'kredit' => $totalCredit,
             ]);
 
             TransaksiPembebananAp::create([
                 'kode_branch' => $row->kode_branch,
-                'kode_transaksi' => 'BU/'.$row->kode_branch.'/'.$kode_ap,
+                'kode_transaksi' => 'BU/' . $row->kode_branch . '/' . $kode_ap,
                 'kode_rekening' => '2500000',
                 'tanggal_transaksi' => date('Y-m-d'),
                 'jenis_transaksi' => 'Bukti SYSTEM',
-                'keterangan' => 'Jurnal Pembebanan Inventaris '.$row->keterangan.' '.date('M Y'),
+                'keterangan' => 'Jurnal Pembebanan Inventaris ' . $row->keterangan . ' ' . date('M Y'),
                 'debet' => $totalCredit,
                 'kredit' => 0,
             ]);
@@ -147,11 +151,11 @@ class PembebananService
             // KP
             TransaksiPembebananKp::create([
                 'kode_branch' => 1010,
-                'kode_transaksi' => 'BU/1010/'.$kode_kp,
-                'kode_rekening' => '1010-'.$row->gl,
+                'kode_transaksi' => 'BU/1010/' . $kode_kp,
+                'kode_rekening' => '1010-' . $row->gl,
                 'tanggal_transaksi' => date('Y-m-d'),
                 'jenis_transaksi' => 'Bukti SYSTEM',
-                'keterangan' => 'Jurnal Pembebanan Inventaris '.$row->keterangan.' '.date('M Y'),
+                'keterangan' => 'Jurnal Pembebanan Inventaris ' . $row->keterangan . ' ' . date('M Y'),
                 'debet' => 0,
                 'kredit' => $totalCredit,
             ]);
@@ -174,11 +178,11 @@ class PembebananService
             // KP (debet)
             TransaksiPembebananKp::create([
                 'kode_branch' => 1010,
-                'kode_transaksi' => 'BU/1010/'.$kode_kp,
-                'kode_rekening' => '1010-'.$t['GL'],
+                'kode_transaksi' => 'BU/1010/' . $kode_kp,
+                'kode_rekening' => '1010-' . $t['GL'],
                 'tanggal_transaksi' => date('Y-m-d'),
                 'jenis_transaksi' => 'Bukti SYSTEM',
-                'keterangan' => 'Jurnal Pembebanan Inventaris '.$row->keterangan.' '.date('M Y'),
+                'keterangan' => 'Jurnal Pembebanan Inventaris ' . $row->keterangan . ' ' . date('M Y'),
                 'debet' => $value,
                 'kredit' => 0,
             ]);
@@ -186,11 +190,11 @@ class PembebananService
             // AP debet
             TransaksiPembebananAp::create([
                 'kode_branch' => $t['kode_branch'],
-                'kode_transaksi' => 'BU/'.$t['kode_branch'].'/'.$kode_ap,
+                'kode_transaksi' => 'BU/' . $t['kode_branch'] . '/' . $kode_ap,
                 'kode_rekening' => '58312',
                 'tanggal_transaksi' => date('Y-m-d'),
                 'jenis_transaksi' => 'Bukti SYSTEM',
-                'keterangan' => 'Jurnal Pembebanan Inventaris '.$row->keterangan.' '.date('M Y'),
+                'keterangan' => 'Jurnal Pembebanan Inventaris ' . $row->keterangan . ' ' . date('M Y'),
                 'debet' => $value,
                 'kredit' => 0,
             ]);
@@ -198,11 +202,11 @@ class PembebananService
             // AP kredit
             TransaksiPembebananAp::create([
                 'kode_branch' => $t['kode_branch'],
-                'kode_transaksi' => 'BU/'.$t['kode_branch'].'/'.$kode_ap,
+                'kode_transaksi' => 'BU/' . $t['kode_branch'] . '/' . $kode_ap,
                 'kode_rekening' => '2500000',
                 'tanggal_transaksi' => date('Y-m-d'),
                 'jenis_transaksi' => 'Bukti SYSTEM',
-                'keterangan' => 'Jurnal Pembebanan Inventaris '.$row->keterangan.' '.date('M Y'),
+                'keterangan' => 'Jurnal Pembebanan Inventaris ' . $row->keterangan . ' ' . date('M Y'),
                 'debet' => 0,
                 'kredit' => $value,
             ]);
@@ -219,11 +223,11 @@ class PembebananService
         // AP origin kredit = TOTAL CREDIT
         TransaksiPembebananAp::create([
             'kode_branch' => $origin['kode_branch'],
-            'kode_transaksi' => 'BU/'.$origin['kode_branch'].'/'.$kode_ap_origin,
+            'kode_transaksi' => 'BU/' . $origin['kode_branch'] . '/' . $kode_ap_origin,
             'kode_rekening' => '57202',
             'tanggal_transaksi' => date('Y-m-d'),
             'jenis_transaksi' => 'Bukti SYSTEM',
-            'keterangan' => 'Jurnal Pembebanan Inventaris '.$row->keterangan.' '.date('M Y'),
+            'keterangan' => 'Jurnal Pembebanan Inventaris ' . $row->keterangan . ' ' . date('M Y'),
             'debet' => 0,
             'kredit' => $kredit,
         ]);
@@ -231,11 +235,11 @@ class PembebananService
         // AP origin debet
         TransaksiPembebananAp::create([
             'kode_branch' => $origin['kode_branch'],
-            'kode_transaksi' => 'BU/'.$origin['kode_branch'].'/'.$kode_ap_origin,
+            'kode_transaksi' => 'BU/' . $origin['kode_branch'] . '/' . $kode_ap_origin,
             'kode_rekening' => '2500000',
             'tanggal_transaksi' => date('Y-m-d'),
             'jenis_transaksi' => 'Bukti SYSTEM',
-            'keterangan' => 'Jurnal Pembebanan Inventaris '.$row->keterangan.' '.date('M Y'),
+            'keterangan' => 'Jurnal Pembebanan Inventaris ' . $row->keterangan . ' ' . date('M Y'),
             'debet' => $kredit,
             'kredit' => 0,
         ]);
@@ -243,11 +247,11 @@ class PembebananService
         // KP origin kredit = TOTAL CREDIT
         TransaksiPembebananKp::create([
             'kode_branch' => 1010,
-            'kode_transaksi' => 'BU/1010/'.$kode_kp,
-            'kode_rekening' => '1010-'.$origin['GL'],
+            'kode_transaksi' => 'BU/1010/' . $kode_kp,
+            'kode_rekening' => '1010-' . $origin['GL'],
             'tanggal_transaksi' => date('Y-m-d'),
             'jenis_transaksi' => 'Bukti SYSTEM',
-            'keterangan' => 'Jurnal Pembebanan Inventaris '.$row->keterangan.' '.date('M Y'),
+            'keterangan' => 'Jurnal Pembebanan Inventaris ' . $row->keterangan . ' ' . date('M Y'),
             'debet' => 0,
             'kredit' => $kredit,
         ]);

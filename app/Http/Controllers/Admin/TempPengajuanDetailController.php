@@ -21,18 +21,19 @@ class TempPengajuanDetailController extends Controller
         $validated = $request->validate(
         [
             'jenis_peralatan_id' => 'required|integer',
-            'rekening_id'        => 'required|integer',
+            'rekening_id'        => 'nullable|integer',
             'merk'               => 'required|string|max:50',
             'type'               => 'required|string|max:50',
             'kuantitas'          => 'required|integer|min:1',
             'harga'              => 'required|numeric|min:0',
             'no_telp'            => 'nullable|string|max:20',
             'keterangan'         => 'nullable|string',
-            'nama_toko'         => 'nullable|string',
-            'pengguna'         => 'nullable|string',
+            'nama_toko'          => 'nullable|string',
+            'pengguna'           => 'nullable|string',
             'kode_branch'        => 'nullable|string',
             'kode_area'          => 'nullable|string',
             'kode_user'          => 'nullable|string',
+            'tanggal_pembelian'  => 'nullable|date',
 
             'moa'                => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
             'struk_pembelian'    => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
@@ -97,8 +98,10 @@ class TempPengajuanDetailController extends Controller
     public function hapus($id)
     {
         $temp_pengajuan_detail = TempPengajuanDetail::find($id);
-        $temp_pengajuan_detail->delete();
+        if ($temp_pengajuan_detail) {
+            $temp_pengajuan_detail->delete();
+        }
 
-        return redirect()->back()->with('success', 'Data berhasil dihapus');
+        return redirect()->back()->with('success', 'Item berhasil dihapus dari daftar sementara.');
     }
 }

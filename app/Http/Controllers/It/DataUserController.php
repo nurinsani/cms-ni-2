@@ -3,17 +3,14 @@
 namespace App\Http\Controllers\It;
 
 use App\Models\User;
-use App\Models\Cabang;
+use App\Models\Branch;
 use Illuminate\Http\Request;
-use PhpParser\Node\Stmt\TryCatch;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
-use App\Models\ApModel;
-use App\Models\Branch;
 use Illuminate\Support\Facades\Validator;
-use PHPUnit\TextUI\XmlConfiguration\Logging\Logging;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class DataUserController extends Controller
 {
@@ -25,7 +22,8 @@ class DataUserController extends Controller
         'no_rek' => 'required',
         'nama_bank' => 'required',
         'atas_nama' => 'required',
-        'password' => 'required',
+        'role' => 'required',
+        'password' => 'required|min:6',
     ];
 
     /**
@@ -36,7 +34,7 @@ class DataUserController extends Controller
     public function index()
     {
         $data['title'] = 'Data User';
-        $data['users'] = User::all();
+        $data['users'] = User::with(['branch', 'area', 'roles'])->latest('id')->get();
         return view('it.data-user.index', $data);
     }
 
@@ -48,8 +46,8 @@ class DataUserController extends Controller
     public function create()
     {
         $data['title'] = 'Tambah User';
-        $data['roles'] = Role::all();
-        $data['branch'] = Branch::where('status_aktif', 'aktif')->get();
+        $data['roles'] = Role::orderBy('name')->get();
+        $data['branch'] = Branch::where('status_aktif', 'aktif')->orderBy('unit')->get();
         return view('it.data-user.create', $data);
     }
 
@@ -61,25 +59,31 @@ class DataUserController extends Controller
      */
     public function store(Request $request)
     {
-        // dd($request->all());
+        $validator = Validator::make($request->all(), $this->validator);
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
         try {
-            $validator = Validator::make($request->all(), $this->validator);
-            if ($validator->fails()) {
-                return redirect()->back()->withErrors($validator)->withInput();
-            }
             $data = $validator->validated();
+            $role = $data['role'];
+            unset($data['role']);
+
             $data['password'] = bcrypt($request->password);
+
             DB::beginTransaction();
             $user = User::create($data);
             $user->generate_username();
-            $user->assignRole($request->role);
+            $user->syncRoles([$role]);
             DB::commit();
 
-            return redirect()->route('it.data-user.index')->with('success', 'Data berhasil dibuat');
+            Alert::success('Berhasil', 'Data user berhasil ditambahkan.');
+            return redirect()->route('it.data-user.index');
         } catch (\Throwable $th) {
             DB::rollback();
             Log::error($th->getMessage());
-            return redirect()->back()->with('error', 'Data gagal dibuat');
+            Alert::error('Gagal', 'Data user gagal dibuat.');
+            return redirect()->back()->withInput();
         }
     }
 
@@ -91,7 +95,7 @@ class DataUserController extends Controller
      */
     public function show($id)
     {
-        //
+        return redirect()->route('it.data-user.edit', $id);
     }
 
     /**
@@ -103,10 +107,13 @@ class DataUserController extends Controller
     public function edit($id)
     {
         $data['title'] = 'Edit User';
-        $data['roles'] = Role::all();
-        $data['user'] = User::findOrFail($id);
-        $data['cabang'] = Branch::all();
-        
+        $data['roles'] = Role::orderBy('name')->get();
+        $data['user'] = User::with('roles')->findOrFail($id);
+        $data['cabang'] = Branch::where('status_aktif', 'aktif')->orderBy('unit')->get();
+        if ($data['cabang']->isEmpty()) {
+            $data['cabang'] = Branch::orderBy('unit')->get();
+        }
+
         return view('it.data-user.edit', $data);
     }
 
@@ -119,32 +126,40 @@ class DataUserController extends Controller
      */
     public function update(Request $request, $id)
     {
-        // dd($request->all());
+        $rules = $this->validator;
+        $rules['email'] = 'required|email|max:100|unique:users,email,' . $id;
+        $rules['password'] = 'nullable|min:6';
+
+        $validator = Validator::make($request->all(), $rules);
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
 
         try {
-            $this->validator['email'] = 'required|email|max:100|unique:users,email,' . $id;
-            $this->validator['password'] = 'nullable';
-            $validator = Validator::make($request->all(), $this->validator);
-            if ($validator->fails()) {
-                return redirect()->back()->withErrors($validator)->withInput();
-            }
             $data = $validator->validated();
-            if ($request->password) {
+            $role = $data['role'];
+            unset($data['role']);
+
+            if ($request->filled('password')) {
                 $data['password'] = bcrypt($request->password);
             } else {
                 unset($data['password']);
             }
+
             DB::beginTransaction();
             $user = User::findOrFail($id);
             $user->update($data);
-            $user->assignRole($request->role);
+            $user->generate_username();
+            $user->syncRoles([$role]);
             DB::commit();
 
-            return redirect()->route('it.data-user.index')->with('success', 'Data berhasil diubah');
+            Alert::success('Berhasil', 'Data user berhasil diperbarui.');
+            return redirect()->route('it.data-user.index');
         } catch (\Throwable $th) {
             DB::rollback();
             Log::error($th->getMessage());
-            return redirect()->back()->with('error', 'Data gagal diubah');
+            Alert::error('Gagal', 'Data user gagal diperbarui.');
+            return redirect()->back()->withInput();
         }
     }
 
@@ -156,17 +171,25 @@ class DataUserController extends Controller
      */
     public function destroy($id)
     {
+        if (auth()->id() == $id) {
+            Alert::error('Gagal', 'Anda tidak dapat menghapus akun yang sedang digunakan login.');
+            return redirect()->back();
+        }
+
         try {
             DB::beginTransaction();
             $user = User::findOrFail($id);
+            $user->syncRoles([]);
             $user->delete();
             DB::commit();
 
-            return redirect()->route('it.data-user.index')->with('success', 'Data berhasil dihapus');
+            Alert::success('Berhasil', 'Data user berhasil dihapus.');
+            return redirect()->route('it.data-user.index');
         } catch (\Throwable $th) {
             DB::rollback();
             Log::error($th->getMessage());
-            return redirect()->back()->with('error', 'Data gagal dihapus');
+            Alert::error('Gagal', 'Data user gagal dihapus.');
+            return redirect()->back();
         }
     }
 }

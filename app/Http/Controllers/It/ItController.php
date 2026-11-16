@@ -17,6 +17,8 @@ class ItController extends Controller
         $data['belum_approve'] = Pengajuan::where('status_approve', 'akunting-it')->whereHas('pengajuan_details', function($query){
             $query->where('group_approval', 'it');
             })->get();
+        $data['total_user'] = \App\Models\User::count();
+        $data['total_pengajuan_it'] = Pengajuan::where('user_id', auth()->id())->count();
         // $data['belum_approve_bdd'] = PengajuanBdd::where('status_approve', 'akunting-it')->whereHas('jenis_bdd', function($query){
         //     $query->where('group_approval', 'it');
         //     })->get();
@@ -75,7 +77,7 @@ class ItController extends Controller
 
     public function pengajuan_bdd()
     {
-        $data['title'] = 'Pengajuan Peralatan';
+        $data['title'] = 'Approval Pengajuan BDD';
         // $data['belum_approve'] = Pengajuan::where('status_proses', 'it')->where('cabang_id', auth()->user()->cabang_id)->get();
         $data['pengajuan_bdd'] = PengajuanBdd::where('status_proses', 'pending')->whereHas('jenis_bdd', function($query){
             $query->where('group_approval', 'it');

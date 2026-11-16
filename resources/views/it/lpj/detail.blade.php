@@ -1,13 +1,16 @@
 @extends('layouts.main')
 
 @section('head-content')
-    <div class="row mb-2">
+    <div class="row mb-2 align-items-center d-print-none">
         <div class="col-sm-6">
-            <h1 class="m-0">{{ $title }}</h1>
+            <h1 class="m-0 font-weight-bold">
+                {{ $title }}
+            </h1>
         </div>
         <div class="col-sm-6">
-            <ol class="breadcrumb float-sm-right">
-                <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
+            <ol class="breadcrumb float-sm-right bg-transparent p-0 m-0">
+                <li class="breadcrumb-item"><a href="{{ route('it.dashboard') }}">Home</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('it.lpj.index') }}">LPJ</a></li>
                 <li class="breadcrumb-item active">{{ $title }}</li>
             </ol>
         </div>
@@ -19,11 +22,11 @@
         <style>
             @media print {
                 .d-print-none {
-                    display: none;
+                    display: none !important;
                 }
 
                 .d-print-flex {
-                    display: flex;
+                    display: flex !important;
                 }
 
                 .main-footer {
@@ -31,307 +34,243 @@
                 }
 
                 @page {
-                    margin-left: 0.5in;
-                    margin-right: 0.5in;
-                    margin-top: 0;
-                    margin-bottom: 0;
+                    margin: 0.4in;
                 }
             }
         </style>
     @endpush
 
-    <div class="row row-cols-1">
-        <div class="col">
-            <div class="card">
-                <div class="card-header mt-5 d-print-flex justify-content-between d-none">
-                    <img src="https://picsum.photos/200" width="150px" alt="">
-                    <div class="text-center">
-                        <h4>LAPORAN PERTANGGUNGJAWABAN PEMBELIAN</h4>
-                        <h4>WILAYAH JATUT</h4>
-                        <h4>PERIODE AGUSTUS 2023</h4>
-                        <h4>TANGGAL 25-8-2023</h4>
-                    </div>
-                    <div class=""></div>
+    <div class="card card-outline card-primary shadow-sm">
+        <div class="card-header mt-4 d-print-flex justify-content-between d-none">
+            <img src="https://images.glints.com/unsafe/glints-dashboard.s3.amazonaws.com/company-photos/4ee7c569b5fdc3017f63a6c2779474d6.jpg" width="150px" alt="Logo">
+            <div class="text-center">
+                <h4 class="font-weight-bold mb-1">LAPORAN PERTANGGUNGJAWABAN PEMBELIAN</h4>
+                <h5 class="mb-0">TANGGAL {{ $lpj->tanggal_pengajuan?->format('d-M-Y') ?? $lpj->tanggal_pengajuan }}</h5>
+            </div>
+            <div></div>
+        </div>
+
+        <div class="card-header d-print-none">
+            <h3 class="card-title font-weight-bold">
+                Nomor LPJ: <span class="text-primary">{{ $lpj->nomor }}</span>
+            </h3>
+            <div class="card-tools">
+                <a href="{{ route('it.lpj.index') }}" class="btn btn-sm btn-secondary mr-1">
+                    <i class="fas fa-arrow-left mr-1"></i> Kembali
+                </a>
+                <a href="#" onclick="bukti_pengembalian({{ $lpj->id }})" class="btn btn-sm btn-info mr-1">
+                    <i class="fas fa-upload mr-1"></i> Upload Bukti Pengembalian
+                </a>
+                <a href="{{ route('it.ajukan_lpj', $lpj->id) }}" class="btn btn-sm btn-success font-weight-bold">
+                    <i class="fas fa-paper-plane mr-1"></i> Ajukan LPJ
+                </a>
+            </div>
+        </div>
+
+        <div class="card-body">
+            @if ($lpj->nominal_pengembalian)
+                <div class="alert alert-info py-2 mb-3">
+                    <i class="fas fa-check-circle mr-1"></i> <strong>Bukti Pengembalian</strong> sudah diunggah (Nominal: Rp {{ number_format($lpj->nominal_pengembalian, 0, ',', '.') }}).
                 </div>
-                <div class="card-body">
-                    <a href="{{ url()->previous() }}" class="btn btn-sm btn-primary mb-3"><i class="fas fa-arrow-left"></i> Kembali</a>
-                    <ul class="p-0" style="list-style: none">
-                        <li>Nomor : {{ $lpj->nomor }}</li>
-                        <li>Kepada : Ketua dan Pengurus KSPPS Nur Insani</li>
-                        <li>Dari : {{ $lpj->user->name }}</li>
-                        <li>Tanggal : {{ $lpj->tanggal_pengajuan }}</li>
-                    </ul>
+            @endif
 
-                    <div class="table-responsive">
-                        <a href="{{ route('it.ajukan_lpj', $lpj->id) }}" class="btn btn-sm btn-success my-3">Ajukan
-                            LPJ</a>
-                            
-                        <a href="#" onclick="bukti_pengembalian({{ $lpj->id }} )"
-                            class="btn btn-sm btn-primary">Upload Bukti Pengembalian
-                        </a>
+            <div class="row mb-3 p-3 bg-light rounded border mx-0">
+                <div class="col-md-6">
+                    <table class="table table-sm table-borderless mb-0">
+                        <tr>
+                            <td style="width: 130px;" class="text-muted font-weight-bold">Nomor Surat</td>
+                            <td style="width: 15px;">:</td>
+                            <td class="font-weight-bold">{{ $lpj->nomor }}</td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted font-weight-bold">Kepada</td>
+                            <td>:</td>
+                            <td>Ketua dan Pengurus KSPPS Nur Insani</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="col-md-6">
+                    <table class="table table-sm table-borderless mb-0">
+                        <tr>
+                            <td style="width: 130px;" class="text-muted font-weight-bold">Dari (Pemohon)</td>
+                            <td style="width: 15px;">:</td>
+                            <td>{{ $lpj->user?->name ?? '-' }}</td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted font-weight-bold">Tanggal</td>
+                            <td>:</td>
+                            <td>{{ $lpj->tanggal_pengajuan?->format('d-M-Y') ?? $lpj->tanggal_pengajuan }}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
 
-                        <div class="">
-                            @if ($lpj->nominal_pengembalian == true)
-                                <div class="text-danger">*Bukti Pengembalian sudah di upload.</div>
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped table-hover mb-0">
+                    <thead class="bg-light">
+                        <tr>
+                            <th class="text-center" style="width: 45px;">No</th>
+                            <th>AP / Cabang</th>
+                            <th>COA</th>
+                            <th>Nama Jenis Peralatan</th>
+                            <th>Merk / Tipe</th>
+                            <th class="text-right">Nominal Pengajuan</th>
+                            <th class="text-right">Realisasi Pembelian</th>
+                            <th class="text-center" style="width: 110px;">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($lpj->pengajuan_details as $item)
+                            <tr>
+                                <td class="text-center align-middle">{{ $loop->iteration }}</td>
+                                <td class="align-middle">{{ $item->ap?->unit ?? ($item->area?->area ?? '-') }}</td>
+                                <td class="align-middle">{{ $item->jenis_peralatan?->param_peralatan?->coa ?? '-' }}</td>
+                                <td class="align-middle font-weight-bold">{{ $item->jenis_peralatan?->nama_jenis ?? '-' }}</td>
+                                <td class="align-middle">{{ $item->merk }} {{ $item->type }}</td>
+                                <td class="text-right align-middle">Rp {{ number_format($item->harga * $item->kuantitas, 0, ',', '.') }}</td>
+                                <td class="text-right align-middle font-weight-bold">Rp {{ number_format($item->harga_pembelian ?? 0, 0, ',', '.') }}</td>
+                                <td class="text-center align-middle">
+                                    @if ($item->status_lpj == 'belum')
+                                        <button type="button" onclick="buat_lpj({{ $item->id }})" class="btn btn-sm btn-primary">
+                                            <i class="fas fa-edit mr-1"></i> Buat LPJ
+                                        </button>
+                                    @else
+                                        <span class="badge badge-success px-2 py-1">
+                                            <i class="fas fa-check-circle mr-1"></i> Selesai
+                                        </span>
+                                    @endif
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                    <tfoot class="bg-light">
+                        <tr>
+                            <td colspan="5" class="text-right"><strong>Total Uang Muka (Subtotal)</strong></td>
+                            <td colspan="2" class="text-right"><strong>Rp {{ number_format($lpj->subtotal(), 0, ',', '.') }}</strong></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td colspan="5" class="text-right"><strong>Total Realisasi Pembelian</strong></td>
+                            <td colspan="2" class="text-right text-primary"><strong>Rp {{ number_format($lpj->total_pembelian(), 0, ',', '.') }}</strong></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td colspan="5" class="text-right"><strong>Selisih (Sisa / Kurang)</strong></td>
+                            <td colspan="2" class="text-right text-success">
+                                <strong>Rp {{ number_format($lpj->subtotal() - $lpj->total_pembelian(), 0, ',', '.') }}</strong>
+                            </td>
+                            <td></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            <!-- Modal Upload LPJ Item -->
+            <div class="modal fade" id="modal_lpj">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header bg-primary text-white">
+                            <h5 class="modal-title"><i class="fas fa-file-upload mr-1"></i> Input Realisasi LPJ</h5>
+                            <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <form action="{{ route('it.lpj.update', $lpj->id) }}" method="post" enctype="multipart/form-data">
+                            @method('PUT')
+                            @csrf
+                            <div class="modal-body">
+                                <input type="hidden" id="pengajuan_detail_id" name="pengajuan_detail_id">
+
+                                <div class="form-group">
+                                    <label class="form-label">Tanggal Pembelian <span class="text-danger">*</span></label>
+                                    <input type="date" class="form-control @error('tanggal_perolehan') is-invalid @enderror"
+                                        name="tanggal_perolehan" value="{{ old('tanggal_perolehan', date('Y-m-d')) }}" required>
+                                    @error('tanggal_pembelian')
+                                        <small class="text-danger">{{ $message }}</small>
+                                    @enderror
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Harga Realisasi Pembelian (Rp) <span class="text-danger">*</span></label>
+                                    <input type="number" class="form-control @error('harga_pembelian') is-invalid @enderror"
+                                        name="harga_pembelian" value="{{ old('harga_pembelian') }}" placeholder="Masukkan total harga pembelian" required>
+                                    @error('harga_pembelian')
+                                        <small class="text-danger">{{ $message }}</small>
+                                    @enderror
+                                </div>
+
+                                <div class="form-group mb-0">
+                                    <label class="form-label">Struk Pembelian <span class="text-danger">*</span></label>
+                                    <input type="file" class="form-control-file border rounded p-1 @error('struk_pembelian') is-invalid @enderror"
+                                        name="struk_pembelian" required>
+                                    @error('struk_pembelian')
+                                        <small class="text-danger">{{ $message }}</small>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                                <button type="submit" class="btn btn-primary">Simpan LPJ</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Bukti Pengembalian -->
+            <div class="modal fade" id="bukti_pengembalian">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header bg-info text-white">
+                            <h5 class="modal-title"><i class="fas fa-upload mr-1"></i> Upload Bukti Pengembalian</h5>
+                            <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            @if ($lpj->nominal_pengembalian == false)
+                                <form action="{{ url('it/lpj/upload-bukti-pengembalian', $lpj->id) }}" method="post" enctype="multipart/form-data">
+                                    @method('PUT')
+                                    @csrf
+                                    <div class="form-group">
+                                        <label class="form-label">Nominal Pengembalian (Rp)</label>
+                                        <input type="number" class="form-control @error('nominal_pengembalian') is-invalid @enderror"
+                                            name="nominal_pengembalian" value="{{ old('nominal_pengembalian') }}" required>
+                                        @error('nominal_pengembalian')
+                                            <small class="text-danger">{{ $message }}</small>
+                                        @enderror
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="form-label">Bukti Pengembalian</label>
+                                        <input type="file" class="form-control-file border rounded p-1 @error('bukti_pengembalian') is-invalid @enderror"
+                                            name="bukti_pengembalian" required>
+                                        @error('bukti_pengembalian')
+                                            <small class="text-danger">{{ $message }}</small>
+                                        @enderror
+                                    </div>
+
+                                    <div class="form-group mb-0">
+                                        <label class="form-label">Keterangan</label>
+                                        <input type="text" class="form-control @error('keterangan_lpj') is-invalid @enderror"
+                                            name="keterangan_lpj" value="{{ old('keterangan_lpj') }}">
+                                        @error('keterangan_lpj')
+                                            <small class="text-danger">{{ $message }}</small>
+                                        @enderror
+                                    </div>
+
+                                    <div class="modal-footer px-0 pb-0 mt-3">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                                        <button type="submit" class="btn btn-info">Simpan</button>
+                                    </div>
+                                </form>
+                            @else
+                                <div class="alert alert-success mb-0">
+                                    <i class="fas fa-check-circle mr-1"></i> Bukti Pengembalian sudah diunggah!
+                                </div>
                             @endif
                         </div>
-                        <table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th scope="col">No</th>
-                                    <th scope="col">AP</th>
-                                    <th scope="col">COA</th>
-                                    <th scope="col">Nama jenis Peralatan</th>
-                                    <th scope="col">Merk/Type</th>
-                                    <th scope="col">Pengajuan</th>
-                                    <th scope="col">Harga Pembelian</th>
-                                    <th scope="col">Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($lpj->pengajuan_details as $item)
-                                    <tr>
-                                        <td>{{ $loop->iteration }}</td>
-                                        <td>{{ $item->ap->unit ?? $item->area->area}}</td>
-                                        <td>{{ $item->jenis_peralatan->param_peralatan->coa }}</td>
-                                        <td>{{ $item->jenis_peralatan->nama_jenis }}</td>
-                                        <td>{{ $item->merk }}</td>
-                                        <td>Rp. {{ number_format($item->harga * $item->kuantitas) }}</td>
-                                        <td>Rp. {{ number_format($item->harga_pembelian) }}</td>
-                                        <td>
-                                            @if ($item->status_lpj == 'belum')
-                                                <a href="#" onclick="buat_lpj({{ $item->id }} )"
-                                                    class="btn btn-sm btn-primary">Buat LPJ</a>
-                                            @else
-                                                <a href="#" onclick="buat_lpj({{ $item->id }} )"
-                                                    class="btn btn-sm btn-success disabled">
-                                                    <i class="far fa-check-square"></i>
-                                                </a>
-                                            @endif
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                            <tfoot>
-                                <tr>
-                                    <td colspan="3"><strong>Subtotal</strong></td>
-                                    <td colspan="4" class="text-right"><strong>Rp.
-                                            {{ number_format($lpj->subtotal()) }}</strong></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td colspan="3">
-                                        <strong>Total pembelian</strong>
-                                    </td>
-                                    <td colspan="4" class="text-right">
-                                        <strong>
-                                            Rp. {{ number_format($lpj->total_pembelian()) }}
-                                        </strong>
-                                    </td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td colspan="3">
-                                        <strong>Total yang dibayarkan</strong>
-                                    </td>
-                                    <td colspan="4" class="text-right">
-                                        <strong>
-                                            Rp. {{ number_format($lpj->total_pembelian()) }}
-                                        </strong>
-                                    </td>
-                                    <td></td>
-                                </tr>
-                                
-                                {{ number_format($lpj->subtotal() - $lpj->total_pembelian()) }}</strong>
-                            </tfoot>
-                        </table>
                     </div>
-
-                    <!-- Modal Body -->
-                    <div class="modal fade" id="modal_lpj">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h4 class="modal-title">Upload LPJ</h4>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div class="modal-body">
-                                    <form action="{{ route('it.lpj.update', $lpj->id) }}" method="post"
-                                        enctype="multipart/form-data">
-                                        @method('PUT')
-                                        @csrf
-                                        <input type="hidden" id="pengajuan_detail_id" name="pengajuan_detail_id">
-
-                                        <div class="mb-3">
-                                            <label for="" class="form-label">Tanggal Pembelian</label>
-                                            <input type="date"
-                                                class="form-control @error('tanggal_perolehan') is-invalid @enderror"
-                                                name="tanggal_perolehan" value="{{ old('tanggal_perolehan') }}"
-                                                placeholder="">
-                                            @error('tanggal_pembelian')
-                                                <small class="text-danger">{{ $message }}</small>
-                                            @enderror
-                                        </div>
-
-                                        <div class="mb-3">
-                                            <label for="" class="form-label">Harga Pembelian</label>
-                                            <input type="number"
-                                                class="form-control @error('harga_pembelian') is-invalid @enderror"
-                                                name="harga_pembelian" value="{{ old('harga_pembelian') }}" placeholder="">
-                                            @error('harga_pembelian')
-                                                <small class="text-danger">{{ $message }}</small>
-                                            @enderror
-                                        </div>
-
-                                        <div class="mb-3">
-                                            <label for="" class="form-label">Struk Pembelian</label>
-                                            <input type="file"
-                                                class="form-control @error('struk_pembelian') is-invalid @enderror"
-                                                name="struk_pembelian" value="{{ old('struk_pembelian') }}" placeholder="">
-                                            @error('struk_pembelian')
-                                                <small class="text-danger">{{ $message }}</small>
-                                            @enderror
-                                        </div>
-
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary"
-                                                data-dismiss="modal">Tutup</button>
-                                            <button type="submit" class="btn btn-primary">Simpan</button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- /.modal -->
-
-                    {{-- modal pengembalian   --}}
-                    <div class="modal fade" id="bukti_pengembalian">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <span class="modal-title">Upload Bukti Pengembalian</span>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div class="modal-body">
-                                    @if ($lpj->nominal_pengembalian == false)
-                                        <form action="{{ url('it/lpj/upload-bukti-pengembalian', $lpj->id) }}"
-                                            method="post" enctype="multipart/form-data">
-                                            @method('PUT')
-                                            @csrf
-                                            <div class="mb-3">
-                                                <label for="" class="form-label">Nominal Pengembalian</label>
-                                                <input type="number"
-                                                    class="form-control @error('nominal_pengembalian') is-invalid @enderror"
-                                                    name="nominal_pengembalian" value="{{ old('nominal_pengembalian') }}"
-                                                    placeholder="">
-                                                @error('nominal_pengembalian')
-                                                    <small class="text-danger">{{ $message }}</small>
-                                                @enderror
-                                            </div>
-
-                                            <div class="mb-3">
-                                                <label for="" class="form-label">Bukti Pengembalian</label>
-                                                <input type="file"
-                                                    class="form-control @error('bukti_pengembalian') is-invalid @enderror"
-                                                    name="bukti_pengembalian" value="{{ old('bukti_pengembalian') }}"
-                                                    placeholder="">
-                                                @error('bukti_pengembalian')
-                                                    <small class="text-danger">{{ $message }}</small>
-                                                @enderror
-                                            </div>
-
-                                            <div class="mb-3">
-                                                <label for="" class="form-label">Keterangan</label>
-                                                <input type="text"
-                                                    class="form-control @error('keterangan_lpj') is-invalid @enderror"
-                                                    name="keterangan_lpj" value="{{ old('keterangan_lpj') }}" placeholder="">
-                                                @error('keterangan_lpj')
-                                                    <small class="text-danger">{{ $message }}</small>
-                                                @enderror
-                                            </div>
-
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary"
-                                                    data-dismiss="modal">Tutup</button>
-                                                <button type="submit" class="btn btn-primary">Simpan</button>
-                                            </div>
-                                        </form>
-                                    @else
-                                        <h4>*Bukti Pengembalian Sudah di Upload!</h4>
-                                    @endif
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    {{-- end modal pengembalian --}}
-
-                    {{-- modal pembelian kurang --}}
-                    <div class="modal fade" id="bukti_kurang">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <span class="modal-title">Upload Bukti Pembelian Kurang</span>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div class="modal-body">
-                                    @if ($lpj->nominal_pengembalian == false)
-                                        <form action="{{ url('it/lpj/upload-bukti-kurang', $lpj->id) }}"
-                                            method="post" enctype="multipart/form-data">
-                                            @method('PUT')
-                                            @csrf
-                                            <div class="mb-3">
-                                                <label for="" class="form-label">Nominal Kurang</label>
-                                                <input type="number"
-                                                    class="form-control @error('nominal_kurang') is-invalid @enderror"
-                                                    name="nominal_kurang" value="{{ old('nominal_kurang') }}"
-                                                    placeholder="">
-                                                @error('nominal_kurang')
-                                                    <small class="text-danger">{{ $message }}</small>
-                                                @enderror
-                                            </div>
-
-                                            <div class="mb-3">
-                                                <label for="" class="form-label">Bukti Kekurangan</label>
-                                                <input type="file"
-                                                    class="form-control @error('bukti_kurang') is-invalid @enderror"
-                                                    name="bukti_kurang" value="{{ old('bukti_kurang') }}"
-                                                    placeholder="">
-                                                @error('bukti_kurang')
-                                                    <small class="text-danger">{{ $message }}</small>
-                                                @enderror
-                                            </div>
-
-                                            <div class="mb-3">
-                                                <label for="" class="form-label">Keterangan</label>
-                                                <input type="text"
-                                                    class="form-control @error('keterangan_lpj') is-invalid @enderror"
-                                                    name="keterangan_lpj" value="{{ old('keterangan_lpj') }}" placeholder="">
-                                                @error('keterangan_lpj')
-                                                    <small class="text-danger">{{ $message }}</small>
-                                                @enderror
-                                            </div>
-
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary"
-                                                    data-dismiss="modal">Tutup</button>
-                                                <button type="submit" class="btn btn-primary">Simpan</button>
-                                            </div>
-                                        </form>
-                                    @else
-                                        <h4>*Bukti Pengembalian Sudah di Upload!</h4>
-                                    @endif
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    {{-- end modal pembelian kurang --}}
                 </div>
             </div>
         </div>
@@ -341,20 +280,12 @@
 @push('js')
     <script>
         function buat_lpj(pengajuan_detail_id) {
-            let modal = $('#modal_lpj').modal('show')
-            modal.find('#pengajuan_detail_id').val(pengajuan_detail_id)
+            let modal = $('#modal_lpj').modal('show');
+            modal.find('#pengajuan_detail_id').val(pengajuan_detail_id);
         }
-    </script>
 
-    <script>
         function bukti_pengembalian() {
-            let modal = $('#bukti_pengembalian').modal('show')
+            $('#bukti_pengembalian').modal('show');
         }
     </script>
-
-<script>
-    function bukti_kurang() {
-        let modal = $('#bukti_kurang').modal('show')
-    }
-</script>
 @endpush

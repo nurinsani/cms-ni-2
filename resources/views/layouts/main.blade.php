@@ -34,13 +34,36 @@
     <!-- Select2 -->
     <link rel="stylesheet" href="{{ asset('/AdminLTE/plugins/select2/css/select2.min.css') }}">
     <link rel="stylesheet" href="{{ asset('/AdminLTE/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
+    <style>
+        .main-sidebar .nav-sidebar .nav-link {
+            border-radius: 6px;
+            margin-bottom: 2px;
+        }
+        .card {
+            border-radius: 8px;
+        }
+        .small-box {
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .badge-purple {
+            background-color: #6f42c1;
+            color: #fff;
+        }
+        .table th {
+            vertical-align: middle !important;
+        }
+        .table td {
+            vertical-align: middle !important;
+        }
+    </style>
     @stack('css')
 </head>
 
 <body class="hold-transition sidebar-mini">
     <div class="wrapper">
         <!-- Navbar -->
-        <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+        <nav class="main-header navbar navbar-expand navbar-white navbar-light shadow-sm border-bottom-0">
             <!-- Left navbar links -->
             <ul class="navbar-nav">
                 <li class="nav-item">
@@ -50,33 +73,21 @@
             </ul>
 
             <!-- Right navbar links -->
-            <ul class="navbar-nav ml-auto">
-                <!-- Navbar Search -->
+            <ul class="navbar-nav ml-auto align-items-center">
+                <li class="nav-item mr-2 d-none d-sm-inline-block">
+                    <span class="text-muted small">
+                        <i class="far fa-user-circle mr-1"></i> {{ Auth::user()->name }}
+                        <span class="badge badge-primary ml-1 text-uppercase">{{ Auth::user()->getRoleNames()[0] ?? '' }}</span>
+                    </span>
+                </li>
                 <li class="nav-item">
-                    <a class="nav-link" onclick="logout('#logout_form')" href="#" role="button">
-                        Keluar
+                    <a class="btn btn-sm btn-outline-danger" onclick="logout('#logout_form')" href="#" role="button">
+                        <i class="fas fa-sign-out-alt mr-1"></i> Keluar
                     </a>
-                    <form action="{{ route('logout') }}" id="logout_form" method="post">
+                    <form action="{{ route('logout') }}" id="logout_form" method="post" class="d-none">
                         @csrf
                     </form>
-                    <div class="navbar-search-block">
-                        <form class="form-inline">
-                            <div class="input-group input-group-sm">
-                                <input class="form-control form-control-navbar" type="search" placeholder="Search"
-                                    aria-label="Search">
-                                <div class="input-group-append">
-                                    <button class="btn btn-navbar" type="submit">
-                                        <i class="fas fa-search"></i>
-                                    </button>
-                                    <button class="btn btn-navbar" type="button" data-widget="navbar-search">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
                 </li>
-
             </ul>
         </nav>
         <!-- /.navbar -->
@@ -189,8 +200,6 @@
     <!-- ./wrapper -->
 
     <!-- REQUIRED SCRIPTS -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>
-
     <!-- jQuery -->
     <script src="{{ asset('/AdminLTE/plugins/jquery/jquery.min.js') }}"></script>
     <!-- Bootstrap -->
@@ -267,7 +276,7 @@
                     { extend: "pdf", exportOptions: defaultExportOptions },
                     { extend: "print", exportOptions: defaultExportOptions }
                 ]
-            }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+            }).buttons().container().appendTo('#example2_wrapper .col-md-6:eq(0)');
 
             $('.myTable').DataTable({
                 "paging": true,
