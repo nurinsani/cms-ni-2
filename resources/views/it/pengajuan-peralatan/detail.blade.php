@@ -54,9 +54,6 @@
 
         {{-- Header Layar --}}
         <div class="card-header d-print-none">
-            <h3 class="card-title font-weight-bold">
-                Nomor Pengajuan: <span class="text-primary">{{ $pengajuan->nomor }}</span>
-            </h3>
             <div class="card-tools">
                 <a href="{{ url('it/pengajuan') }}" class="btn btn-sm btn-secondary">
                     <i class="fas fa-arrow-left mr-1"></i> Kembali
@@ -169,7 +166,7 @@
                     <tfoot>
                         <tr class="bg-light">
                             <td colspan="5" class="text-right"><strong>Total Uang Muka</strong></td>
-                            <td class="text-right text-primary"><strong>Rp
+                            <td class="text-right"><strong>Rp
                                     {{ number_format($pengajuan->subtotal(), 0, ',', '.') }}</strong></td>
                             <td colspan="2"></td>
                         </tr>

@@ -81,6 +81,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('pengajuan/peralatan', [PengajuanController::class, 'pengajuan_peralatan']);
         Route::get('pengajuan/inventaris', [PengajuanController::class, 'pengajuan_inventaris']);
         Route::post('temp-pengajuan', [TempPengajuanDetailController::class, 'store']);
+        Route::get('temp-pengajuan/{id}', [TempPengajuanDetailController::class, 'hapus']);
         Route::get('pengajuan-hapus-buku/get-inventaris/{kodeBranch}', [PengajuanHapusBukuController::class, 'getInventaris']);
         Route::get('pengajuan-hapus-buku-gol-2/get-inventaris/{kodeBranch}', [PengajuanHapusBukuGol2Controller::class, 'getInventaris']);
         Route::resources([

@@ -26,27 +26,57 @@ class AdminKlaimController extends Controller
 
     public function klaim_peralatan()
     {
-        $data['title'] = 'Pengajuan Peralatan';
-        $data['temp_pengajuan'] = TempPengajuanDetail::where('user_id', auth()->user()->id)->get();
+        $data['title'] = 'Tambah Klaim Peralatan';
+        $data['temp_pengajuan'] = TempPengajuanDetail::with(['jenis_peralatan.param_peralatan', 'ap', 'area'])
+            ->where(function ($q) {
+                $q->where('user_id', auth()->id())->orWhereNull('user_id');
+            })
+            ->get();
         $data['jenis_peralatan'] = JenisPeralatan::all();
         $data['rekening'] = Rekening::all();
         $data['param_peralatan'] = ParamPeralatan::whereHas('param_peralatan', function($query) {
             $query->where('group_inventaris', 'tidak');
         })->get();
-        $data['branch'] = Branch::where('code_area', auth()->user()->code_area)->get();
+        $data['branch'] = Branch::whereNotNull('code_area')
+            ->where('code_area', '!=', '')
+            ->orderBy('unit', 'asc')
+            ->get();
+        $data['area'] = Branch::whereNotNull('code_area')
+            ->where('code_area', '!=', '')
+            ->where('area', '!=', '')
+            ->where('area', '!=', '0000')
+            ->select('code_area', 'area')
+            ->distinct()
+            ->orderBy('area', 'asc')
+            ->get();
         return view('admin.klaim-pembelian.klaim-peralatan', $data);
     }
 
     public function klaim_inventaris()
     {
-        $data['title'] = 'Pengajuan Peralatan';
-        $data['temp_pengajuan'] = TempPengajuanDetail::where('user_id', auth()->user()->id)->get();
+        $data['title'] = 'Tambah Klaim Inventaris';
+        $data['temp_pengajuan'] = TempPengajuanDetail::with(['jenis_peralatan.param_peralatan', 'ap', 'area'])
+            ->where(function ($q) {
+                $q->where('user_id', auth()->id())->orWhereNull('user_id');
+            })
+            ->get();
         $data['jenis_peralatan'] = JenisPeralatan::all();
         $data['rekening'] = Rekening::all();
         $data['param_peralatan'] = ParamPeralatan::whereHas('param_peralatan', function($query) {
             $query->where('group_inventaris', 'ya');
         })->get();
-        $data['branch'] = Branch::where('code_area', auth()->user()->code_area)->get();
+        $data['branch'] = Branch::whereNotNull('code_area')
+            ->where('code_area', '!=', '')
+            ->orderBy('unit', 'asc')
+            ->get();
+        $data['area'] = Branch::whereNotNull('code_area')
+            ->where('code_area', '!=', '')
+            ->where('area', '!=', '')
+            ->where('area', '!=', '0000')
+            ->select('code_area', 'area')
+            ->distinct()
+            ->orderBy('area', 'asc')
+            ->get();
         return view('admin.klaim-pembelian.klaim-inventaris', $data);
     }
 

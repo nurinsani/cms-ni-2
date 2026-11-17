@@ -29,35 +29,57 @@ class PengajuanAhController extends Controller
 
     public function pengajuan_peralatan()
     {
-        $data['title'] = 'Pengajuan Peralatan';
-        $data['temp_pengajuan'] = TempPengajuanDetail::all();
+        $data['title'] = 'Tambah Pengajuan Peralatan';
+        $data['temp_pengajuan'] = TempPengajuanDetail::with(['jenis_peralatan.param_peralatan', 'ap', 'area'])
+            ->where(function ($q) {
+                $q->where('user_id', auth()->id())->orWhereNull('user_id');
+            })
+            ->get();
         $data['jenis_peralatan'] = JenisPeralatan::all();
         $data['rekening'] = Rekening::all();
         $data['param_peralatan'] = ParamPeralatan::whereHas('param_peralatan', function($query) {
             $query->where('group_inventaris', 'tidak');
         })->get();
-        $data['branch'] = Branch::where('code_region', auth()->user()->code_region)->get();
-        $data['area'] = Branch::where('code_region', auth()->user()->code_region)
-        ->select('area')
-        ->distinct()
-        ->get();
+        $data['branch'] = Branch::whereNotNull('code_area')
+            ->where('code_area', '!=', '')
+            ->orderBy('unit', 'asc')
+            ->get();
+        $data['area'] = Branch::whereNotNull('code_area')
+            ->where('code_area', '!=', '')
+            ->where('area', '!=', '')
+            ->where('area', '!=', '0000')
+            ->select('code_area', 'area')
+            ->distinct()
+            ->orderBy('area', 'asc')
+            ->get();
         return view('admin-head.pengajuan.tambah-peralatan', $data);
     }
 
     public function pengajuan_inventaris()
     {
-        $data['title'] = 'Pengajuan';
-        $data['temp_pengajuan'] = TempPengajuanDetail::all();
+        $data['title'] = 'Tambah Pengajuan Inventaris';
+        $data['temp_pengajuan'] = TempPengajuanDetail::with(['jenis_peralatan.param_peralatan', 'ap', 'area'])
+            ->where(function ($q) {
+                $q->where('user_id', auth()->id())->orWhereNull('user_id');
+            })
+            ->get();
         $data['jenis_peralatan'] = JenisPeralatan::all();
         $data['rekening'] = Rekening::all();
         $data['param_peralatan'] = ParamPeralatan::whereHas('param_peralatan', function($query) {
             $query->where('group_inventaris', 'ya');
         })->get();
-        $data['branch'] = Branch::where('code_region', auth()->user()->code_region)->get();
-        $data['area'] = Branch::where('code_region', auth()->user()->code_region)
-        ->select('area')
-        ->distinct()
-        ->get();
+        $data['branch'] = Branch::whereNotNull('code_area')
+            ->where('code_area', '!=', '')
+            ->orderBy('unit', 'asc')
+            ->get();
+        $data['area'] = Branch::whereNotNull('code_area')
+            ->where('code_area', '!=', '')
+            ->where('area', '!=', '')
+            ->where('area', '!=', '0000')
+            ->select('code_area', 'area')
+            ->distinct()
+            ->orderBy('area', 'asc')
+            ->get();
         return view('admin-head.pengajuan.tambah-inventaris', $data);
     }
 

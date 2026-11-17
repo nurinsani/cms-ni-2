@@ -1,5 +1,12 @@
 @php
-    $isPengajuanOpen = request()->is('it/pengajuan', 'it/pengajuan/*', 'it/lpj*', 'it/klaim*', 'it/peralatan/klaim*', 'it/inventaris/klaim*');
+    $isPengajuanOpen = request()->is(
+        'it/pengajuan',
+        'it/pengajuan/*',
+        'it/lpj*',
+        'it/klaim*',
+        'it/peralatan/klaim*',
+        'it/inventaris/klaim*',
+    );
     $isApprovalOpen = request()->is('it/pengajuan-peralatan*', 'it/pengajuan-detail*', 'it/pengajuan-bdd*');
 @endphp
 
@@ -7,13 +14,6 @@
     <a href="{{ route('it.dashboard') }}" class="nav-link {{ request()->is('it/dashboard*') ? 'active' : '' }}">
         <i class="nav-icon fas fa-tachometer-alt"></i>
         <p>Dashboard</p>
-    </a>
-</li>
-
-<li class="nav-item">
-    <a href="{{ url('/update-password') }}" class="nav-link {{ request()->is('update-password*') ? 'active' : '' }}">
-        <i class="nav-icon fas fa-key"></i>
-        <p>Ganti Password</p>
     </a>
 </li>
 
@@ -27,7 +27,8 @@
     </a>
     <ul class="nav nav-treeview">
         <li class="nav-item">
-            <a href="{{ url('it/pengajuan') }}" class="nav-link {{ request()->is('it/pengajuan', 'it/pengajuan/*') ? 'active' : '' }}">
+            <a href="{{ url('it/pengajuan') }}"
+                class="nav-link {{ request()->is('it/pengajuan', 'it/pengajuan/*') ? 'active' : '' }}">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Uang Muka</p>
             </a>
@@ -41,7 +42,8 @@
         </li>
 
         <li class="nav-item">
-            <a href="{{ url('it/klaim') }}" class="nav-link {{ request()->is('it/klaim*', 'it/peralatan/klaim*', 'it/inventaris/klaim*') ? 'active' : '' }}">
+            <a href="{{ url('it/klaim') }}"
+                class="nav-link {{ request()->is('it/klaim*', 'it/peralatan/klaim*', 'it/inventaris/klaim*') ? 'active' : '' }}">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Klaim</p>
             </a>
@@ -81,5 +83,12 @@
     <a href="{{ route('it.data-user.index') }}" class="nav-link {{ request()->is('it/data-user*') ? 'active' : '' }}">
         <i class="nav-icon fas fa-users-cog"></i>
         <p>Data User</p>
+    </a>
+</li>
+
+<li class="nav-item">
+    <a href="{{ url('/update-password') }}" class="nav-link {{ request()->is('update-password*') ? 'active' : '' }}">
+        <i class="nav-icon fas fa-key"></i>
+        <p>Ganti Password</p>
     </a>
 </li>
