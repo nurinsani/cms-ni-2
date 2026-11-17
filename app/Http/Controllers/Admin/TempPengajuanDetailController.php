@@ -39,22 +39,32 @@ class TempPengajuanDetailController extends Controller
             'struk_pembelian'    => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
         ],
         [
-            'required' => ':attribute wajib diisi.',
-            'string'   => ':attribute harus berupa teks.',
-            'max.string' => ':attribute maksimal :max karakter.',
-            'numeric'  => ':attribute harus berupa angka.',
-            'integer'  => ':attribute harus berupa bilangan bulat.',
-            'date'     => ':attribute harus berupa tanggal.',
+            'required'    => ':attribute wajib diisi.',
+            'string'      => ':attribute harus berupa teks.',
+            'max.string'  => ':attribute maksimal :max karakter.',
+            'max.file'    => ':attribute maksimal berukuran :max KB (2 MB).',
+            'mimes'       => ':attribute harus berupa file bertipe: :values.',
+            'numeric'     => ':attribute harus berupa angka.',
+            'integer'     => ':attribute harus berupa bilangan bulat.',
+            'date'        => ':attribute harus berupa tanggal.',
             'min.numeric' => ':attribute minimal :min.',
+            'min.integer' => ':attribute minimal :min.',
         ],
         [
-            'jenis_peralatan_id' => 'Jenis Peralatan',
-            'rekening_id' => 'Rekening',
-            'merk' => 'Merk',
-            'type' => 'Tipe',
-            'kuantitas' => 'Kuantitas',
-            'harga' => 'Harga',
-            'no_telp' => 'No Telp',
+            'jenis_peralatan_id' => 'Jenis Peralatan / Inventaris',
+            'rekening_id'        => 'Rekening',
+            'merk'               => 'Merk',
+            'type'               => 'Tipe / Model',
+            'kuantitas'          => 'Kuantitas',
+            'harga'              => 'Harga Satuan',
+            'no_telp'            => 'No. Telepon Toko',
+            'nama_toko'          => 'Nama Toko / Vendor',
+            'pengguna'           => 'Nama Pengguna',
+            'keterangan'         => 'Keterangan',
+            'moa'                => 'Berkas MOA',
+            'struk_pembelian'    => 'Struk Pembelian',
+            'kode_branch'        => 'Unit / AP',
+            'kode_area'          => 'Cabang / Area',
         ]);
 
         DB::beginTransaction();
@@ -85,11 +95,27 @@ class TempPengajuanDetailController extends Controller
             $temp->save();
 
             DB::commit();
+
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Item berhasil ditambahkan ke daftar'
+                ]);
+            }
+
             return redirect()->back()->with('success', 'Data berhasil dibuat');
 
         } catch (\Throwable $th) {
             DB::rollBack();
             Log::error($th);
+
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Data gagal disimpan: ' . $th->getMessage()
+                ], 500);
+            }
+
             return redirect()->back()->with('error', 'Data gagal disimpan');
         }
     }
