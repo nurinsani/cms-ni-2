@@ -63,8 +63,12 @@
                     </ul>
 
                     <div class="table-responsive">
-                        <a href="{{ url('admin-head/ajukan_lpj', $lpj->id) }}" class="btn btn-sm btn-success my-3">Ajukan
-                            LPJ</a>
+                        <form id="form-ajukan-lpj" action="{{ url('admin-head/ajukan_lpj', $lpj->id) }}" method="POST" class="d-inline">
+                            @csrf
+                            <button type="button" id="btn-ajukan-lpj" class="btn btn-sm btn-success my-3 font-weight-bold">
+                                <i class="fas fa-paper-plane mr-1"></i> Ajukan LPJ
+                            </button>
+                        </form>
                         @php
                             $tes = $lpj->subtotal() - $lpj->total_pembelian();
                         @endphp
@@ -102,10 +106,10 @@
                                         <td>Rp. {{ number_format($item->harga_pembelian) }}</td>
                                         <td>
                                             @if ($item->status_lpj == 'belum')
-                                                <a href="#" onclick="buat_lpj({{ $item->id }} )"
+                                                <a href="#" onclick="buat_lpj({{ $item->id }}, {{ $item->harga_pembelian ? $item->harga_pembelian : 'null' }})"
                                                     class="btn btn-sm btn-primary">Buat LPJ</a>
                                             @else
-                                                <a href="#" onclick="buat_lpj({{ $item->id }} )"
+                                                <a href="#" onclick="buat_lpj({{ $item->id }}, {{ $item->harga_pembelian ? $item->harga_pembelian : 'null' }})"
                                                     class="btn btn-sm btn-success">
                                                     <i class="far fa-check-square"></i>
                                                 </a>
@@ -178,20 +182,32 @@
                                         </div>
 
                                         <div class="mb-3">
-                                            <label for="" class="form-label">Harga Pembelian</label>
-                                            <input type="number"
-                                                class="form-control @error('harga_pembelian') is-invalid @enderror"
-                                                name="harga_pembelian" value="{{ old('harga_pembelian') }}" placeholder="">
+                                            <label for="" class="form-label">Harga Pembelian <span class="text-danger">*</span></label>
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">Rp</span>
+                                                </div>
+                                                <input type="number"
+                                                    class="form-control @error('harga_pembelian') is-invalid @enderror"
+                                                    id="harga_pembelian"
+                                                    name="harga_pembelian" value="{{ old('harga_pembelian') }}" placeholder="Masukkan total harga pembelian" required>
+                                            </div>
+                                            <div class="mt-1">
+                                                <span class="badge badge-light border text-dark" id="preview_harga_pembelian">Rp 0</span>
+                                            </div>
                                             @error('harga_pembelian')
                                                 <small class="text-danger">{{ $message }}</small>
                                             @enderror
                                         </div>
 
                                         <div class="mb-3">
-                                            <label for="" class="form-label">Struk Pembelian</label>
+                                            <label for="" class="form-label">Struk Pembelian <span class="text-danger">*</span></label>
                                             <input type="file"
                                                 class="form-control @error('struk_pembelian') is-invalid @enderror"
-                                                name="struk_pembelian" value="{{ old('struk_pembelian') }}" placeholder="">
+                                                id="struk_pembelian"
+                                                name="struk_pembelian"
+                                                accept=".pdf,.jpg,.jpeg,.png">
+                                            <small class="text-muted d-block mt-1"><i class="fas fa-info-circle mr-1"></i>Format: PDF/JPG/PNG (Maks. 2MB)</small>
                                             @error('struk_pembelian')
                                                 <small class="text-danger">{{ $message }}</small>
                                             @enderror
@@ -201,8 +217,10 @@
                                             <label for="" class="form-label">Lampiran (Optional)</label>
                                             <input type="file"
                                                 class="form-control @error('lampiran') is-invalid @enderror"
-                                                name="lampiran" value="{{ old('lampiran') }}"
-                                                placeholder="">
+                                                id="lampiran_file"
+                                                name="lampiran"
+                                                accept=".pdf,.jpg,.jpeg,.png">
+                                            <small class="text-muted d-block mt-1"><i class="fas fa-info-circle mr-1"></i>Format: PDF/JPG/PNG (Maks. 2MB)</small>
                                             @error('lampiran')
                                                 <small class="text-danger">{{ $message }}</small>
                                             @enderror
@@ -245,22 +263,34 @@
                                             @method('PUT')
                                             @csrf
                                             <div class="mb-3">
-                                                <label for="" class="form-label">Nominal Pengembalian</label>
-                                                <input type="number"
-                                                    class="form-control @error('nominal_pengembalian') is-invalid @enderror"
-                                                    name="nominal_pengembalian" value="{{ old('nominal_pengembalian') }}"
-                                                    placeholder="">
+                                                <label for="" class="form-label">Nominal Pengembalian <span class="text-danger">*</span></label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">Rp</span>
+                                                    </div>
+                                                    <input type="number"
+                                                        class="form-control @error('nominal_pengembalian') is-invalid @enderror"
+                                                        id="nominal_pengembalian"
+                                                        name="nominal_pengembalian" value="{{ old('nominal_pengembalian') }}"
+                                                        placeholder="Masukkan nominal pengembalian" required>
+                                                </div>
+                                                <div class="mt-1">
+                                                    <span class="badge badge-light border text-dark" id="preview_nominal_pengembalian">Rp 0</span>
+                                                </div>
                                                 @error('nominal_pengembalian')
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
                                             </div>
 
                                             <div class="mb-3">
-                                                <label for="" class="form-label">Bukti Pengembalian</label>
+                                                <label for="" class="form-label">Bukti Pengembalian <span class="text-danger">*</span></label>
                                                 <input type="file"
                                                     class="form-control @error('bukti_pengembalian') is-invalid @enderror"
-                                                    name="bukti_pengembalian" value="{{ old('bukti_pengembalian') }}"
-                                                    placeholder="">
+                                                    id="bukti_pengembalian_file"
+                                                    name="bukti_pengembalian"
+                                                    accept=".pdf,.jpg,.jpeg,.png"
+                                                    required>
+                                                <small class="text-muted d-block mt-1"><i class="fas fa-info-circle mr-1"></i>Format: PDF/JPG/PNG (Maks. 2MB)</small>
                                                 @error('bukti_pengembalian')
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
@@ -361,21 +391,150 @@
 
 @push('js')
     <script>
-        function buat_lpj(pengajuan_detail_id) {
-            let modal = $('#modal_lpj').modal('show')
-            modal.find('#pengajuan_detail_id').val(pengajuan_detail_id)
+        function updateHargaPembelianPreview() {
+            var val = parseFloat($('#harga_pembelian').val()) || 0;
+            if (val > 0) {
+                $('#preview_harga_pembelian').text('Rp ' + val.toLocaleString('id-ID'));
+            } else {
+                $('#preview_harga_pembelian').text('Rp 0');
+            }
         }
-    </script>
 
-    <script>
+        $('#harga_pembelian').on('input keyup change', updateHargaPembelianPreview);
+
+        function buat_lpj(pengajuan_detail_id, harga_pembelian) {
+            let modal = $('#modal_lpj').modal('show');
+            modal.find('#pengajuan_detail_id').val(pengajuan_detail_id);
+            if (harga_pembelian) {
+                modal.find('#harga_pembelian').val(harga_pembelian);
+            }
+            updateHargaPembelianPreview();
+        }
+
+        function updateNominalPengembalianPreview() {
+            var val = parseFloat($('#nominal_pengembalian').val()) || 0;
+            if (val > 0) {
+                $('#preview_nominal_pengembalian').text('Rp ' + val.toLocaleString('id-ID'));
+            } else {
+                $('#preview_nominal_pengembalian').text('Rp 0');
+            }
+        }
+
+        $('#nominal_pengembalian').on('input keyup change', updateNominalPengembalianPreview);
+
         function bukti_pengembalian() {
-            let modal = $('#bukti_pengembalian').modal('show')
+            let modal = $('#bukti_pengembalian').modal('show');
+            updateNominalPengembalianPreview();
         }
-    </script>
 
-<script>
-    function bukti_kurang() {
-        let modal = $('#bukti_kurang').modal('show')
-    }
-</script>
+        function bukti_kurang() {
+            let modal = $('#bukti_kurang').modal('show');
+        }
+
+        function validasiUkuranFile(input, namaField) {
+            if (input.files && input.files[0]) {
+                var file = input.files[0];
+                var maxSize = 2 * 1024 * 1024; // 2MB
+                if (file.size > maxSize) {
+                    var fileSizeMB = (file.size / (1024 * 1024)).toFixed(2);
+                    if (typeof Swal !== 'undefined') {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Ukuran File Terlalu Besar',
+                            html: 'Ukuran ' + namaField + ' adalah <b>' + fileSizeMB + ' MB</b>.<br>Batas maksimal ukuran file yang diperbolehkan adalah <b>2 MB</b>.',
+                            confirmButtonColor: '#3085d6',
+                            confirmButtonText: 'Pilih File Lain'
+                        });
+                    } else {
+                        alert('Ukuran ' + namaField + ' (' + fileSizeMB + ' MB) melebihi batas maksimal 2 MB.');
+                    }
+                    $(input).val('');
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        $('#struk_pembelian').on('change', function() {
+            validasiUkuranFile(this, 'Struk Pembelian');
+        });
+
+        $('#lampiran_file').on('change', function() {
+            validasiUkuranFile(this, 'Lampiran');
+        });
+
+        $('#bukti_pengembalian_file').on('change', function() {
+            validasiUkuranFile(this, 'Bukti Pengembalian');
+        });
+
+        $(document).ready(function() {
+            updateHargaPembelianPreview();
+            updateNominalPengembalianPreview();
+        });
+
+        @php
+            $itemBelumCount = $lpj->pengajuan_details->where('status_lpj', '!=', 'sudah')->count();
+            $selisihLebih = $lpj->subtotal() - $lpj->total_pembelian();
+            $butuhPengembalian = ($selisihLebih > 0 && (empty($lpj->bukti_pengembalian) || empty($lpj->nominal_pengembalian)));
+        @endphp
+
+        $('#btn-ajukan-lpj').on('click', function(e) {
+            e.preventDefault();
+
+            var itemBelum = {{ $itemBelumCount }};
+            var butuhPengembalian = {{ $butuhPengembalian ? 'true' : 'false' }};
+            var sisaNominal = '{{ number_format($selisihLebih > 0 ? $selisihLebih : 0, 0, ',', '.') }}';
+
+            if (itemBelum > 0) {
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Data Belum Lengkap',
+                        html: 'Masih ada <b>' + itemBelum + ' item</b> yang belum dibuatkan LPJ.<br>Silakan klik tombol <b>"Buat LPJ"</b> pada setiap item terlebih dahulu.',
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'OK'
+                    });
+                } else {
+                    alert('Masih ada ' + itemBelum + ' item yang belum dibuatkan LPJ. Silakan selesaikan LPJ per item terlebih dahulu.');
+                }
+                return false;
+            }
+
+            if (butuhPengembalian) {
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Bukti Pengembalian Belum Ada',
+                        html: 'Terdapat sisa uang muka sebesar <b>Rp ' + sisaNominal + '</b>.<br>Silakan klik tombol <b>"Upload Bukti Pengembalian"</b> terlebih dahulu sebelum mengajukan LPJ.',
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'OK'
+                    });
+                } else {
+                    alert('Terdapat sisa uang muka sebesar Rp ' + sisaNominal + '. Harap upload bukti pengembalian terlebih dahulu.');
+                }
+                return false;
+            }
+
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    title: 'Konfirmasi Pengajuan LPJ',
+                    text: 'Apakah Anda yakin ingin mengajukan LPJ ini? Pastikan seluruh data realisasi dan bukti struk sudah benar.',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#28a745',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: '<i class="fas fa-paper-plane mr-1"></i> Ya, Ajukan Sekarang',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $('#form-ajukan-lpj').submit();
+                    }
+                });
+            } else {
+                if (confirm('Apakah Anda yakin ingin mengajukan LPJ ini?')) {
+                    $('#form-ajukan-lpj').submit();
+                }
+            }
+        });
+    </script>
 @endpush

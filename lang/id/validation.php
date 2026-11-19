@@ -65,10 +65,14 @@ return [
         'nama_toko'          => 'Nama Toko / Vendor',
         'pengguna'           => 'Nama Pengguna',
         'keterangan'         => 'Keterangan',
-        'moa'                => 'Berkas MOA',
-        'struk_pembelian'    => 'Struk Pembelian',
-        'kode_branch'        => 'Unit / AP',
-        'kode_area'          => 'Cabang / Area',
+        'moa'                  => 'Berkas MOA',
+        'struk_pembelian'      => 'Struk Pembelian',
+        'bukti_pengembalian'   => 'Bukti Pengembalian',
+        'harga_pembelian'      => 'Harga Realisasi Pembelian',
+        'nominal_pengembalian' => 'Nominal Pengembalian',
+        'tanggal_perolehan'    => 'Tanggal Pembelian',
+        'kode_branch'          => 'Unit / AP',
+        'kode_area'            => 'Cabang / Area',
     ],
 ];
 
