@@ -75,7 +75,20 @@ class ItLpjController extends Controller
     public function update(Request $request, $id)
     {
         try {
-            $validator = Validator::make($request->all(), $this->validator);
+            $rules = [
+                'pengajuan_detail_id' => 'required|exists:pengajuan_details,id',
+                'tanggal_perolehan'   => 'required|date',
+                'harga_pembelian'     => 'required|numeric|min:0',
+                'struk_pembelian'     => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+            ];
+
+            $lpj = PengajuanDetail::findOrFail($request->pengajuan_detail_id);
+
+            if (empty($lpj->struk_pembelian)) {
+                $rules['struk_pembelian'] = 'required|file|mimes:pdf,jpg,jpeg,png|max:2048';
+            }
+
+            $validator = Validator::make($request->all(), $rules);
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator)->withInput();
             }
@@ -84,19 +97,17 @@ class ItLpjController extends Controller
             $data['status_lpj'] = 'sudah';
 
             if ($request->hasFile('struk_pembelian')) {
-                $gambar = $request->struk_pembelian;
-                $namafile = time().'.'.$gambar->getClientOriginalExtension();
+                $gambar = $request->file('struk_pembelian');
+                $namafile = time() . '_' . uniqid() . '.' . $gambar->getClientOriginalExtension();
                 $gambar->move('images/lpj/struk_pembelian', $namafile);
                 $data['struk_pembelian'] = $namafile;
             }
 
             DB::beginTransaction();
-            $lpj = PengajuanDetail::find($data['pengajuan_detail_id']);
             $lpj->update($data);
             DB::commit();
-            return redirect()->back()->with('success', 'Data berhasil diubah');
+            return redirect()->back()->with('success', 'Data LPJ berhasil disimpan');
         } catch (\Throwable $th) {
-            //throw $th;
             DB::rollback();
             Log::error($th->getMessage());
             return redirect()->back()->with('error', 'Data gagal diubah');
@@ -105,21 +116,29 @@ class ItLpjController extends Controller
 
     public function upload_bukti_pengembalian(Request $request, $id)
     {
+        $validator = Validator::make($request->all(), [
+            'nominal_pengembalian' => 'required|numeric|min:1',
+            'bukti_pengembalian'   => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
+            'keterangan_lpj'       => 'nullable|string|max:255',
+        ]);
 
-        $lpj = Pengajuan::find($id);
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        $lpj = Pengajuan::findOrFail($id);
         $lpj->nominal_pengembalian = $request->nominal_pengembalian;
         $lpj->keterangan_lpj = $request->keterangan_lpj;
 
         if ($request->hasFile('bukti_pengembalian')) {
-            $gambar = $request->bukti_pengembalian;
-            $namafile = time().'.'.$gambar->getClientOriginalExtension();
+            $gambar = $request->file('bukti_pengembalian');
+            $namafile = time() . '_' . uniqid() . '.' . $gambar->getClientOriginalExtension();
             $gambar->move('images/lpj/bukti_pengembalian', $namafile);
             $lpj->bukti_pengembalian = $namafile;
         }
 
         $lpj->update();
-        return redirect()->back()->with('success', 'Data berhasil diubah');
-
+        return redirect()->back()->with('success', 'Bukti pengembalian berhasil diunggah');
     }
 
     public function upload_bukti_pembelian_kurang(Request $request, $id)
@@ -143,11 +162,38 @@ class ItLpjController extends Controller
 
     public function ajukan_lpj(Request $request, $id)
     {
-        $ajukan_lpj = Pengajuan::findOrFail($id);
-        // if ($ajukan_lpj->tanggal_pembelian == NULL) {
-        //     return redirect()->back()->with('error', 'Anda belum buat LPJ.');
-        // }
-        
+        $ajukan_lpj = Pengajuan::with('pengajuan_details.jenis_peralatan')->findOrFail($id);
+
+        if ($ajukan_lpj->status_approve != 'lpj-admin') {
+            return redirect()->back()->with('error', 'LPJ sudah pernah diajukan atau status pengajuan tidak valid.');
+        }
+
+        if ($ajukan_lpj->pengajuan_details->isEmpty()) {
+            return redirect()->back()->with('error', 'Gagal mengajukan LPJ: Tidak ada item dalam pengajuan ini.');
+        }
+
+        // Cek apakah seluruh item sudah dibuatkan LPJ (status_lpj == 'sudah')
+        $itemBelum = $ajukan_lpj->pengajuan_details->where('status_lpj', '!=', 'sudah')->count();
+        if ($itemBelum > 0) {
+            return redirect()->back()->with('error', "Gagal mengajukan LPJ: Masih ada {$itemBelum} item yang belum diinput realisasinya. Silakan selesaikan tombol 'Buat LPJ' pada setiap item.");
+        }
+
+        // Cek kelengkapan data per item
+        foreach ($ajukan_lpj->pengajuan_details as $item) {
+            if (empty($item->tanggal_perolehan) || empty($item->harga_pembelian) || empty($item->struk_pembelian)) {
+                $namaItem = $item->jenis_peralatan?->nama_jenis ?? ('Item #' . $item->id);
+                return redirect()->back()->with('error', "Gagal mengajukan LPJ: Data tanggal, harga pembelian, atau struk untuk item '{$namaItem}' belum lengkap.");
+            }
+        }
+
+        // Cek sisa uang muka (pengembalian dana)
+        $selisih = $ajukan_lpj->subtotal() - $ajukan_lpj->total_pembelian();
+        if ($selisih > 0) {
+            if (empty($ajukan_lpj->bukti_pengembalian) || empty($ajukan_lpj->nominal_pengembalian)) {
+                return redirect()->back()->with('error', 'Gagal mengajukan LPJ: Terdapat sisa uang muka sebesar Rp ' . number_format($selisih, 0, ',', '.') . '. Harap upload bukti pengembalian dan isi nominal pengembalian terlebih dahulu.');
+            }
+        }
+
         if (auth()->user()->code_area == 1010) {
             $ajukan_lpj->update([
                 'status_approve' => 'lpj-atasan-it',
@@ -155,10 +201,9 @@ class ItLpjController extends Controller
         } else {
             $ajukan_lpj->update([
                 'status_approve' => 'lpj-admin-head',
-                // 'nominal_kurang' => $ajukan_lpj->subtotal() - $ajukan_lpj->total_pembelian()
             ]);
-
         }
-        return redirect()->route('it.lpj.index')->with('success', 'Data sudah di Ajukan');
+
+        return redirect()->route('it.lpj.index')->with('success', 'Data LPJ berhasil diajukan.');
     }
 }

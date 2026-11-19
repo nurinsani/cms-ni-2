@@ -70,7 +70,7 @@ Route::get('/', function () {
 
 Route::get('/releases', function () {
     $title = 'releases';
- return view('releases', compact('title'));
+    return view('releases', compact('title'));
 });
 
 Route::get('/dashboard', [IndexController::class, 'redirect_role'])->middleware(['auth', 'verified'])->name('dashboard');
@@ -116,7 +116,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('penganjuan-bdd-asuransi/edit/{id}', [PengajuanBddController::class, 'pengajuan_asuransi_edit'])->name('pengajuan-bdd.edit-asuransi');
         Route::put('penganjuan-bdd-asuransi/{id}', [PengajuanBddController::class, 'update_asuransi'])->name('pengajuan-bdd.update-asuransi');
 
-        Route::get('ajukan_lpj/{id}', [LpjController::class, 'ajukan_lpj'])->name('ajukan_lpj');
+        Route::match(['get', 'post'], 'ajukan_lpj/{id}', [LpjController::class, 'ajukan_lpj'])->name('ajukan_lpj');
         Route::put('lpj/upload-bukti-pengembalian/{id}', [LpjController::class, 'upload_bukti_pengembalian']);
         Route::put('lpj/upload-bukti-kurang/{id}', [LpjController::class, 'upload_bukti_pembelian_kurang']);
 
@@ -141,7 +141,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('klaim/peralatan', [AdminKlaimController::class, 'klaim_peralatan']);
         Route::get('klaim/inventaris', [AdminKlaimController::class, 'klaim_inventaris']);
         Route::post('klaim/pembelian', [AdminKlaimController::class, 'klaim_store']);
-
     });
 
     Route::group(['prefix' => 'akunting', 'as' => 'akunting.', 'middleware' => 'role:akunting'], function () {
@@ -267,7 +266,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ]);
         Route::get('lpj', [LpjAhController::class, 'index']);
         Route::get('lpj/{id}', [LpjAhController::class, 'detail']);
-        Route::get('ajukan_lpj/{id}', [LpjAhController::class, 'ajukan_lpj']);
+        Route::match(['get', 'post'], 'ajukan_lpj/{id}', [LpjAhController::class, 'ajukan_lpj']);
         Route::put('lpj/upload-bukti-pengembalian/{id}', [LpjController::class, 'upload_bukti_pengembalian']);
 
         Route::get('klaim-pembelian', [AdminHeadKlaimController::class, 'index']);
@@ -371,7 +370,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             'lpj' => ItLpjController::class,
         ]);
 
-        Route::get('ajukan_lpj/{id}', [ItLpjController::class, 'ajukan_lpj'])->name('ajukan_lpj');
+        Route::match(['get', 'post'], 'ajukan_lpj/{id}', [ItLpjController::class, 'ajukan_lpj'])->name('ajukan_lpj');
         Route::put('lpj/upload-bukti-pengembalian/{id}', [ItLpjController::class, 'upload_bukti_pengembalian']);
         Route::put('lpj/upload-bukti-kurang/{id}', [ItLpjController::class, 'upload_bukti_pembelian_kurang']);
 
@@ -388,7 +387,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('peralatan/klaim', [ItKlaimController::class, 'klaim_peralatan']);
         Route::get('inventaris/klaim', [ItKlaimController::class, 'klaim_inventaris']);
         Route::post('klaim', [ItKlaimController::class, 'klaim_store']);
-
     });
 
     Route::group(['prefix' => 'atasan-akunting', 'as' => 'atasan-akunting.', 'middleware' => 'role:atasan-akunting'], function () {
@@ -448,7 +446,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('jurnal-kp', [JurnalController::class, 'jurnal_kp']);
     Route::get('jurnal-ap', [JurnalController::class, 'jurnal_ap']);
-    
+
     Route::get('jurnal-penyusutan-kp', [JurnalController::class, 'jurnal_penyusutan_kp']);
     Route::get('jurnal-penyusutan-ap', [JurnalController::class, 'jurnal_penyusutan_ap']);
     Route::get('jurnal-pembebanan-kp', [JurnalController::class, 'jurnal_pembebanan_kp']);
@@ -487,7 +485,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/get-inventaris/{kodeBranch}', [PengajuanMutasiController::class, 'getInventaris']);
 
     Route::get('/get-inventaris-gol-2/{kodeBranch}', [PengajuanMutasiGol2Controller::class, 'getInventarisGol2']);
-    
+
 
     Route::get('koreksi-jurnal/ap', [TransaksiController::class, 'koreksi_jurnal_ap']);
     Route::post('/koreksi-jurnal/ap/update/{id}', [TransaksiController::class, 'update_jurnal_ap']);
@@ -517,7 +515,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/pembebanan/upload-penyusutan-kp-gol-2', [PenyusutanUploadController::class, 'penyusutanUploadApiGol2'])->name('penyusutan.upload-api-gol-2');
 
     Route::post('/inventaris-gol-2/update-inline', [InventarisGol2Controller::class, 'updateInline'])
-    ->name('inventaris-gol-2.update.inline');
+        ->name('inventaris-gol-2.update.inline');
 
     Route::post('/inventaris-gol-2/import', [InventarisGol2Controller::class, 'import'])
         ->name('inventaris-gol-2.import');
@@ -527,7 +525,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/log-penghapusan-barang', function () {
         return redirect()->route('akunting.log-penghapusan-barang.index');
     });
-
 });
 
 Route::get('jenis-peralatan-dropdown/{id}', [JenisPeralatanController::class, 'dropdown'])->name('jenis-peralatan-dropdown');
