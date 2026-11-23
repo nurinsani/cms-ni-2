@@ -127,8 +127,8 @@
                                 </tr>
                                 @if ($lpj->total_pembelian() > $lpj->subtotal())
                                     <tr>
-                                        <td colspan="4"><strong>Kekurangan</strong></td>
-                                        <td colspan="2"><strong>Rp. {{ number_format($lpj->total_pembelian() - $lpj->subtotal())}}</strong></td> 
+                                        <td colspan="4" class="text-danger"><strong>Kekurangan</strong></td>
+                                        <td colspan="2" class="text-danger"><strong>Rp. {{ number_format($lpj->total_pembelian() - $lpj->subtotal())}}</strong></td> 
                                     </tr>
                                 @else
                                     <tr>
@@ -183,8 +183,8 @@
                                 </tr>
                                 @if ($lpj->total_pembelian() > $lpj->subtotal())
                                     <tr>
-                                        <td colspan="6"><strong>Kekurangan</strong></td>
-                                        <td colspan="3"><strong>Rp. {{ number_format($lpj->total_pembelian() - $lpj->subtotal())}}</strong></td> 
+                                        <td colspan="6" class="text-danger"><strong>Kekurangan</strong></td>
+                                        <td colspan="3" class="text-danger"><strong>Rp. {{ number_format($lpj->total_pembelian() - $lpj->subtotal())}}</strong></td> 
                                     </tr>
                                 @else
                                     <tr>

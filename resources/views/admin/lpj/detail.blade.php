@@ -139,7 +139,26 @@
                                     <td></td>
                                 </tr>
 
-                                {{ number_format($lpj->subtotal() - $lpj->total_pembelian()) }}</strong>
+                                @php
+                                    $selisih = $lpj->subtotal() - $lpj->total_pembelian();
+                                @endphp
+                                @if ($selisih < 0)
+                                    <tr>
+                                        <td colspan="3" class="text-danger"><strong>Kekurangan (Klaim)</strong></td>
+                                        <td colspan="4" class="text-right text-danger">
+                                            <strong>Rp. {{ number_format(abs($selisih), 0, ',', '.') }}</strong>
+                                        </td>
+                                        <td></td>
+                                    </tr>
+                                @else
+                                    <tr>
+                                        <td colspan="3"><strong>Sisa / Pengembalian</strong></td>
+                                        <td colspan="4" class="text-right">
+                                            <strong>Rp. {{ number_format($selisih, 0, ',', '.') }}</strong>
+                                        </td>
+                                        <td></td>
+                                    </tr>
+                                @endif
                             </tfoot>
                         </table>
                     </div>

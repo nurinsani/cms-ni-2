@@ -175,14 +175,26 @@
                                     {{ number_format($lpj->total_pembelian(), 0, ',', '.') }}</strong></td>
                             <td></td>
                         </tr>
-                        <tr>
-                            <td colspan="5" class="text-right"><strong>Selisih (Sisa / Kurang)</strong></td>
-                            <td colspan="2" class="text-right">
-                                <strong>Rp
-                                    {{ number_format($lpj->subtotal() - $lpj->total_pembelian(), 0, ',', '.') }}</strong>
-                            </td>
-                            <td></td>
-                        </tr>
+                        @php
+                            $selisih = $lpj->subtotal() - $lpj->total_pembelian();
+                        @endphp
+                        @if ($selisih < 0)
+                            <tr>
+                                <td colspan="5" class="text-right text-danger"><strong>Kekurangan (Klaim)</strong></td>
+                                <td colspan="2" class="text-right font-weight-bold text-danger">
+                                    <strong>Rp {{ number_format(abs($selisih), 0, ',', '.') }}</strong>
+                                </td>
+                                <td></td>
+                            </tr>
+                        @else
+                            <tr>
+                                <td colspan="5" class="text-right"><strong>Sisa / Pengembalian</strong></td>
+                                <td colspan="2" class="text-right font-weight-bold">
+                                    <strong>Rp {{ number_format($selisih, 0, ',', '.') }}</strong>
+                                </td>
+                                <td></td>
+                            </tr>
+                        @endif
                     </tfoot>
                 </table>
             </div>
