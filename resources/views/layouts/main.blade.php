@@ -48,6 +48,12 @@
             border-radius: 10px;
             overflow: hidden;
         }
+        @media (max-width: 767.98px) {
+            .small-box,
+            .small-box .inner {
+                text-align: left !important;
+            }
+        }
         .badge-purple {
             background-color: #6f42c1;
             color: #fff;
