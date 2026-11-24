@@ -79,7 +79,7 @@
                                 <td class="align-middle">{{ $item->pengguna }}</td>
                                 <td class="text-center align-middle font-weight-bold">{{ $item->kuantitas }}</td>
                                 <td class="text-right align-middle">Rp {{ number_format($item->harga, 0, ',', '.') }}</td>
-                                <td class="text-right align-middle font-weight-bold text-primary">Rp {{ number_format($subtotal, 0, ',', '.') }}</td>
+                                <td class="text-right align-middle font-weight-bold">Rp {{ number_format($subtotal, 0, ',', '.') }}</td>
                                 <td class="text-center align-middle">
                                     <a href="{{ url('admin/temp-pengajuan/' . $item->id) }}"
                                         class="btn btn-sm btn-outline-danger"
@@ -103,7 +103,7 @@
                         <tfoot class="bg-light">
                             <tr>
                                 <th colspan="8" class="text-right">Total Estimasi Pengajuan:</th>
-                                <th class="text-right text-success h6 font-weight-bold mb-0">
+                                <th class="text-right h6 font-weight-bold mb-0">
                                     Rp {{ number_format($grandTotal, 0, ',', '.') }}
                                 </th>
                                 <th></th>

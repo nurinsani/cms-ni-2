@@ -73,25 +73,22 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="" class="form-label">Pilih Pengguna</label>
-                                    <select name="kode_user" id="kode_area" class="form-control">
-                                        <option value="">-- Pilih Pengguna --</option>
-                                            <option value="9999">Business Head</option>
-                                            <option value="9999">QA</option>
-                                            <option value="2200">BM Jateng 1</option>
-                                            <option value="8888">AM Area 2</option>
-                                            <option value="1101">AL Jabar 1</option>
-                                            <option value="1102">AL Jabar 2</option>
-                                            <option value="2200">AL Jateng 1</option>
-                                            <option value="2205">AL Jateng 2</option>
-                                            <option value="2203">AL Jateng 3</option>
-                                            <option value="2204">AL Jateng 4</option>
-                                            <option value="2202">AL Jateng 5</option>
-                                            <option value="2206">AL Jateng 6</option>
-                                            <option value="2207">AL Jateng 7</option>
-                                            <option value="2208">AL Jateng 8</option>
-                                            <option value="2208">MM Pedurungan</option>
-                                            <option value="2208">MM Semarang Timur</option>
+                                    <label for="kode_user" class="form-label">Jabatan / Posisi Pembebanan</label>
+                                    <select name="kode_user" id="kode_user" class="form-control select2bs4">
+                                        <option value="">-- Pilih Jabatan / Posisi --</option>
+                                        @php
+                                            $listJabatan = isset($param_jabatan) && $param_jabatan->isNotEmpty() 
+                                                ? $param_jabatan 
+                                                : \App\Models\ParamJabatan::aktif()->orderBy('kategori')->orderBy('nama_jabatan')->get();
+                                            $groupedList = $listJabatan->groupBy('kategori');
+                                        @endphp
+                                        @foreach ($groupedList as $kategori => $items)
+                                            <optgroup label="{{ $kategori ?: 'Lainnya' }}">
+                                                @foreach ($items as $jbt)
+                                                    <option value="{{ $jbt->kode_pembebanan }}">{{ $jbt->nama_jabatan }}</option>
+                                                @endforeach
+                                            </optgroup>
+                                        @endforeach
                                     </select>
                                 </div>
     
@@ -145,9 +142,9 @@
                                 </div>
     
                                 <div class="form-group">
-                                    <label for="" class="form-label">Penguna</label>
+                                    <label for="pengguna" class="form-label">Nama Pengguna (PIC / Pemakai)</label>
                                     <input type="text" name="pengguna" id="pengguna" class="form-control"
-                                        placeholder="" required>
+                                        placeholder="Contoh: Nama staf / penanggung jawab" required>
                                 </div>
     
                                 <div class="form-group">

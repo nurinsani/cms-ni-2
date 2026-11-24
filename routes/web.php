@@ -21,6 +21,7 @@ use App\Http\Controllers\Admin\PengajuanHapusBukuController;
 use App\Http\Controllers\Admin\PengajuanHapusBukuGol2Controller;
 use App\Http\Controllers\Admin\RekeningController;
 use App\Http\Controllers\Admin\TempPengajuanDetailController;
+use App\Http\Controllers\ParamJabatanController;
 use App\Http\Controllers\AdminHead\klaimController as AdminHeadKlaimController;
 use App\Http\Controllers\AdminHead\LpjAhController;
 use App\Http\Controllers\AdminHead\ApprovalHapusBukuController as AdminHeadApprovalHapusBukuController;
@@ -100,6 +101,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             'pengajuan-hapus-buku-gol-2' => PengajuanHapusBukuGol2Controller::class,
             'pemutusan-bdd' => PemutusanBddController::class,
             'rekening' => RekeningController::class,
+            'param-jabatan' => ParamJabatanController::class,
         ]);
 
         Route::get('admin-menu', [AdminController::class, 'menu_admin']);
@@ -191,6 +193,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::resources([
             'jenis-peralatan' => JenisPeralatanController::class,
             'param-peralatan' => ParamPeralatanController::class,
+            'param-jabatan' => ParamJabatanController::class,
         ]);
 
         Route::get('klaim-pembelian', [AkuntingKlaimController::class, 'index']);
@@ -282,8 +285,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('jurnal-penyusutan-ap', [JurnalController::class, 'jurnal_penyusutan_ap']);
         Route::get('jurnal-pembebanan-kp', [JurnalController::class, 'jurnal_pembebanan_kp']);
         Route::get('jurnal-pembebanan-ap', [JurnalController::class, 'jurnal_pembebanan_ap']);
-
-        Route::get('export-excel', [PeralatanController::class, 'excel'])->name('peralatan.export');
 
         Route::get('pengajuan/klaim', [PengajuanKlaimController::class, 'index']);
         Route::get('pengajuan/klaim/{id}', [PengajuanKlaimController::class, 'detail']);
@@ -439,7 +440,6 @@ Route::middleware('auth')->group(function () {
     Route::post('/update-password', [ProfileController::class, 'updatePassword']);
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    Route::post('/export-excel-peralatan', [PeralatanController::class, 'excel'])->name('peralatan.export');
     Route::post('/export-excel-inventaris', [MiscController::class, 'inventarisExcel']);
     Route::post('/export-excel/jurnal-kp', [MiscController::class, 'jurnalKPExcel']);
     Route::post('/export-excel/jurnal-ap', [MiscController::class, 'jurnalAPExcel']);

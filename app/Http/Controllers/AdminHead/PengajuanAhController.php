@@ -40,15 +40,23 @@ class PengajuanAhController extends Controller
         $data['param_peralatan'] = ParamPeralatan::whereHas('param_peralatan', function($query) {
             $query->where('group_inventaris', 'tidak');
         })->get();
-        $data['branch'] = Branch::whereNotNull('code_area')
-            ->where('code_area', '!=', '')
-            ->orderBy('unit', 'asc')
-            ->get();
-        $data['area'] = Branch::whereNotNull('code_area')
+        $codeRegion = auth()->user()->code_region;
+
+        $branchQuery = Branch::whereNotNull('code_area')
+            ->where('code_area', '!=', '');
+        if (!empty($codeRegion)) {
+            $branchQuery->where('code_region', $codeRegion);
+        }
+        $data['branch'] = $branchQuery->orderBy('unit', 'asc')->get();
+
+        $areaQuery = Branch::whereNotNull('code_area')
             ->where('code_area', '!=', '')
             ->where('area', '!=', '')
-            ->where('area', '!=', '0000')
-            ->select('code_area', 'area')
+            ->where('area', '!=', '0000');
+        if (!empty($codeRegion)) {
+            $areaQuery->where('code_region', $codeRegion);
+        }
+        $data['area'] = $areaQuery->select('code_area', 'area')
             ->distinct()
             ->orderBy('area', 'asc')
             ->get();
@@ -68,15 +76,24 @@ class PengajuanAhController extends Controller
         $data['param_peralatan'] = ParamPeralatan::whereHas('param_peralatan', function($query) {
             $query->where('group_inventaris', 'ya');
         })->get();
-        $data['branch'] = Branch::whereNotNull('code_area')
-            ->where('code_area', '!=', '')
-            ->orderBy('unit', 'asc')
-            ->get();
-        $data['area'] = Branch::whereNotNull('code_area')
+
+        $codeRegion = auth()->user()->code_region;
+
+        $branchQuery = Branch::whereNotNull('code_area')
+            ->where('code_area', '!=', '');
+        if (!empty($codeRegion)) {
+            $branchQuery->where('code_region', $codeRegion);
+        }
+        $data['branch'] = $branchQuery->orderBy('unit', 'asc')->get();
+
+        $areaQuery = Branch::whereNotNull('code_area')
             ->where('code_area', '!=', '')
             ->where('area', '!=', '')
-            ->where('area', '!=', '0000')
-            ->select('code_area', 'area')
+            ->where('area', '!=', '0000');
+        if (!empty($codeRegion)) {
+            $areaQuery->where('code_region', $codeRegion);
+        }
+        $data['area'] = $areaQuery->select('code_area', 'area')
             ->distinct()
             ->orderBy('area', 'asc')
             ->get();

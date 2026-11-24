@@ -1,12 +1,12 @@
 @extends('layouts.main')
 
 @section('head-content')
-    <div class="row mb-2">
+    <div class="row mb-2 align-items-center">
         <div class="col-sm-6">
-            <h1 class="m-0">{{ $title }}</h1>
+            <h1 class="m-0 font-weight-bold">{{ $title }}</h1>
         </div><!-- /.col -->
         <div class="col-sm-6">
-            <ol class="breadcrumb float-sm-right">
+            <ol class="breadcrumb float-sm-right bg-transparent p-0 m-0">
                 <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
                 <li class="breadcrumb-item active">{{ $title }}</li>
             </ol>
@@ -15,97 +15,94 @@
 @endsection
 
 @section('content')
-    <div class="card">
-        <div class="card-header">
-            <a href="{{ url('admin/pengajuan/peralatan') }}" class="btn btn-sm btn-success mr-1">
-                <i class="fas fa-plus"></i> Pengajuan Peralatan
-            </a>
-            <a href="{{ url('admin/pengajuan/inventaris') }}" class="btn btn-sm btn-warning">
-                <i class="fas fa-plus"></i> Pengajuan Inventaris
-            </a>
+    <div class="card card-outline card-primary shadow-sm">
+        <div class="card-header d-flex justify-content-between align-items-center flex-wrap">
+            <h3 class="card-title font-weight-bold mb-0">Daftar Pengajuan Uang Muka</h3>
+            <div class="card-tools ml-auto">
+                <a href="{{ url('admin/pengajuan/peralatan') }}" class="btn btn-sm btn-success mr-1">
+                    <i class="fas fa-plus mr-1"></i> Pengajuan Peralatan
+                </a>
+                <a href="{{ url('admin/pengajuan/inventaris') }}" class="btn btn-sm btn-warning">
+                    <i class="fas fa-plus mr-1"></i> Pengajuan Inventaris
+                </a>
+            </div>
         </div>
-        <div class="card-body table-sm table-responsive">
-            <table id="example2" class="table table-bordered table-hover">
-                <thead>
+        <div class="card-body table-responsive">
+            <table id="example2" class="table table-bordered table-striped table-hover mb-0">
+                <thead class="bg-light">
                     <tr>
-                        <th>No</th>
-                        <th>No. Pengajuan</th>
+                        <th width="45" class="text-center">No</th>
+                        <th>Nomor Pengajuan</th>
                         <th>Area</th>
                         <th>COA</th>
                         <th>Jenis Pengajuan</th>
-                        <th>Tanggal Pengajuan</th>
-                        <th>Status</th>
-                        <th>Aksi</th>
+                        <th class="text-center">Tanggal Pengajuan</th>
+                        <th class="text-center">Status</th>
+                        <th width="150" class="text-center no-export">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($pengajuan as $data)
+                    @forelse ($pengajuan as $data)
                         <tr>
-                            <td>{{ $loop->iteration }}</td>
-                            <td>{{ $data->nomor }}</td>
-                            <td>{{ $data->area->area }}</td>
-                            <td>
-                                <ul class="p-0" style="list-style: none">
-                                    @foreach ($data->pengajuan_details as $item)
-                                        <li> {{ $item->jenis_peralatan->param_peralatan->coa ?? '' }}</li>
-                                    @endforeach
-                                </ul>
+                            <td class="text-center align-middle">{{ $loop->iteration }}</td>
+                            <td class="font-weight-bold align-middle">{{ $data->nomor }}</td>
+                            <td class="align-middle">{{ $data->area?->area ?? '-' }}</td>
+                            <td class="align-middle">
+                                @foreach ($data->pengajuan_details as $item)
+                                    <div>{{ $item->jenis_peralatan?->param_peralatan?->coa ?? '-' }}</div>
+                                @endforeach
                             </td>
-                            <td>
-                                <ul class="p-0" style="list-style: none">
-                                    @foreach ($data->pengajuan_details as $item)
-                                        <li> {{ $item->jenis_peralatan->nama_jenis ?? '' }}</li>
-                                    @endforeach
-                                </ul>
+                            <td class="align-middle">
+                                @foreach ($data->pengajuan_details as $item)
+                                    <div>{{ $item->jenis_peralatan?->nama_jenis ?? '-' }}</div>
+                                @endforeach
                             </td>
-                            <td>{{ $data->tanggal_pengajuan->format('d-M-Y') }}</td>
-                            <td>
-                                @if ($data->status_approve == 'lpj-admin')
-                                    <span class="badge bg-success">Disetujui</span>
-                                @elseif($data->status_approve == 'lpj-admin-head')
-                                    <span class="badge bg-warning">LPJ AH</span>
-                                @elseif($data->status_approve == 'lpj-akunting-it')
-                                    <span class="badge bg-warning">LPJ Akunting/IT</span>
-                                @elseif($data->status_approve == 'lpj-pengurus')
-                                    <span class="badge bg-warning">LPJ Pengurus</span>
-                                @elseif($data->status_approve == 'lpj-finance')
-                                    <span class="badge bg-warning">LPJ Finance</span>
+                            <td class="text-center align-middle">
+                                {{ $data->tanggal_pengajuan ? $data->tanggal_pengajuan->format('d-M-Y') : '-' }}
+                            </td>
+                            <td class="text-center align-middle">
+                                @if (in_array($data->status_approve, ['lpj-admin', 'lpj-admin-head', 'lpj-akunting-it', 'lpj-pengurus', 'lpj-finance']))
+                                    <span class="badge badge-success px-2 py-1">Disetujui</span>
                                 @elseif($data->status_approve == 'admin-head')
-                                    <span class="badge bg-warning">AH</span>
+                                    <span class="badge badge-warning px-2 py-1">AH</span>
                                 @elseif($data->status_approve == 'akunting-it')
-                                    <span class="badge bg-warning">IT/Akunting</span>
+                                    <span class="badge badge-warning px-2 py-1">IT/Akunting</span>
                                 @elseif($data->status_approve == 'pengurus')
-                                    <span class="badge bg-warning">Pengurus</span>
+                                    <span class="badge badge-warning px-2 py-1">Pengurus</span>
                                 @elseif($data->status_approve == 'finance')
-                                    <span class="badge bg-warning">Finance</span>
+                                    <span class="badge badge-warning px-2 py-1">Finance</span>
                                 @elseif($data->status_approve == 'atasan-akunting')
-                                    <span class="badge bg-warning">Atasan Akunting</span>
+                                    <span class="badge badge-warning px-2 py-1">Atasan Akunting</span>
+                                @elseif($data->status_approve == 'atasan-it')
+                                    <span class="badge badge-warning px-2 py-1">Atasan IT</span>
                                 @elseif($data->status_approve == 'admin')
-                                    <span class="badge bg-danger">Ditolak</span>
-                                @elseif($data->status_approve == 'selesai')
-                                    <span class="badge bg-success">Selesai</span>
-                                @elseif($data->status_approve == 'klaim-pengurus')
-                                    <span class="badge bg-warning">Pengurus</span>
-                                @elseif($data->status_approve == 'klaim-finance')
-                                    <span class="badge bg-warning">Finance</span>
+                                    <span class="badge badge-danger px-2 py-1">Ditolak</span>
+                                @elseif(in_array($data->status_approve, ['selesai', 'klaim-selesai']))
+                                    <span class="badge badge-success px-2 py-1">Selesai</span>
                                 @elseif($data->status_approve == 'klaim-akunting-it')
-                                    <span class="badge bg-warning">Akunting</span>
-                                @elseif($data->status_approve == 'admin')
-                                    <span class="badge bg-danger">Ditolak</span>
-                                @elseif($data->status_approve == 'klaim-selesai')
-                                    <span class="badge bg-success">Selesai</span>
+                                    <span class="badge badge-warning px-2 py-1">Akunting</span>
+                                @elseif(in_array($data->status_approve, ['klaim-pengurus', 'klaim-finance']))
+                                    <span class="badge badge-warning px-2 py-1">{{ ucfirst(str_replace('klaim-', '', $data->status_approve)) }}</span>
+                                @else
+                                    <span class="badge badge-secondary px-2 py-1">{{ $data->status_approve }}</span>
                                 @endif
                             </td>
-                            <td>
+                            <td class="text-center align-middle text-nowrap">
                                 @if ($data->status_proses == 'admin')
                                     <a href="{{ route('admin.pengajuan.edit', $data->id) }}"
-                                        class="btn btn-xs btn-primary">Edit</a>
+                                        class="btn btn-sm btn-outline-primary mr-1">
+                                        <i class="fas fa-edit mr-1"></i> Edit
+                                    </a>
                                 @endif
                                 <a href="{{ route('admin.pengajuan.show', $data->id) }}"
-                                    class="btn btn-xs btn-success">Detail</a>
+                                    class="btn btn-sm btn-outline-info mr-1">
+                                    <i class="fas fa-eye mr-1"></i> Detail
+                                </a>
                                 @if ($data->status_approve == 'admin')
-                                    <button type="submit" onclick="hapus_data('#delete_form{{ $data->id }}')"
-                                        class="btn btn-xs btn-danger">Hapus</button>
+                                    <button type="button" onclick="hapus_data('#delete_form{{ $data->id }}')"
+                                        class="btn btn-sm btn-outline-danger">
+                                        <i class="fas fa-trash-alt mr-1"></i> Hapus
+                                    </button>
                                     <form class="d-inline" id="delete_form{{ $data->id }}"
                                         action="{{ route('admin.pengajuan.destroy', $data->id) }}" method="post">
                                         @csrf
@@ -114,11 +111,13 @@
                                 @endif
                             </td>
                         </tr>
-                    @endforeach
-                    </tfoot>
+                    @empty
+                        <tr>
+                            <td colspan="8" class="text-center text-muted py-3">Tidak ada data pengajuan.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
             </table>
         </div>
     </div>
 @endsection
-
-<!-- ini komen -->

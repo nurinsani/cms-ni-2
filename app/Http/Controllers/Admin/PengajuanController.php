@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Validator;
 Use Alert;
 use App\Models\Admin\TempPengajuanDetail;
 use App\Models\Rekening;
+use App\Models\ParamJabatan;
 // use Barryvdh\DomPDF\PDF;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Http;
@@ -34,7 +35,9 @@ class PengajuanController extends Controller
     public function index()
     {
         $data['title'] = 'Pengajuan Pembelian';
-        $data['pengajuan'] = Pengajuan::where('code_area', auth()->user()->code_area)->get();
+        $data['pengajuan'] = Pengajuan::where('code_area', auth()->user()->code_area)
+            ->latest('id')
+            ->get();
         return view('admin.pengajuan-peralatan.index', $data);
     }
 
@@ -55,15 +58,23 @@ class PengajuanController extends Controller
         $data['param_peralatan'] = ParamPeralatan::whereHas('param_peralatan', function($query) {
             $query->where('group_inventaris', 'tidak');
         })->get();
-        $data['branch'] = Branch::whereNotNull('code_area')
-            ->where('code_area', '!=', '')
-            ->orderBy('unit', 'asc')
-            ->get();
-        $data['area'] = Branch::whereNotNull('code_area')
+        $codeArea = auth()->user()->code_area;
+
+        $branchQuery = Branch::whereNotNull('code_area')
+            ->where('code_area', '!=', '');
+        if (!empty($codeArea)) {
+            $branchQuery->where('code_area', $codeArea);
+        }
+        $data['branch'] = $branchQuery->orderBy('unit', 'asc')->get();
+
+        $areaQuery = Branch::whereNotNull('code_area')
             ->where('code_area', '!=', '')
             ->where('area', '!=', '')
-            ->where('area', '!=', '0000')
-            ->select('code_area', 'area')
+            ->where('area', '!=', '0000');
+        if (!empty($codeArea)) {
+            $areaQuery->where('code_area', $codeArea);
+        }
+        $data['area'] = $areaQuery->select('code_area', 'area')
             ->distinct()
             ->orderBy('area', 'asc')
             ->get();
@@ -84,15 +95,28 @@ class PengajuanController extends Controller
         $data['param_peralatan'] = ParamPeralatan::whereHas('param_peralatan', function($query) {
             $query->where('group_inventaris', 'ya');
         })->get();
-        $data['branch'] = Branch::whereNotNull('code_area')
-            ->where('code_area', '!=', '')
-            ->orderBy('unit', 'asc')
+        $data['param_jabatan'] = ParamJabatan::aktif()
+            ->orderBy('kategori', 'asc')
+            ->orderBy('nama_jabatan', 'asc')
             ->get();
-        $data['area'] = Branch::whereNotNull('code_area')
+
+        $codeArea = auth()->user()->code_area;
+
+        $branchQuery = Branch::whereNotNull('code_area')
+            ->where('code_area', '!=', '');
+        if (!empty($codeArea)) {
+            $branchQuery->where('code_area', $codeArea);
+        }
+        $data['branch'] = $branchQuery->orderBy('unit', 'asc')->get();
+
+        $areaQuery = Branch::whereNotNull('code_area')
             ->where('code_area', '!=', '')
             ->where('area', '!=', '')
-            ->where('area', '!=', '0000')
-            ->select('code_area', 'area')
+            ->where('area', '!=', '0000');
+        if (!empty($codeArea)) {
+            $areaQuery->where('code_area', $codeArea);
+        }
+        $data['area'] = $areaQuery->select('code_area', 'area')
             ->distinct()
             ->orderBy('area', 'asc')
             ->get();

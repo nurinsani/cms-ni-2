@@ -10,6 +10,7 @@ use App\Models\Akunting\JenisPeralatan;
 use App\Models\Akunting\ParamPeralatan;
 use App\Models\Branch;
 use App\Models\Rekening;
+use App\Models\ParamJabatan;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -18,9 +19,12 @@ class AdminKlaimController extends Controller
     public function index()
     {
         $data['title'] = 'Klaim Pembelian';
-        $data['pengajuan'] = Pengajuan::where('code_area', auth()->user()->code_area)
-        ->where('status_approve', 'klaim-admin-head')
-        ->get();
+        $codeArea = auth()->user()->code_area;
+        $query = Pengajuan::where('status_approve', 'like', 'klaim%');
+        if (!empty($codeArea)) {
+            $query->where('code_area', $codeArea);
+        }
+        $data['pengajuan'] = $query->latest('id')->get();
         return view('admin.klaim-pembelian.index', $data);
     }
 
@@ -37,15 +41,23 @@ class AdminKlaimController extends Controller
         $data['param_peralatan'] = ParamPeralatan::whereHas('param_peralatan', function($query) {
             $query->where('group_inventaris', 'tidak');
         })->get();
-        $data['branch'] = Branch::whereNotNull('code_area')
-            ->where('code_area', '!=', '')
-            ->orderBy('unit', 'asc')
-            ->get();
-        $data['area'] = Branch::whereNotNull('code_area')
+        $codeArea = auth()->user()->code_area;
+
+        $branchQuery = Branch::whereNotNull('code_area')
+            ->where('code_area', '!=', '');
+        if (!empty($codeArea)) {
+            $branchQuery->where('code_area', $codeArea);
+        }
+        $data['branch'] = $branchQuery->orderBy('unit', 'asc')->get();
+
+        $areaQuery = Branch::whereNotNull('code_area')
             ->where('code_area', '!=', '')
             ->where('area', '!=', '')
-            ->where('area', '!=', '0000')
-            ->select('code_area', 'area')
+            ->where('area', '!=', '0000');
+        if (!empty($codeArea)) {
+            $areaQuery->where('code_area', $codeArea);
+        }
+        $data['area'] = $areaQuery->select('code_area', 'area')
             ->distinct()
             ->orderBy('area', 'asc')
             ->get();
@@ -65,15 +77,28 @@ class AdminKlaimController extends Controller
         $data['param_peralatan'] = ParamPeralatan::whereHas('param_peralatan', function($query) {
             $query->where('group_inventaris', 'ya');
         })->get();
-        $data['branch'] = Branch::whereNotNull('code_area')
-            ->where('code_area', '!=', '')
-            ->orderBy('unit', 'asc')
+        $data['param_jabatan'] = ParamJabatan::aktif()
+            ->orderBy('kategori', 'asc')
+            ->orderBy('nama_jabatan', 'asc')
             ->get();
-        $data['area'] = Branch::whereNotNull('code_area')
+
+        $codeArea = auth()->user()->code_area;
+
+        $branchQuery = Branch::whereNotNull('code_area')
+            ->where('code_area', '!=', '');
+        if (!empty($codeArea)) {
+            $branchQuery->where('code_area', $codeArea);
+        }
+        $data['branch'] = $branchQuery->orderBy('unit', 'asc')->get();
+
+        $areaQuery = Branch::whereNotNull('code_area')
             ->where('code_area', '!=', '')
             ->where('area', '!=', '')
-            ->where('area', '!=', '0000')
-            ->select('code_area', 'area')
+            ->where('area', '!=', '0000');
+        if (!empty($codeArea)) {
+            $areaQuery->where('code_area', $codeArea);
+        }
+        $data['area'] = $areaQuery->select('code_area', 'area')
             ->distinct()
             ->orderBy('area', 'asc')
             ->get();
@@ -104,14 +129,14 @@ class AdminKlaimController extends Controller
         $data['tanggal_pengajuan'] = Carbon::now(); 
         $data['user_id'] = auth()->user()->id;
         $data['code_area'] = auth()->user()->code_area;
-        $data['rekening_id'] = $request->rekening_id;
+        $temp_pengajuan = TempPengajuanDetail::where('user_id', auth()->user()->id)->get();
+        $data['rekening_id'] = $request->rekening_id ?? $temp_pengajuan->first()?->rekening_id;
         if (auth()->user()->code_area == 1010) {
             $data['status_approve'] = 'klaim-akunting-it';
         } else {
             $data['status_approve'] = 'klaim-admin-head';
         }
         
-        $temp_pengajuan = TempPengajuanDetail::where('user_id', auth()->user()->id)->get();
         $pengajuan = Pengajuan::create($data);
         
         foreach ($temp_pengajuan as $item) {
