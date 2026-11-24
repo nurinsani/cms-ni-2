@@ -25,7 +25,8 @@
                 Daftar Item Klaim Inventaris
             </h3>
             <div class="card-tools ml-auto">
-                <button type="button" class="btn btn-sm btn-primary shadow-sm mr-1" data-toggle="modal" data-target="#modal-tambah-klaim-inventaris">
+                <button type="button" class="btn btn-sm btn-primary shadow-sm mr-1" data-toggle="modal"
+                    data-target="#modal-tambah-klaim-inventaris">
                     <i class="fas fa-plus mr-1"></i> Tambah Klaim
                 </button>
                 <a href="{{ url('admin/klaim-pembelian') }}" class="btn btn-sm btn-secondary shadow-sm">
@@ -63,27 +64,36 @@
                                 <td class="align-middle font-weight-bold">
                                     {{ $item->jenis_peralatan?->nama_jenis ?? '-' }}
                                     @if ($item->keterangan)
-                                        <br><small class="text-muted font-weight-normal"><i class="far fa-comment-dots mr-1"></i>{{ $item->keterangan }}</small>
+                                        <br><small class="text-muted font-weight-normal"><i
+                                                class="far fa-comment-dots mr-1"></i>{{ $item->keterangan }}</small>
                                     @endif
                                 </td>
                                 <td class="align-middle">
-                                    <span class="badge badge-info">{{ $item->ap?->unit ?? ($item->area?->area ?? $item->kode_branch) }}</span>
+                                    <span
+                                        class="badge badge-info">{{ $item->ap?->unit ?? ($item->area?->area ?? $item->kode_branch) }}</span>
                                 </td>
                                 <td class="align-middle">{{ $item->merk }} - {{ $item->type }}</td>
                                 <td class="align-middle">
                                     {{ $item->nama_toko }}
                                     @if ($item->no_telp)
-                                        <br><small class="text-muted"><i class="fas fa-phone-alt mr-1"></i>{{ $item->no_telp }}</small>
+                                        <br><small class="text-muted"><i
+                                                class="fas fa-phone-alt mr-1"></i>{{ $item->no_telp }}</small>
                                     @endif
                                 </td>
-                                <td class="align-middle">{{ $item->pengguna }}</td>
+                                <td class="align-middle">
+                                    <span class="font-weight-bold">{{ $item->pengguna }}</span>
+                                    @if ($item->kode_user)
+                                        <br><small class="text-muted"><i class="fas fa-briefcase mr-1"></i>Posisi/Kode:
+                                            {{ $item->kode_user }}</small>
+                                    @endif
+                                </td>
                                 <td class="text-center align-middle font-weight-bold">{{ $item->kuantitas }}</td>
                                 <td class="text-right align-middle">Rp {{ number_format($item->harga, 0, ',', '.') }}</td>
-                                <td class="text-right align-middle font-weight-bold text-primary">Rp {{ number_format($subtotal, 0, ',', '.') }}</td>
+                                <td class="text-right align-middle font-weight-bold">Rp
+                                    {{ number_format($subtotal, 0, ',', '.') }}</td>
                                 <td class="text-center align-middle">
                                     <a href="{{ url('admin/temp-pengajuan/' . $item->id) }}"
-                                        class="btn btn-sm btn-outline-danger"
-                                        title="Hapus dari daftar"
+                                        class="btn btn-sm btn-outline-danger" title="Hapus dari daftar"
                                         onclick="return confirm('Hapus item ini dari daftar klaim?')">
                                         <i class="fas fa-trash-alt"></i>
                                     </a>
@@ -94,7 +104,8 @@
                                 <td colspan="10" class="text-center py-5 text-muted">
                                     <i class="fas fa-inbox fa-3x mb-2 d-block text-secondary"></i>
                                     Belum ada item klaim di dalam daftar.<br>
-                                    <small>Silakan klik tombol <strong>"+ Tambah Klaim"</strong> di atas untuk memasukkan item baru.</small>
+                                    <small>Silakan klik tombol <strong>"+ Tambah Klaim"</strong> di atas untuk memasukkan
+                                        item baru.</small>
                                 </td>
                             </tr>
                         @endforelse
@@ -103,7 +114,7 @@
                         <tfoot class="bg-light">
                             <tr>
                                 <th colspan="8" class="text-right">Total Estimasi Klaim:</th>
-                                <th class="text-right text-success h6 font-weight-bold mb-0">
+                                <th class="text-right h6 font-weight-bold mb-0">
                                     Rp {{ number_format($grandTotal, 0, ',', '.') }}
                                 </th>
                                 <th></th>
@@ -122,7 +133,8 @@
 
                 <form action="{{ url('admin/klaim/pembelian') }}" method="post" class="m-0 ml-auto">
                     @csrf
-                    <button type="submit" class="btn btn-success font-weight-bold px-4" {{ $temp_pengajuan->isEmpty() ? 'disabled' : '' }}>
+                    <button type="submit" class="btn btn-success font-weight-bold px-4"
+                        {{ $temp_pengajuan->isEmpty() ? 'disabled' : '' }}>
                         <i class="fas fa-paper-plane mr-1"></i> Simpan & Ajukan Klaim
                     </button>
                 </form>
@@ -131,7 +143,8 @@
     </div>
 
     {{-- MODAL TAMBAH KLAIM INVENTARIS --}}
-    <div class="modal fade" id="modal-tambah-klaim-inventaris" tabindex="-1" role="dialog" aria-labelledby="modalTambahKlaimInventarisLabel" aria-hidden="true">
+    <div class="modal fade" id="modal-tambah-klaim-inventaris" tabindex="-1" role="dialog"
+        aria-labelledby="modalTambahKlaimInventarisLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -143,7 +156,8 @@
                     </button>
                 </div>
 
-                <form id="form-tambah-klaim-inventaris" action="{{ url('admin/temp-pengajuan') }}" method="post" enctype="multipart/form-data">
+                <form id="form-tambah-klaim-inventaris" action="{{ url('admin/temp-pengajuan') }}" method="post"
+                    enctype="multipart/form-data">
                     @csrf
                     <div class="modal-body">
                         <div id="modal-alert-error" class="alert alert-danger d-none shadow-sm"></div>
@@ -162,7 +176,8 @@
                         <div class="row">
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <label for="nama_peralatan">Kategori Inventaris <span class="text-danger">*</span></label>
+                                    <label for="nama_peralatan">Kategori Inventaris <span
+                                            class="text-danger">*</span></label>
                                     <select id="nama_peralatan" class="form-control select2-modal" required>
                                         <option value="">-- Pilih Kategori --</option>
                                         @foreach ($param_peralatan as $data)
@@ -175,7 +190,8 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="nama_jenis">Jenis Inventaris <span class="text-danger">*</span></label>
-                                    <select name="jenis_peralatan_id" id="nama_jenis" class="form-control jenis_peralatan select2-modal" required>
+                                    <select name="jenis_peralatan_id" id="nama_jenis"
+                                        class="form-control jenis_peralatan select2-modal" required>
                                         <option value="">-- Pilih Kategori Dulu --</option>
                                     </select>
                                 </div>
@@ -187,7 +203,8 @@
                                     <select name="kode_area" id="kode_area" class="form-control select2-modal" required>
                                         <option value="">-- Pilih Cabang / Area --</option>
                                         @foreach ($area as $item)
-                                            <option value="{{ $item->code_area }}">{{ $item->area }} ({{ $item->code_area }})</option>
+                                            <option value="{{ $item->code_area }}">{{ $item->area }}
+                                                ({{ $item->code_area }})</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -196,7 +213,8 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="kode_branch">Nama Unit / AP <span class="text-danger">*</span></label>
-                                    <select name="kode_branch" id="kode_branch" class="form-control select2-modal" required>
+                                    <select name="kode_branch" id="kode_branch" class="form-control select2-modal"
+                                        required>
                                         <option value="">-- Pilih Cabang Dulu --</option>
                                     </select>
                                 </div>
@@ -207,21 +225,24 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="merk">Merk <span class="text-danger">*</span></label>
-                                    <input type="text" name="merk" id="merk" class="form-control" value="{{ old('merk') }}" placeholder="Contoh: Lenovo / Epson" required>
+                                    <input type="text" name="merk" id="merk" class="form-control"
+                                        value="{{ old('merk') }}" placeholder="Contoh: Lenovo / Epson" required>
                                 </div>
                             </div>
 
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="type">Tipe / Model <span class="text-danger">*</span></label>
-                                    <input type="text" name="type" id="type" class="form-control" value="{{ old('type') }}" placeholder="Contoh: ThinkPad E14 / L3210" required>
+                                    <input type="text" name="type" id="type" class="form-control"
+                                        value="{{ old('type') }}" placeholder="Contoh: ThinkPad E14 / L3210" required>
                                 </div>
                             </div>
 
                             <div class="col-md-2">
                                 <div class="form-group">
                                     <label for="kuantitas">Kuantitas <span class="text-danger">*</span></label>
-                                    <input type="number" name="kuantitas" id="kuantitas" min="1" class="form-control" value="{{ old('kuantitas', 1) }}" placeholder="1" required>
+                                    <input type="number" name="kuantitas" id="kuantitas" min="1"
+                                        class="form-control" value="{{ old('kuantitas', 1) }}" placeholder="1" required>
                                 </div>
                             </div>
 
@@ -232,7 +253,9 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text">Rp</span>
                                         </div>
-                                        <input type="number" name="harga" id="harga" min="0" class="form-control" value="{{ old('harga') }}" placeholder="Masukkan nominal harga" required>
+                                        <input type="number" name="harga" id="harga" min="0"
+                                            class="form-control" value="{{ old('harga') }}"
+                                            placeholder="Masukkan nominal harga" required>
                                     </div>
                                     <div class="mt-1">
                                         <span class="badge badge-light border text-dark" id="preview_harga">Rp 0</span>
@@ -245,45 +268,98 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="nama_toko">Nama Toko / Vendor <span class="text-danger">*</span></label>
-                                    <input type="text" name="nama_toko" id="nama_toko" class="form-control" value="{{ old('nama_toko') }}" placeholder="Nama toko pembelian" required>
+                                    <input type="text" name="nama_toko" id="nama_toko" class="form-control"
+                                        value="{{ old('nama_toko') }}" placeholder="Nama toko pembelian" required>
                                 </div>
                             </div>
 
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="no_telp">No. Telepon Toko <span class="text-danger">*</span></label>
-                                    <input type="number" name="no_telp" id="no_telp" class="form-control" value="{{ old('no_telp') }}" placeholder="08xxxxxxxxxx" required>
+                                    <input type="number" name="no_telp" id="no_telp" class="form-control"
+                                        value="{{ old('no_telp') }}" placeholder="08xxxxxxxxxx" required>
+                                </div>
+                            </div>
+
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="kode_user">Jabatan / Posisi Pembebanan <span
+                                            class="text-danger">*</span></label>
+                                    <select name="kode_user" id="kode_user" class="form-control select2-modal" required>
+                                        <option value="">-- Pilih Jabatan / Posisi --</option>
+                                        @if (isset($param_jabatan) && $param_jabatan->isNotEmpty())
+                                            @php
+                                                $groupedJabatan = $param_jabatan->groupBy('kategori');
+                                            @endphp
+                                            @foreach ($groupedJabatan as $kategori => $items)
+                                                <optgroup label="{{ $kategori ?: 'Lainnya' }}">
+                                                    @foreach ($items as $jbt)
+                                                        <option value="{{ $jbt->kode_pembebanan }}">
+                                                            {{ $jbt->nama_jabatan }}</option>
+                                                    @endforeach
+                                                </optgroup>
+                                            @endforeach
+                                        @endif
+                                    </select>
                                 </div>
                             </div>
 
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="pengguna">Nama Pengguna (PIC) <span class="text-danger">*</span></label>
-                                    <input type="text" name="pengguna" id="pengguna" class="form-control" value="{{ old('pengguna') }}" placeholder="Nama pemakai barang" required>
-                                </div>
-                            </div>
-
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label for="tanggal_pembelian">Tanggal Pembelian <span class="text-danger">*</span></label>
-                                    <input type="date" name="tanggal_pembelian" id="tanggal_pembelian" class="form-control" value="{{ old('tanggal_pembelian', date('Y-m-d')) }}" required>
+                                    <input type="text" name="pengguna" id="pengguna" class="form-control"
+                                        value="{{ old('pengguna') }}" placeholder="Nama pemakai barang" required>
                                 </div>
                             </div>
                         </div>
 
                         <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="tanggal_pembelian">Tanggal Pembelian <span
+                                            class="text-danger">*</span></label>
+                                    <input type="date" name="tanggal_pembelian" id="tanggal_pembelian"
+                                        class="form-control" value="{{ old('tanggal_pembelian', date('Y-m-d')) }}"
+                                        required>
+                                </div>
+                            </div>
+
                             <div class="col-md-6">
-                                <div class="form-group mb-0">
-                                    <label for="struk_pembelian">Upload Struk Pembelian / Nota <span class="text-danger">*</span></label>
-                                    <input type="file" name="struk_pembelian" id="struk_pembelian" class="form-control-file border rounded p-1 bg-light" accept=".pdf,.jpg,.jpeg,.png" required>
+                                <div class="form-group">
+                                    <label for="struk_pembelian">Upload Struk Pembelian / Nota <span
+                                            class="text-danger">*</span></label>
+                                    <input type="file" name="struk_pembelian" id="struk_pembelian"
+                                        class="form-control-file border rounded p-1 bg-light"
+                                        accept=".pdf,.jpg,.jpeg,.png" required>
                                     <small class="text-muted">Format: PDF/JPG/PNG (Maks. 2MB)</small>
                                 </div>
                             </div>
 
                             <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="rekening_id">Rekening Tujuan Transfer <span
+                                            class="text-muted font-weight-normal">(Opsional)</span></label>
+                                    <select name="rekening_id" id="rekening_id" class="form-control select2-modal"
+                                        style="width: 100%;">
+                                        <option value="">-- Gunakan Rekening Pembuat
+                                            ({{ auth()->user()->nama_bank }} - {{ auth()->user()->no_rek }}) --</option>
+                                        @foreach ($rekening as $item)
+                                            <option value="{{ $item->id }}">{{ $item->no_rek }} -
+                                                {{ $item->nama_bank }} (a.n. {{ $item->atas_nama }})</option>
+                                        @endforeach
+                                    </select>
+                                    <small class="text-muted">*Kosongkan jika menggunakan rekening Anda.</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12">
                                 <div class="form-group mb-0">
-                                    <label for="keterangan">Keterangan / Keperluan <span class="text-danger">*</span></label>
-                                    <textarea name="keterangan" id="keterangan" class="form-control" rows="2" placeholder="Contoh: Pembelian inventaris operasional" required>{{ old('keterangan') }}</textarea>
+                                    <label for="keterangan">Keterangan / Keperluan <span
+                                            class="text-danger">*</span></label>
+                                    <textarea name="keterangan" id="keterangan" class="form-control" rows="2"
+                                        placeholder="Contoh: Pembelian inventaris operasional" required>{{ old('keterangan') }}</textarea>
                                 </div>
                             </div>
                         </div>
@@ -313,7 +389,7 @@
 
             $(document).ready(function() {
                 // Inisialisasi Select2 di dalam Modal agar search bar dan dropdown berfungsi dengan baik
-                $('#modal-tambah-klaim-inventaris').on('shown.bs.modal', function () {
+                $('#modal-tambah-klaim-inventaris').on('shown.bs.modal', function() {
                     $('.select2-modal').select2({
                         theme: 'bootstrap4',
                         dropdownParent: $('#modal-tambah-klaim-inventaris'),
@@ -346,7 +422,8 @@
                         });
 
                         $.each(filteredBranches, function(index, item) {
-                            $apSelect.append('<option value="' + item.kode_branch + '">' + item.unit + '</option>');
+                            $apSelect.append('<option value="' + item.kode_branch + '">' + item.unit +
+                                '</option>');
                         });
                     }
 
@@ -364,10 +441,13 @@
                             type: "GET",
                             dataType: "json",
                             success: function(data) {
-                                $jenisSelect.append('<option value="">-- Pilih Jenis Inventaris --</option>');
+                                $jenisSelect.append(
+                                    '<option value="">-- Pilih Jenis Inventaris --</option>');
                                 if (data) {
                                     $.each(data, function(key, jenis_peralatan) {
-                                        $jenisSelect.append('<option value="' + jenis_peralatan.id + '">' + jenis_peralatan.nama_jenis + '</option>');
+                                        $jenisSelect.append('<option value="' +
+                                            jenis_peralatan.id + '">' + jenis_peralatan
+                                            .nama_jenis + '</option>');
                                     });
                                 }
                                 $jenisSelect.trigger('change');
@@ -379,7 +459,7 @@
                     }
                 });
 
-                $('#modal-tambah-klaim-inventaris').on('hidden.bs.modal', function () {
+                $('#modal-tambah-klaim-inventaris').on('hidden.bs.modal', function() {
                     $('#modal-alert-error').addClass('d-none').empty();
                     $('#preview_harga').text('Rp 0');
                 });
@@ -396,7 +476,8 @@
                     var $submitBtn = $(form).find('button[type="submit"]');
                     var originalBtnHtml = $submitBtn.html();
 
-                    $submitBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin mr-1"></i> Menyimpan...');
+                    $submitBtn.prop('disabled', true).html(
+                        '<i class="fas fa-spinner fa-spin mr-1"></i> Menyimpan...');
                     $('#modal-alert-error').addClass('d-none').empty();
 
                     $.ajax({
@@ -414,7 +495,8 @@
                                 Swal.fire({
                                     icon: 'success',
                                     title: 'Berhasil',
-                                    text: response.message || 'Item berhasil ditambahkan ke daftar klaim.',
+                                    text: response.message ||
+                                        'Item berhasil ditambahkan ke daftar klaim.',
                                     timer: 1500,
                                     showConfirmButton: false
                                 }).then(function() {
@@ -447,7 +529,9 @@
                             errorListHtml += '</ul>';
 
                             // Tampilkan alert di dalam modal (modal tetap terbuka)
-                            $('#modal-alert-error').html('<strong>Gagal menambahkan item:</strong>' + errorListHtml).removeClass('d-none');
+                            $('#modal-alert-error').html(
+                                    '<strong>Gagal menambahkan item:</strong>' + errorListHtml)
+                                .removeClass('d-none');
 
                             // Tampilkan SweetAlert tanpa menutup modal
                             if (typeof Swal !== 'undefined') {

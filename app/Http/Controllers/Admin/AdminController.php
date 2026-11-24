@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Admin\Peralatan;
+use App\Models\Admin\Pengajuan;
 use App\Models\Branch;
 use App\Models\Inventaris;
 use App\Models\Penyusutan;
@@ -16,7 +17,12 @@ class AdminController extends Controller
 {
     public function dashboard()
     {
-        $data['title'] = 'Admin Dashboard';
+        $codeArea = auth()->user()->code_area;
+        $data['title'] = 'Dashboard Admin';
+        $data['pengajuan_um_count'] = Pengajuan::where('code_area', $codeArea)->count();
+        $data['pengajuan_lpj_count'] = Pengajuan::where('status_approve', 'lpj-admin')->count();
+        $data['pengajuan_klaim_count'] = Pengajuan::where('code_area', $codeArea)->where('status_approve', 'klaim-admin-head')->count();
+
         $data['nominative'] = Peralatan::all();
         $data['user1'] = User::where('code_area', 1101)->get();
 

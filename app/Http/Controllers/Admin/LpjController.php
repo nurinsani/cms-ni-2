@@ -29,8 +29,13 @@ class LpjController extends Controller
      */
     public function index()
     {
-        $data['title'] = 'LPJ';
-        $data['pengajuan'] = Pengajuan::where('status_approve', 'lpj-admin')->get();
+        $data['title'] = 'Laporan Pertanggungjawaban (LPJ)';
+        $codeArea = auth()->user()->code_area;
+        $query = Pengajuan::where('status_approve', 'lpj-admin');
+        if (!empty($codeArea)) {
+            $query->where('code_area', $codeArea);
+        }
+        $data['pengajuan'] = $query->latest('id')->get();
         return view('admin.lpj.index', $data);
     }
 
@@ -122,7 +127,7 @@ class LpjController extends Controller
                 'pengajuan_detail_id' => 'required|exists:pengajuan_details,id',
                 'tanggal_perolehan'   => 'required|date',
                 'harga_pembelian'     => 'required|numeric|min:0',
-                'keterangan_lpj'      => 'required|string',
+                'keterangan_lpj'      => 'nullable|string',
                 'struk_pembelian'     => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
             ];
 
@@ -160,17 +165,20 @@ class LpjController extends Controller
 
     public function upload_bukti_pengembalian(Request $request, $id)
     {
-        $validator = Validator::make($request->all(), [
+        $lpj = Pengajuan::findOrFail($id);
+
+        $rules = [
             'nominal_pengembalian' => 'required|numeric|min:1',
-            'bukti_pengembalian'   => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
             'keterangan_lpj'       => 'nullable|string|max:255',
-        ]);
+            'bukti_pengembalian'   => $lpj->bukti_pengembalian ? 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048' : 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
+        ];
+
+        $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        $lpj = Pengajuan::findOrFail($id);
         $lpj->nominal_pengembalian = $request->nominal_pengembalian;
         $lpj->keterangan_lpj = $request->keterangan_lpj;
 
@@ -182,7 +190,7 @@ class LpjController extends Controller
         }
 
         $lpj->update();
-        return redirect()->back()->with('success', 'Bukti pengembalian berhasil diunggah');
+        return redirect()->back()->with('success', 'Bukti pengembalian berhasil disimpan');
     }
 
     public function upload_bukti_pembelian_kurang(Request $request, $id)

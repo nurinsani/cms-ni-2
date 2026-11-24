@@ -272,9 +272,9 @@
 {{-- end menu LPJ --}}
 
 <li
-    class="nav-item has-treeview {{ request()->is('akunting/param-peralatan*') || request()->is('akunting/jenis-peralatan*') ? 'menu-open' : '' }}">
+    class="nav-item has-treeview {{ request()->is('akunting/param-peralatan*') || request()->is('akunting/jenis-peralatan*') || request()->is('akunting/param-jabatan*') ? 'menu-open' : '' }}">
     <a href="#"
-        class="nav-link {{ request()->is('akunting/param-peralatan*') || request()->is('akunting/jenis-peralatan*') ? 'active' : '' }}">
+        class="nav-link {{ request()->is('akunting/param-peralatan*') || request()->is('akunting/jenis-peralatan*') || request()->is('akunting/param-jabatan*') ? 'active' : '' }}">
         <i class="nav-icon fas fa-tools"></i>
         <p>
             Master Data
@@ -296,6 +296,14 @@
                 class="nav-link {{ request()->is('akunting/jenis-peralatan*') ? 'active' : '' }}">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Jenis Peralatan</p>
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a href="{{ url('akunting/param-jabatan') }}"
+                class="nav-link {{ request()->is('akunting/param-jabatan*') ? 'active' : '' }}">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Parameter Jabatan</p>
             </a>
         </li>
     </ul>

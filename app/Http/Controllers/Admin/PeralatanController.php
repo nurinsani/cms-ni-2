@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Exports\PeralatanExport;
 use Illuminate\Http\Request;
 use App\Models\Admin\Pengajuan;
 use App\Models\Admin\Peralatan;
@@ -10,7 +9,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
-use Maatwebsite\Excel\Facades\Excel;
 
 class PeralatanController extends Controller
 {
@@ -25,7 +23,7 @@ class PeralatanController extends Controller
     public function index()
     {
         $data['title'] = 'Daftar Peralatan';
-        $data['daftar_peralatan'] = Peralatan::all();
+        $data['daftar_peralatan'] = Peralatan::with('ap')->latest()->get();
         return view('admin.peralatan.index', $data);
     }
 
@@ -103,10 +101,5 @@ class PeralatanController extends Controller
             Log::error($th->getMessage());
             return redirect()->back()->with('error', 'Data gagal dihapus');
         }
-    }
-
-    public function excel()
-    {
-        return Excel::download(new PeralatanExport, 'peralatan.xlsx');
     }
 }
