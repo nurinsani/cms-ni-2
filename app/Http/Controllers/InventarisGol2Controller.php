@@ -222,7 +222,7 @@ class InventarisGol2Controller extends Controller
         $value = $request->value;
 
         // Field yang boleh diubah via inline edit
-        $allowedFields = ['pengguna', 'jabatan'];
+        $allowedFields = ['pengguna', 'jabatan', 'nip'];
 
         if (!in_array($field, $allowedFields)) {
             return response()->json(['success' => false]);
@@ -234,6 +234,10 @@ class InventarisGol2Controller extends Controller
         }
 
         // SIMPAN NILAI LAMA
+        if ($field === 'nip') {
+            $inventaris->old_nip = $inventaris->nip;
+        }
+
         if ($field === 'pengguna') {
             $inventaris->old_pengguna = $inventaris->pengguna;
         }
