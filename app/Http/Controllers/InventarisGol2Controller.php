@@ -16,9 +16,18 @@ class InventarisGol2Controller extends Controller
     public function index(Request $request)
     {
         $title = 'Inventaris Gol 2';
+        $user = auth()->user();
 
-        // Menarik hanya branches dengan status_aktif = 'aktif'
-        $branches = Branch::where('status_aktif', 'aktif')->get();
+        $branchQuery = Branch::where('status_aktif', 'aktif');
+
+        // Jika user adalah admin cabang (bukan kantor pusat 1010)
+        if ($user && $user->hasRole('admin') && !empty($user->code_area) && $user->code_area != 1010) {
+            $branchQuery->where('code_area', $user->code_area);
+        } elseif ($user && $user->hasRole('admin-head') && !empty($user->code_region)) {
+            $branchQuery->where('code_region', $user->code_region);
+        }
+
+        $branches = $branchQuery->get();
 
         $regions = [];
         $area = [];
@@ -33,18 +42,15 @@ class InventarisGol2Controller extends Controller
             }
         }
 
-
         sort($regions);
         sort($area);
 
-        // dd($area);
-
-        return view('inventaris_gol_2.index', compact('regions', 'area', 'title'));
+        return view('inventaris_gol_2.index', compact('regions', 'area', 'title', 'branches'));
     }
 
     public function fetchData(Request $request)
     {
-        $currentYear = $request->input('tahun') ? (int)$request->input('tahun') : 2026;
+        $currentYear = $request->input('tahun') ? (int)$request->input('tahun') : (int)date('Y');
         $selectedMonth = $request->input('bulan');
         $selectedBranch = $request->input('kode_branch');
         $area = $request->input('area');
@@ -55,6 +61,16 @@ class InventarisGol2Controller extends Controller
                 $q->whereNull('status')
                   ->orWhere('status', '!=', 'hapus_buku');
             });
+
+        // Filter otomatis sesuai wilayah kewenangan role pengguna
+        $user = auth()->user();
+        if ($user && $user->hasRole('admin') && !empty($user->code_area) && $user->code_area != 1010) {
+            $adminBranchCodes = Branch::where('code_area', $user->code_area)->pluck('kode_branch');
+            $query->whereIn('kode_branch', $adminBranchCodes);
+        } elseif ($user && $user->hasRole('admin-head') && !empty($user->code_region)) {
+            $ahBranchCodes = Branch::where('code_region', $user->code_region)->pluck('kode_branch');
+            $query->whereIn('kode_branch', $ahBranchCodes);
+        }
 
         if ($selectedMonth) {
             $cutoffDate = Carbon::createFromDate($currentYear, (int)$selectedMonth, 1)->endOfMonth()->toDateString();
@@ -75,42 +91,28 @@ class InventarisGol2Controller extends Controller
         $branches = [];
     
         if ($selectedBranch) {
-            $branch = Branch::where('area', $area)
-                ->where('kode_branch', $selectedBranch)
-                ->pluck('kode_branch');
-    
-            $query->whereIn('kode_branch', $branch);
+            $query->where('kode_branch', $selectedBranch);
         } elseif ($area) {
-            $branch = Branch::where('area', $area)
-                ->pluck('kode_branch');
+            $branchCodes = Branch::where('area', $area)->pluck('kode_branch');
+            $query->whereIn('kode_branch', $branchCodes);
     
-            $query->whereIn('kode_branch', $branch);
-    
-            $branch = Branch::where('area', $area)
-                ->get();
-    
-            foreach ($branch as $row) {
+            $branchesList = Branch::where('area', $area)->get();
+            foreach ($branchesList as $row) {
                 if (!in_array($row->kode_branch, $branches) && strlen($row->kode_branch) > 0) {
                     $branches[] = $row->kode_branch;
                 }
             }
-    
             sort($branches);
         } elseif ($region) {
-            $branch = Branch::where('region', $region)
-                ->pluck('kode_branch');
+            $branchCodes = Branch::where('region', $region)->pluck('kode_branch');
+            $query->whereIn('kode_branch', $branchCodes);
     
-            $query->whereIn('kode_branch', $branch);
-    
-            $branch = Branch::where('region', $region)
-                ->get();
-    
-            foreach ($branch as $row) {
+            $branchesList = Branch::where('region', $region)->get();
+            foreach ($branchesList as $row) {
                 if (!in_array($row->area, $areas) && strlen($row->area) > 0) {
                     $areas[] = $row->area;
                 }
             }
-    
             sort($areas);
         }
     

@@ -10,6 +10,7 @@
         }
 
         function fetchData() {
+            $('#loading-overlay').css('display', 'flex').fadeIn(150);
             $.ajax({
                 url: '{{ route('inventaris.fetchData') }}',
                 method: 'GET',
@@ -77,7 +78,11 @@
                     var totalPenyusutanKe = 0;
                     var totalPengguna = 0;
 
-                    var selectedYear = $('#tahun').val() || response.selectedYear || '2026';
+                    var selectedYear = $('#tahun').val() || response.selectedYear || new Date().getFullYear();
+
+                    // Update badge tahun
+                    $('#selected-year-badge').text('Tahun ' + selectedYear);
+
                     var rowsToDraw = [];
 
                     // Populate table rows
@@ -196,29 +201,32 @@
                     $('#total-penyusutan-ke').text(formatRupiah(
                         totalPenyusutanKe)); // Rupiah format for total penyusutan_ke
                     $('#total-pengguna').text(totalPengguna); // Rupiah format for total pengguna
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error fetching data:', error);
+                },
+                complete: function() {
+                    $('#loading-overlay').fadeOut(200);
                 }
             });
         }
 
-        // Initialize DataTable
-        $('#inventaris-table').DataTable({
-            "paging": true,
-            "lengthChange": true,
-            "searching": true,
-            "ordering": false,
-            "info": false,
-            "autoWidth": false,
-            "responsive": false,
-            "scrollX": false, // Enable horizontal scroll
-            "fixedColumns": false, // Enable fixed columns if needed
-            "columnDefs": [{
-                "width": "200px",
-                "targets": '_all'
-            }], // Adjust the width as needed
-            dom: 'Bfrtip', // This is required to show buttons on the top of the table
+        // Initialize DataTable with Bootstrap 4 styling
+        var table = $('#inventaris-table').DataTable({
+            paging: true,
+            lengthChange: true,
+            searching: true,
+            ordering: false,
+            info: true,
+            autoWidth: false,
+            responsive: false,
+            pageLength: 25,
+            destroy: true,
             buttons: [
                 {
                     extend: 'csv',
+                    className: 'btn btn-sm btn-info',
+                    text: '<i class="fas fa-file-csv mr-1"></i> CSV',
                     exportOptions: {
                         format: {
                             body: function (data, row, column, node) {
@@ -229,6 +237,8 @@
                 },
                 {
                     extend: 'excel',
+                    className: 'btn btn-sm btn-success',
+                    text: '<i class="fas fa-file-excel mr-1"></i> Excel',
                     footer: true, // Untuk menampilkan footer (di mana total akan ditambahkan)
                     exportOptions: {
                         format: {
@@ -258,6 +268,8 @@
                 },
                 {
                     extend: 'pdf',
+                    className: 'btn btn-sm btn-danger',
+                    text: '<i class="fas fa-file-pdf mr-1"></i> PDF',
                     exportOptions: {
                         format: {
                             body: function (data, row, column, node) {
@@ -266,42 +278,42 @@
                         }
                     }
                 },
-                'print'
+                {
+                    extend: 'print',
+                    className: 'btn btn-sm btn-secondary',
+                    text: '<i class="fas fa-print mr-1"></i> Print'
+                }
             ]
         });
+
+        table.buttons().container().appendTo('#inventaris-table_wrapper .col-md-6:eq(0)');
 
         // Initial fetch
         fetchData();
 
         // Fetch data when the selected branch changes
-        $('#region').change(function() {
-            $('#kode_branch').html('');
-            $('#area').html('');
-
-            $('#area').val('');
-            $('#kode_branch').val('');
+        $(document).on('change', '#region', function() {
+            $('#kode_branch').html('').val('');
+            $('#area').html('').val('');
             fetchData();
         });
         
-        $('#area').change(function() {
-            $('#kode_branch').html('');
-
-            $('#kode_branch').val('');
+        $(document).on('change', '#area', function() {
+            $('#kode_branch').html('').val('');
             fetchData();
         });
 
-        $('#kode_branch').change(function() {
+        $(document).on('change', '#kode_branch', function() {
             fetchData();
         });
-
 
         // Trigger fetchData ketika filter tahun berubah
-        $('#tahun').on('change', function() {
+        $(document).on('change', '#tahun', function() {
             fetchData();
         });
 
         // Trigger fetchData ketika filter bulan berubah
-        $('#bulan').on('change', function() {
+        $(document).on('change', '#bulan', function() {
             fetchData();
         });
 

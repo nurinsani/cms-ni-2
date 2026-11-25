@@ -106,7 +106,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         Route::get('admin-menu', [AdminController::class, 'menu_admin']);
         Route::get('export-pdf-peralatan/{id}', [PengajuanController::class, 'pdf'])->name('peralatan.pdf');
-        Route::get('inventaris', [AdminController::class, 'inventaris']);
 
         Route::get('penganjuan-bdd-sewa', [PengajuanBddController::class, 'pengajuan_sewa'])->name('pengajuan-bdd-sewa');
         Route::post('penganjuan-bdd-sewa', [PengajuanBddController::class, 'store_sewa'])->name('pengajuan-bdd.store-sewa');
