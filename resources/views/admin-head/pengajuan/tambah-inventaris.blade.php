@@ -39,16 +39,16 @@
                 <table class="table table-hover table-striped table-bordered mb-0">
                     <thead class="bg-light">
                         <tr>
-                            <th class="text-center" style="width: 45px;">No</th>
-                            <th>Jenis Inventaris</th>
-                            <th>Lokasi (AP / Cabang)</th>
-                            <th>Merk & Tipe</th>
-                            <th>Toko & No. Telp</th>
-                            <th>Pengguna</th>
-                            <th class="text-center" style="width: 70px;">Qty</th>
-                            <th class="text-right">Harga Satuan</th>
-                            <th class="text-right">Subtotal</th>
-                            <th class="text-center" style="width: 80px;">Aksi</th>
+                            <th class="text-center" style="width: 45px;">NO</th>
+                            <th>JENIS INVENTARIS</th>
+                            <th>LOKASI (AP / CABANG)</th>
+                            <th>MERK & TIPE</th>
+                            <th>TOKO & NO. TELP</th>
+                            <th>PENGGUNA & JABATAN</th>
+                            <th class="text-center" style="width: 70px;">QTY</th>
+                            <th class="text-right">HARGA SATUAN</th>
+                            <th class="text-right">SUBTOTAL</th>
+                            <th class="text-center" style="width: 80px;">AKSI</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -76,10 +76,15 @@
                                         <br><small class="text-muted"><i class="fas fa-phone-alt mr-1"></i>{{ $item->no_telp }}</small>
                                     @endif
                                 </td>
-                                <td class="align-middle">{{ $item->pengguna }}</td>
+                                <td class="align-middle">
+                                    <div class="font-weight-bold">{{ $item->pengguna ?? '-' }}</div>
+                                    @if ($item->kode_user)
+                                        <small class="text-muted"><i class="fas fa-briefcase mr-1"></i>{{ $item->jabatan?->nama_jabatan ?? $item->kode_user }}</small>
+                                    @endif
+                                </td>
                                 <td class="text-center align-middle font-weight-bold">{{ $item->kuantitas }}</td>
                                 <td class="text-right align-middle">Rp {{ number_format($item->harga, 0, ',', '.') }}</td>
-                                <td class="text-right align-middle font-weight-bold text-primary">Rp {{ number_format($subtotal, 0, ',', '.') }}</td>
+                                <td class="text-right align-middle font-weight-bold">Rp {{ number_format($subtotal, 0, ',', '.') }}</td>
                                 <td class="text-center align-middle">
                                     <a href="{{ url('admin-head/temp-pengajuan/' . $item->id) }}"
                                         class="btn btn-sm btn-outline-danger"
@@ -103,7 +108,7 @@
                         <tfoot class="bg-light">
                             <tr>
                                 <th colspan="8" class="text-right">Total Estimasi Pengajuan:</th>
-                                <th class="text-right text-success h6 font-weight-bold mb-0">
+                                <th class="text-right font-weight-bold">
                                     Rp {{ number_format($grandTotal, 0, ',', '.') }}
                                 </th>
                                 <th></th>
@@ -265,15 +270,36 @@
 
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <label for="moa">Upload Berkas MOA <span class="text-danger">*</span></label>
-                                    <input type="file" name="moa" id="moa" class="form-control-file border rounded p-1 bg-light" accept=".pdf,.jpg,.jpeg,.png" required>
-                                    <small class="text-muted">Format: PDF/JPG/PNG (Maks. 2MB)</small>
+                                    <label for="kode_user">Jabatan / Posisi Pembebanan <span class="text-danger">*</span></label>
+                                    <select name="kode_user" id="kode_user" class="form-control select2-modal" required>
+                                        <option value="">-- Pilih Jabatan / Posisi --</option>
+                                        @if (isset($param_jabatan) && $param_jabatan->isNotEmpty())
+                                            @php
+                                                $groupedJabatan = $param_jabatan->groupBy('kategori');
+                                            @endphp
+                                            @foreach ($groupedJabatan as $kategori => $items)
+                                                <optgroup label="{{ $kategori ?: 'Lainnya' }}">
+                                                    @foreach ($items as $jbt)
+                                                        <option value="{{ $jbt->kode_pembebanan }}">{{ $jbt->nama_jabatan }}</option>
+                                                    @endforeach
+                                                </optgroup>
+                                            @endforeach
+                                        @endif
+                                    </select>
                                 </div>
                             </div>
                         </div>
 
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="moa">Upload Berkas MOA <span class="text-danger">*</span></label>
+                                    <input type="file" name="moa" id="moa" class="form-control-file border rounded p-1 bg-light" accept=".pdf,.jpg,.jpeg,.png" required>
+                                    <small class="text-muted">Format: PDF/JPG/PNG (Maks. 2MB)</small>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
                                 <div class="form-group mb-0">
                                     <label for="rekening_id">Rekening Tujuan Transfer <span class="text-muted font-weight-normal">(Opsional)</span></label>
                                     <select name="rekening_id" id="rekening_id" class="form-control select2-modal" style="width: 100%;">
@@ -282,11 +308,11 @@
                                             <option value="{{ $item->id }}">{{ $item->no_rek }} - {{ $item->nama_bank }} (a.n. {{ $item->atas_nama }})</option>
                                         @endforeach
                                     </select>
-                                    <small class="text-muted">*Pilih jika ingin menggunakan rekening tujuan lain. Kosongkan untuk menggunakan rekening Anda.</small>
+                                    <small class="text-muted">*Pilih jika ingin menggunakan rekening tujuan lain.</small>
                                 </div>
                             </div>
 
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <div class="form-group mb-0">
                                     <label for="keterangan">Keterangan / Keperluan <span class="text-danger">*</span></label>
                                     <textarea name="keterangan" id="keterangan" class="form-control" rows="2" placeholder="Contoh: Pembelian laptop operasional staf Admin Head" required>{{ old('keterangan') }}</textarea>

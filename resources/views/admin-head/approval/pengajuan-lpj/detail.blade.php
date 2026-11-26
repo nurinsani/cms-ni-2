@@ -1,17 +1,18 @@
 @extends('layouts.main')
 
 @section('head-content')
-    <div class="row mb-2">
+    <div class="row mb-2 align-items-center d-print-none">
         <div class="col-sm-6">
-            <h1 class="m-0">{{ $title }}</h1>
-        </div><!-- /.col -->
+            <h1 class="m-0 font-weight-bold">{{ $title }}</h1>
+        </div>
         <div class="col-sm-6">
-            <ol class="breadcrumb float-sm-right">
-                <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
+            <ol class="breadcrumb float-sm-right bg-transparent p-0 m-0">
+                <li class="breadcrumb-item"><a href="{{ route('admin-head.dashboard') }}">Home</a></li>
+                <li class="breadcrumb-item"><a href="{{ url('admin-head/approval-lpj') }}">Approval LPJ</a></li>
                 <li class="breadcrumb-item active">{{ $title }}</li>
             </ol>
-        </div><!-- /.col -->
-    </div><!-- /.row -->
+        </div>
+    </div>
 @endsection
 
 @section('content')
@@ -19,11 +20,11 @@
         <style>
             @media print {
                 .d-print-none {
-                    display: none;
+                    display: none !important;
                 }
 
                 .d-print-flex {
-                    display: flex;
+                    display: flex !important;
                 }
 
                 .main-footer {
@@ -31,175 +32,168 @@
                 }
 
                 @page {
-                    margin-left: 0.5in;
-                    margin-right: 0.5in;
-                    margin-top: 0;
-                    margin-bottom: 0;
+                    margin: 0.4in;
                 }
             }
         </style>
     @endpush
 
-    <div class="row row-cols-1">
-        <div class="col">
-            <div class="card">
-                <div class="card-header mt-5 d-print-flex justify-content-between d-none">
-                    <img src="https://picsum.photos/200" width="150px" alt="">
-                    <div class="text-center">
-                        <h4>LAPORAN PERTANGGUNGJAWABAN PEMBELIAN</h4>
-                        <h4>WILAYAH JATUT</h4>
-                        <h4>PERIODE AGUSTUS 2023</h4>
-                        <h4>TANGGAL 25-8-2023</h4>
-                    </div>
-                    <div class=""></div>
+    <div class="card card-outline card-primary shadow-sm">
+        {{-- Header Layar --}}
+        <div class="card-header d-print-none">
+            <div class="d-flex justify-content-between align-items-center flex-wrap">
+                <div>
+                    <a href="{{ url('admin-head/approval-lpj') }}" class="btn btn-sm btn-secondary mr-2">
+                        <i class="fas fa-arrow-left mr-1"></i> Kembali
+                    </a>
                 </div>
-                <div class="card-body">
-                    <a href="{{ url('admin-head/approval-lpj') }}" class="btn btn-sm btn-primary mb-3">
-                        <i class="fas fa-arrow-left"></i> Kembali</a>
-                    <ul class="p-0" style="list-style: none">
-                        <li>Nomor : {{ $lpj->nomor }}</li>
-                        <li>Kepada : Ketua dan Pengurus KSPPS Nur Insani</li>
-                        <li>Dari : {{ $lpj->user->name }}</li>
-                        <li>Tanggal : {{ $lpj->tanggal_pengajuan->format('d-M-Y'); }}</li>
-                        <li>Cabang : {{ $lpj->ap->unit ?? $lpj->area->area}}</li>
-                    </ul>
+                <div class="d-flex align-items-center">
+                    @if ($lpj->status_approve == 'lpj-admin-head')
+                        <button type="button" onclick="approve('#approve{{ $lpj->id }}')" class="btn btn-sm btn-success mr-2">
+                            <i class="fas fa-check mr-1"></i> Approve LPJ
+                        </button>
+                        <form class="d-inline" id="approve{{ $lpj->id }}" action="{{ url('admin-head/approval-lpj/approve', $lpj->id) }}" method="post">
+                            @csrf
+                        </form>
 
-                    <div class="table-responsive">
-                        {{-- @foreach ($lpj->pengajuan_details as $item)
-                        @endforeach
-                        @if ($item->kode_area == TRUE)
-                        <table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th scope="col">No</th>
-                                    <th scope="col">COA</th>
-                                    <th scope="col">Nama jenis Peralatan</th>
-                                    <th scope="col">Merk/Type</th>
-                                    <th scope="col">Pengajuan</th>
-                                        @foreach ($lpj->pengajuan_details as $item)
-                                        @endforeach
-                                        @php
-                                            $branch = App\Models\Branch::where('code_area', $item->kode_area)->get();
-                                        @endphp
-                                        @foreach ($branch as $b)
-                                        <th>
-                                            {{ Str::ucfirst($b->unit) }}
-                                        </th>
-                                        @endforeach
-                                    <th scope="col">Harga Pembelian</th>
-                                    <th>Struk pembelian</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($lpj->pengajuan_details as $item)
-                                    <tr>
-                                        <td>{{ $loop->iteration }}</td>
-                                        
-                                        <td>{{ $item->jenis_peralatan->param_peralatan->coa }}</td>
-                                        <td>{{ $item->jenis_peralatan->nama_jenis }}</td>
-                                        <td>{{ $item->merk }}</td>
-                                        <td>Rp. {{ number_format($item->harga * $item->kuantitas) }}</td>
-                                            @foreach ($item->avarage() as $a)
-                                            <td class="branch_unit" harga='{{ $a->harga }}' unit='{{ $a->unit }}'>
-                                                Rp. {{ number_format($a->harga) }}
-                                            </td>
-                                            @endforeach
-                                        <td>
-                                            {{ number_format(($item->harga_pembelian / $branch->count()) * $branch->count()) }}
-                                        </td>
-                                        <td><a href="" onclick="window.open('{{ url('images/lpj/struk_pembelian/'.$item->struk_pembelian) }}')">{{ $item->struk_pembelian }}</a></td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                            <tfoot>
-                                <tr>
-                                    <td colspan="4"><strong>Jumlah</strong></td>
-                                    <td colspan="1"><strong>Rp. {{ number_format($lpj->subtotal()) }}</strong</td>
-                                    @foreach ($lpj->pengajuan_details as $item)
-                                    @endforeach
+                        <button type="button" onclick="tolak('#tolak{{ $lpj->id }}')" class="btn btn-sm btn-danger mr-2">
+                            <i class="fas fa-times mr-1"></i> Tolak LPJ
+                        </button>
+                        <form class="d-inline" id="tolak{{ $lpj->id }}" action="{{ url('admin-head/approval-lpj/tolak', $lpj->id) }}" method="post">
+                            @csrf
+                        </form>
+                    @endif
 
-                                    @foreach ($item->avarage() as $a)
-                                    <td>
-                                        <strong id="hasil_{{ $a->unit }}">0</strong>
-                                    </td>
-                                    @endforeach
-                                    <td colspan="1"><strong>Rp. {{ number_format($lpj->total_pembelian()) }}</strong></td>
-                                </tr>
-                                @if ($lpj->total_pembelian() > $lpj->subtotal())
-                                    <tr>
-                                        <td colspan="4" class="text-danger"><strong>Kekurangan</strong></td>
-                                        <td colspan="2" class="text-danger"><strong>Rp. {{ number_format($lpj->total_pembelian() - $lpj->subtotal())}}</strong></td> 
-                                    </tr>
-                                @else
-                                    <tr>
-                                        <td colspan="4"><strong>Sisa/Pengembalian</strong></td>
-                                        <td colspan="2"><strong>Rp. {{ number_format($lpj->subtotal() - $lpj->total_pembelian())}}</strong></td> 
-                                    </tr>
-                                @endif
-                            </tfoot>
-                        </table>
-                        @endif --}}
-                        
-                        {{-- @if ($item->kode_branch == TRUE) --}}
-                        <table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th scope="col">No</th>
-                                    <th scope="col">AP</th>
-                                    <th scope="col">COA</th>
-                                    <th scope="col">Nama jenis Peralatan</th>
-                                    <th scope="col">Merk/Type</th>
-                                    <th scope="col">Pengajuan</th>
-                                    <th scope="col">Harga Pembelian</th>
-                                    <th>Struk Pembelian</th>
-                                    <th>Bukti Pengembalian</th>
-
-                                    {{-- <th scope="col">Aksi</th> --}}
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($lpj->pengajuan_details as $item)
-                                    <tr>
-                                        <td>{{ $loop->iteration }}</td>
-                                        <td>{{ $item->ap->unit ?? $item->area->area}}</td>
-                                        <td>{{ $item->jenis_peralatan->param_peralatan->coa }}</td>
-                                        <td>{{ $item->jenis_peralatan->nama_jenis }}</td>
-                                        <td>{{ $item->merk }} {{ $item->type }}</td>
-                                        <td>Rp. {{ number_format($item->harga * $item->kuantitas) }}</td>
-                                        <td>Rp. {{ number_format($item->harga_pembelian) }}</td>
-                                        <td><a href="" onclick="window.open('{{ url('images/lpj/struk_pembelian/'.$item->struk_pembelian) }}')">{{ $item->struk_pembelian }}</a></td>
-                                        <td><a href="" onclick="window.open('{{ url('images/lpj/bukti_pengembalian/'.$lpj->bukti_pengembalian) }}')">{{ $lpj->bukti_pengembalian }}</a></td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                            <tfoot>
-                                <tr>
-                                    <td colspan="6"><strong>Total Uang Muka</strong></td>
-                                    <td colspan="3"><strong>Rp. {{ number_format($lpj->subtotal()) }}</strong></td>
-                                </tr>
-                                <tr>
-                                    <td colspan="6"><strong>Total Pembelian</strong></td>
-                                    <td colspan="3"><strong>Rp. {{ number_format($lpj->total_pembelian()) }}</strong></td> 
-                                </tr>
-                                @if ($lpj->total_pembelian() > $lpj->subtotal())
-                                    <tr>
-                                        <td colspan="6" class="text-danger"><strong>Kekurangan</strong></td>
-                                        <td colspan="3" class="text-danger"><strong>Rp. {{ number_format($lpj->total_pembelian() - $lpj->subtotal())}}</strong></td> 
-                                    </tr>
-                                @else
-                                    <tr>
-                                        <td colspan="6"><strong>Sisa/Pengembalian</strong></td>
-                                        <td colspan="3"><strong>Rp. {{ number_format($lpj->subtotal() - $lpj->total_pembelian())}}</strong></td> 
-                                    </tr>
-                                @endif
-                            </tfoot>    
-                        </table>
-                        {{-- @endif --}}
-                        
-                    </div>
-
+                    <button type="button" onclick="window.print()" class="btn btn-sm btn-outline-primary">
+                        <i class="fas fa-print mr-1"></i> Cetak
+                    </button>
                 </div>
-                <!-- /.card-body -->
+            </div>
+        </div>
+
+        <div class="card-body">
+            {{-- Info Metadata --}}
+            <div class="row mb-3 p-3 bg-light rounded border mx-0">
+                <div class="col-md-6">
+                    <table class="table table-sm table-borderless mb-0">
+                        <tr>
+                            <td style="width: 140px;" class="text-muted font-weight-bold">Nomor Pengajuan</td>
+                            <td style="width: 15px;">:</td>
+                            <td class="font-weight-bold">{{ $lpj->nomor }}</td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted font-weight-bold">Cabang / Area</td>
+                            <td>:</td>
+                            <td>{{ $lpj->ap?->unit ?? ($lpj->area?->area ?? '-') }}</td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted font-weight-bold">Kepada</td>
+                            <td>:</td>
+                            <td>Ketua dan Pengurus KSPPS Nur Insani</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="col-md-6">
+                    <table class="table table-sm table-borderless mb-0">
+                        <tr>
+                            <td style="width: 140px;" class="text-muted font-weight-bold">Dari (Pemohon)</td>
+                            <td style="width: 15px;">:</td>
+                            <td>{{ $lpj->user?->name ?? '-' }}</td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted font-weight-bold">Tanggal Pengajuan</td>
+                            <td>:</td>
+                            <td>{{ $lpj->tanggal_pengajuan ? $lpj->tanggal_pengajuan->format('d-M-Y') : '-' }}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            {{-- Tabel Rincian LPJ --}}
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped table-hover mb-0">
+                    <thead class="bg-light">
+                        <tr>
+                            <th class="text-center align-middle" style="width: 45px;">NO</th>
+                            <th class="align-middle">UNIT / AP</th>
+                            <th class="align-middle">COA</th>
+                            <th class="align-middle">JENIS PERALATAN</th>
+                            <th class="align-middle">MERK / TIPE</th>
+                            <th class="text-right align-middle" style="width: 130px;">ESTIMASI UM</th>
+                            <th class="text-right align-middle" style="width: 140px;">REALISASI BELI</th>
+                            <th class="text-center align-middle" style="width: 110px;">STRUK BELI</th>
+                            <th class="text-center align-middle" style="width: 130px;">BUKTI PENGEMBALIAN</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($lpj->pengajuan_details as $item)
+                            <tr>
+                                <td class="text-center align-middle">{{ $loop->iteration }}</td>
+                                <td class="align-middle"><strong>{{ $item->ap?->unit ?? ($item->area?->area ?? '-') }}</strong></td>
+                                <td class="align-middle">
+                                    <span class="badge badge-light border text-muted">
+                                        {{ $item->jenis_peralatan?->param_peralatan?->coa ?? '-' }}
+                                    </span>
+                                </td>
+                                <td class="align-middle font-weight-bold">{{ $item->jenis_peralatan?->nama_jenis ?? '-' }}</td>
+                                <td class="align-middle">{{ $item->merk }} {{ $item->type }}</td>
+                                <td class="text-right align-middle">Rp {{ number_format($item->harga * $item->kuantitas, 0, ',', '.') }}</td>
+                                <td class="text-right align-middle font-weight-bold">Rp {{ number_format($item->harga_pembelian, 0, ',', '.') }}</td>
+                                <td class="align-middle text-center">
+                                    @if (empty($item->struk_pembelian))
+                                        <span class="text-muted small"><i>(Tidak ada struk)</i></span>
+                                    @else
+                                        <a href="{{ url('images/lpj/struk_pembelian/' . $item->struk_pembelian) }}" target="_blank" class="btn btn-xs btn-outline-info">
+                                            <i class="fas fa-receipt mr-1"></i> Lihat Struk
+                                        </a>
+                                    @endif
+                                </td>
+                                <td class="align-middle text-center">
+                                    @if (empty($lpj->bukti_pengembalian))
+                                        <span class="text-muted small"><i>-</i></span>
+                                    @else
+                                        <a href="{{ url('images/lpj/bukti_pengembalian/' . $lpj->bukti_pengembalian) }}" target="_blank" class="btn btn-xs btn-outline-secondary">
+                                            <i class="fas fa-file-invoice mr-1"></i> Bukti Sisa
+                                        </a>
+                                    @endif
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="9" class="text-center text-muted py-3">Tidak ada rincian item LPJ.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                    <tfoot class="bg-light">
+                        <tr>
+                            <td colspan="5" class="text-right font-weight-bold">Total Estimasi Uang Muka:</td>
+                            <td class="text-right font-weight-bold">Rp {{ number_format($lpj->subtotal(), 0, ',', '.') }}</td>
+                            <td colspan="3"></td>
+                        </tr>
+                        <tr>
+                            <td colspan="5" class="text-right font-weight-bold">Total Realisasi Pembelian:</td>
+                            <td class="text-right font-weight-bold">Rp {{ number_format($lpj->total_pembelian(), 0, ',', '.') }}</td>
+                            <td colspan="3"></td>
+                        </tr>
+                        @if ($lpj->total_pembelian() > $lpj->subtotal())
+                            <tr>
+                                <td colspan="5" class="text-right font-weight-bold">Kekurangan Dana:</td>
+                                <td class="text-right font-weight-bold">
+                                    Rp {{ number_format($lpj->total_pembelian() - $lpj->subtotal(), 0, ',', '.') }}
+                                </td>
+                                <td colspan="3"></td>
+                            </tr>
+                        @else
+                            <tr>
+                                <td colspan="5" class="text-right font-weight-bold">Sisa / Pengembalian Dana:</td>
+                                <td class="text-right font-weight-bold">
+                                    Rp {{ number_format($lpj->subtotal() - $lpj->total_pembelian(), 0, ',', '.') }}
+                                </td>
+                                <td colspan="3"></td>
+                            </tr>
+                        @endif
+                    </tfoot>
+                </table>
             </div>
         </div>
     </div>
@@ -207,21 +201,16 @@
 
 @push('js')
     <script>
-        function buat_lpj(pengajuan_detail_id) {
-            let modal = $('#modal_lpj').modal('show')
-            modal.find('#pengajuan_detail_id').val(pengajuan_detail_id)
+        function approve(form_id) {
+            if (confirm('Apakah Anda yakin ingin MENYETUJUI (Approve) LPJ ini?')) {
+                $(form_id).submit();
+            }
         }
 
-        var branch_unit = $('.branch_unit')
-        var harga_unit = []
-        $.each(branch_unit, function(index, value){
-            var kode_unit = $(value).attr('unit')
-            var harga = $(value).attr('harga')
-            
-            harga_unit['hasil_' + kode_unit] = harga
-            console.log(harga);
-        })
-
-        console.log(harga_unit);
+        function tolak(form_id) {
+            if (confirm('Apakah Anda yakin ingin MENOLAK LPJ ini?')) {
+                $(form_id).submit();
+            }
+        }
     </script>
 @endpush

@@ -59,7 +59,7 @@ use App\Http\Controllers\PenyusutanController;
 use App\Http\Controllers\PenyusutanGol2Controller;
 use App\Http\Controllers\PenyusutanUploadController;
 use App\Http\Controllers\StokOpnameController;
-use App\Http\Controllers\TransaksiController;
+
 
 // DaftarBdd::jurnal_bdd();
 // Inventaris::penyusutan();
@@ -223,6 +223,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('pengajuan/detail/{id}', [App\Http\Controllers\AdminHead\PengajuanAhController::class, 'detail']);
         Route::get('pengajuan/peralatan', [App\Http\Controllers\AdminHead\PengajuanAhController::class, 'pengajuan_peralatan']);
         Route::get('pengajuan/inventaris', [App\Http\Controllers\AdminHead\PengajuanAhController::class, 'pengajuan_inventaris']);
+        Route::get('pengajuan/{id}', [App\Http\Controllers\AdminHead\PengajuanAhController::class, 'detail'])->where('id', '[0-9]+');
 
         Route::post('temp-pengajuan', [TempPengajuanDetailController::class, 'store']);
         Route::get('temp-pengajuan/{id}', [TempPengajuanDetailController::class, 'hapus']);
@@ -245,7 +246,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('approval-mutasi', [App\Http\Controllers\AdminHead\ApprovalMutasiController::class, 'index']);
         Route::get('approval-mutasi/detail/{id}', [App\Http\Controllers\AdminHead\ApprovalMutasiController::class, 'show'])->name('mutasi.details');
         Route::post('approval-mutasi/approve/{id}', [App\Http\Controllers\AdminHead\ApprovalMutasiController::class, 'approve']);
-        Route::post('approval-mutasi/tolak/{id}', [App\Http\Controllers\AdminHead\ApprovalBddController::class, 'tolak']);
+        Route::post('approval-mutasi/tolak/{id}', [App\Http\Controllers\AdminHead\ApprovalMutasiController::class, 'tolak']);
 
         Route::get('approval-mutasi-gol-2', [ApprovalMutasiGol2Controller::class, 'index']);
         Route::get('approval-mutasi-gol-2/detail/{id}', [ApprovalMutasiGol2Controller::class, 'show']);
@@ -486,11 +487,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/get-inventaris-gol-2/{kodeBranch}', [PengajuanMutasiGol2Controller::class, 'getInventarisGol2']);
 
 
-    Route::get('koreksi-jurnal/ap', [TransaksiController::class, 'koreksi_jurnal_ap']);
-    Route::post('/koreksi-jurnal/ap/update/{id}', [TransaksiController::class, 'update_jurnal_ap']);
 
-    Route::get('koreksi-jurnal/kp', [TransaksiController::class, 'koreksi_jurnal_kp']);
-    Route::post('/koreksi-jurnal/kp/update/{id}', [TransaksiController::class, 'update_jurnal_kp']);
+
+
 
     Route::get('/akunting/stock-opname', [StokOpnameController::class, 'index']);
     Route::get('/kartu-stok-all', [StokOpnameController::class, 'cetakKartu']);

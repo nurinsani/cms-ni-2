@@ -9,6 +9,7 @@ use App\Models\Admin\TempPengajuanDetail;
 use App\Models\Akunting\JenisPeralatan;
 use App\Models\Akunting\ParamPeralatan;
 use App\Models\Branch;
+use App\Models\ParamJabatan;
 use App\Models\Rekening;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -18,11 +19,14 @@ class PengajuanAhController extends Controller
     public function index()
     {
         $data['title'] = 'Pengajuan Pembelian';
-        $data['pengajuan'] = Pengajuan::join('branch', 'branch.code_area', '=', 'pengajuans.code_area')
-        ->select(['pengajuans.*', 'branch.code_area'])
-        ->where('branch.code_region', auth()->user()->code_region)
-        ->distinct()
-        ->get();
+        $data['pengajuan'] = Pengajuan::with(['area', 'pengajuan_details.area', 'pengajuan_details.jenis_peralatan.param_peralatan'])
+            ->join('branch', 'branch.code_area', '=', 'pengajuans.code_area')
+            ->select(['pengajuans.*', 'branch.code_area'])
+            ->where('branch.code_region', auth()->user()->code_region)
+            ->distinct()
+            ->orderBy('pengajuans.tanggal_pengajuan', 'desc')
+            ->orderBy('pengajuans.id', 'desc')
+            ->get();
         // dd($data);
         return view('admin-head.pengajuan.index', $data);
     }
@@ -30,7 +34,7 @@ class PengajuanAhController extends Controller
     public function pengajuan_peralatan()
     {
         $data['title'] = 'Tambah Pengajuan Peralatan';
-        $data['temp_pengajuan'] = TempPengajuanDetail::with(['jenis_peralatan.param_peralatan', 'ap', 'area'])
+        $data['temp_pengajuan'] = TempPengajuanDetail::with(['jenis_peralatan.param_peralatan', 'ap', 'area', 'jabatan'])
             ->where(function ($q) {
                 $q->where('user_id', auth()->id())->orWhereNull('user_id');
             })
@@ -40,6 +44,10 @@ class PengajuanAhController extends Controller
         $data['param_peralatan'] = ParamPeralatan::whereHas('param_peralatan', function($query) {
             $query->where('group_inventaris', 'tidak');
         })->get();
+        $data['param_jabatan'] = ParamJabatan::aktif()
+            ->orderBy('kategori', 'asc')
+            ->orderBy('nama_jabatan', 'asc')
+            ->get();
         $codeRegion = auth()->user()->code_region;
 
         $branchQuery = Branch::whereNotNull('code_area')
@@ -66,7 +74,7 @@ class PengajuanAhController extends Controller
     public function pengajuan_inventaris()
     {
         $data['title'] = 'Tambah Pengajuan Inventaris';
-        $data['temp_pengajuan'] = TempPengajuanDetail::with(['jenis_peralatan.param_peralatan', 'ap', 'area'])
+        $data['temp_pengajuan'] = TempPengajuanDetail::with(['jenis_peralatan.param_peralatan', 'ap', 'area', 'jabatan'])
             ->where(function ($q) {
                 $q->where('user_id', auth()->id())->orWhereNull('user_id');
             })
@@ -76,6 +84,10 @@ class PengajuanAhController extends Controller
         $data['param_peralatan'] = ParamPeralatan::whereHas('param_peralatan', function($query) {
             $query->where('group_inventaris', 'ya');
         })->get();
+        $data['param_jabatan'] = ParamJabatan::aktif()
+            ->orderBy('kategori', 'asc')
+            ->orderBy('nama_jabatan', 'asc')
+            ->get();
 
         $codeRegion = auth()->user()->code_region;
 
@@ -102,8 +114,14 @@ class PengajuanAhController extends Controller
 
     public function store(Request $request)
     {
+        $temp_pengajuan = TempPengajuanDetail::all();
+        if ($temp_pengajuan->isEmpty()) {
+            return redirect()->back()->with('error', 'Item pengajuan masih kosong!');
+        }
+
         $pengajuan = Pengajuan::latest()->first();
-        $kode_branch = auth()->user()->code_area;
+        $targetArea = $temp_pengajuan->first()->kode_area ?? auth()->user()->code_area;
+        $kode_branch = $targetArea;
         $kode_tahun = date('Y');
         $kode_bulan = date('m');
         $kode_tanggal = date('d');
@@ -122,14 +140,12 @@ class PengajuanAhController extends Controller
         $data['nomor'] = $kode_branch.'/'.$kode_tanggal.$kode_bulan.$kode_tahun.'/'.$nomor_urut;
         $data['tanggal_pengajuan'] = Carbon::now(); 
         $data['user_id'] = auth()->user()->id;
-        $data['code_area'] = auth()->user()->code_area;
+        $data['code_area'] = $targetArea;
         $data['rekening_id'] = $request->rekening_id;
         $data['status_approve'] = 'akunting-it';
         $data['approval_1'] = auth()->user()->id;
 
-        
         $pengajuan = Pengajuan::create($data);
-        $temp_pengajuan = TempPengajuanDetail::all();
         
         foreach ($temp_pengajuan as $item) {
             $pengajuan_detail = New PengajuanDetail;
@@ -163,7 +179,14 @@ class PengajuanAhController extends Controller
     public function detail($id)
     {
         $data['title'] = 'Detail Pengajuan';
-        $data['pengajuan'] = Pengajuan::find($id);
+        $data['pengajuan'] = Pengajuan::with([
+            'pengajuan_details.jenis_peralatan.param_peralatan',
+            'pengajuan_details.ap',
+            'pengajuan_details.area',
+            'pengajuan_details.jabatan',
+            'pengajuan_details.rekening',
+            'user'
+        ])->findOrFail($id);
         return view('admin-head.pengajuan.detail', $data);
     }
 }

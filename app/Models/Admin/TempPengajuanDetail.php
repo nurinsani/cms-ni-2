@@ -28,4 +28,9 @@ class TempPengajuanDetail extends Model
     {
         return $this->belongsTo(Branch::class, 'kode_area', 'code_area');
     }
+
+    public function jabatan()
+    {
+        return $this->belongsTo(\App\Models\ParamJabatan::class, 'kode_user', 'kode_pembebanan');
+    }
 }

@@ -45,6 +45,11 @@ class PengajuanDetail extends Model
         return $this->belongsTo(Branch::class, 'kode_user', 'code_region');
     }
 
+    public function jabatan()
+    {
+        return $this->belongsTo(\App\Models\ParamJabatan::class, 'kode_user', 'kode_pembebanan');
+    }
+
     public function subtotal()
     {
         $subtotal = 0;

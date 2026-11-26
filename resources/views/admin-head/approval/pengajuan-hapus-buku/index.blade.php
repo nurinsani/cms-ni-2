@@ -15,25 +15,20 @@
 @endsection
 
 @section('content')
-    <div class="card">
-        <div class="card-header">
-            <h5 class="card-title font-weight-bold">
-                Data Pengajuan Hapus Buku Inventaris Gol 1
-            </h5>
-        </div>
+    <div class="card card-outline card-primary shadow-sm">
         <div class="card-body">
             <div class="table-responsive">
                 <table id="example1" class="table table-bordered table-hover text-nowrap">
                     <thead>
                         <tr>
-                            <th width="5%" class="text-center">No</th>
-                            <th>Kode Pengajuan</th>
-                            <th>KP/Cabang/AP</th>
-                            <th>Jenis Aktiva</th>
-                            <th>Bulan Hapus Buku</th>
-                            <th>Pengaju</th>
-                            <th class="text-center">Jml Barang</th>
-                            <th width="20%" class="text-center">Aksi</th>
+                            <th width="5%" class="text-center">NO</th>
+                            <th>KODE PENGAJUAN</th>
+                            <th>KP/CABANG/AP</th>
+                            <th>JENIS AKTIVA</th>
+                            <th>BULAN HAPUS BUKU</th>
+                            <th>PENGAJU</th>
+                            <th class="text-center">JUMLAH BARANG</th>
+                            <th width="20%" class="text-center">AKSI</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -43,25 +38,25 @@
                                 <td class="font-weight-bold">{{ $item->kode_pengajuan }}</td>
                                 <td>{{ $item->branch->unit ?? $item->kode_branch }}</td>
                                 <td><span class="badge badge-info">{{ $item->jenis_aktiva }}</span></td>
-                                <td>{{ $item->bulan_hapus_buku }}</td>
+                                <td>{{ strtoupper($item->bulan_hapus_buku) }}</td>
                                 <td>{{ $item->user->name ?? '-' }}</td>
                                 <td class="text-center font-weight-bold">{{ $item->details->count() }}</td>
                                 <td class="text-center">
                                     <a href="{{ route('admin-head.approval-hapus-buku.show', $item->id) }}"
-                                        class="btn btn-info btn-xs mr-1">
-                                        <i class="fas fa-eye"></i> Detail
+                                        class="btn btn-outline-info btn-sm mr-1">
+                                        <i class="fas fa-eye mr-1"></i> Detail
                                     </a>
 
                                     <!-- Tombol Modal Approve -->
-                                    <button type="button" class="btn btn-success btn-xs mr-1" data-toggle="modal"
+                                    <button type="button" class="btn btn-outline-success btn-sm mr-1" data-toggle="modal"
                                         data-target="#modalApprove{{ $item->id }}">
-                                        <i class="fas fa-check"></i> Approve
+                                        <i class="fas fa-check mr-1"></i> Approve
                                     </button>
 
                                     <!-- Tombol Modal Tolak -->
-                                    <button type="button" class="btn btn-danger btn-xs" data-toggle="modal"
+                                    <button type="button" class="btn btn-outline-danger btn-sm" data-toggle="modal"
                                         data-target="#modalTolak{{ $item->id }}">
-                                        <i class="fas fa-times"></i> Tolak
+                                        <i class="fas fa-times mr-1"></i> Tolak
                                     </button>
 
                                     <!-- Modal Approve -->
@@ -74,8 +69,7 @@
                                                     method="POST">
                                                     @csrf
                                                     <div class="modal-header bg-success text-white">
-                                                        <h5 class="modal-title font-weight-bold">Konfirmasi Persetujuan
-                                                            Admin Head</h5>
+                                                        <h5 class="modal-title font-weight-bold">Konfirmasi Persetujuan Admin Head</h5>
                                                         <button type="button" class="close text-white"
                                                             data-dismiss="modal" aria-label="Close">
                                                             <span aria-hidden="true">&times;</span>
@@ -111,8 +105,7 @@
                                                     method="POST">
                                                     @csrf
                                                     <div class="modal-header bg-danger text-white">
-                                                        <h5 class="modal-title font-weight-bold">Tolak Pengajuan Hapus Buku
-                                                        </h5>
+                                                        <h5 class="modal-title font-weight-bold">Tolak Pengajuan Hapus Buku</h5>
                                                         <button type="button" class="close text-white"
                                                             data-dismiss="modal" aria-label="Close">
                                                             <span aria-hidden="true">&times;</span>

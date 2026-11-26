@@ -146,7 +146,8 @@
         </li>
 
         <li class="nav-item">
-            <a href="{{ route('admin-head.approval-hapus-buku.index') }}" class="nav-link {{ request()->is('admin-head/approval-hapus-buku') || (request()->is('admin-head/approval-hapus-buku/*') && !request()->is('admin-head/approval-hapus-buku-gol-2*')) ? 'active' : '' }}">
+            <a href="{{ route('admin-head.approval-hapus-buku.index') }}"
+                class="nav-link {{ request()->is('admin-head/approval-hapus-buku') || (request()->is('admin-head/approval-hapus-buku/*') && !request()->is('admin-head/approval-hapus-buku-gol-2*')) ? 'active' : '' }}">
                 <i class="nav-icon far fa-circle nav-icon"></i>
                 <p>
                     Hapus Buku
@@ -155,7 +156,8 @@
         </li>
 
         <li class="nav-item">
-            <a href="{{ route('admin-head.approval-hapus-buku-gol-2.index') }}" class="nav-link {{ request()->is('admin-head/approval-hapus-buku-gol-2*') ? 'active' : '' }}">
+            <a href="{{ route('admin-head.approval-hapus-buku-gol-2.index') }}"
+                class="nav-link {{ request()->is('admin-head/approval-hapus-buku-gol-2*') ? 'active' : '' }}">
                 <i class="nav-icon far fa-circle nav-icon"></i>
                 <p>
                     Hapus Buku Gol 2
@@ -285,22 +287,16 @@
                 </p>
             </a>
         </li>
-        
+
     </ul>
 </li>
 {{-- end menu LPJ --}}
 
-<li class="nav-item">
-    <a href="{{ url('/koreksi-jurnal/ap') }}" class="nav-link {{ request()->is('/koreksi-jurnal') ? 'active' : '' }}">
-        <i class="nav-icon fas fa-edit"></i>
-        <p>
-            Koreksi Jurnal
-        </p>
-    </a>
-</li>
+
 
 <li class="nav-item">
-    <a href="{{ url('/update-password') }}" class="nav-link {{ request()->is('/update-password') ? 'active' : '' }}">
+    <a href="{{ url('/update-password') }}"
+        class="nav-link {{ request()->is('/update-password') ? 'active' : '' }}">
         <i class="nav-icon fas fa-lock"></i>
         <p>
             Ganti Password

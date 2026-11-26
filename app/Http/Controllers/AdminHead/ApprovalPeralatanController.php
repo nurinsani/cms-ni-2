@@ -13,21 +13,30 @@ class ApprovalPeralatanController extends Controller
 {
     public function index()
     {
-        $data['title'] = 'Pengajuan Peralatan';
-        // $data['pengajuan'] = Pengajuan::where('status_approve', 'admin-head')->get();
-        $data['pengajuan'] = Pengajuan::join('branch', 'branch.code_area', 'pengajuans.code_area')
-        ->select(['pengajuans.*', 'branch.code_area'])
-        ->where('pengajuans.status_approve', 'admin-head')
-        ->distinct()
-        ->where('branch.code_region', auth()->user()->code_region)->get();
+        $data['title'] = 'Approval Pengajuan Peralatan';
+        $data['pengajuan'] = Pengajuan::with(['area', 'pengajuan_details.jenis_peralatan.param_peralatan', 'user'])
+            ->join('branch', 'branch.code_area', 'pengajuans.code_area')
+            ->select(['pengajuans.*', 'branch.code_area'])
+            ->where('pengajuans.status_approve', 'admin-head')
+            ->distinct()
+            ->where('branch.code_region', auth()->user()->code_region)
+            ->orderBy('pengajuans.tanggal_pengajuan', 'desc')
+            ->orderBy('pengajuans.id', 'desc')
+            ->get();
         return view('admin-head.approval.pengajuan-peralatan.index', $data);
     }
 
     public function detail($id)
     {
-        $title = 'Detail';
-        $pengajuan = Pengajuan::findOrFail($id);
-        $branch = Branch::where('code_area', 'kode_area')->get();
+        $title = 'Detail Pengajuan Peralatan';
+        $pengajuan = Pengajuan::with([
+            'pengajuan_details.jenis_peralatan.param_peralatan',
+            'pengajuan_details.ap',
+            'pengajuan_details.area',
+            'pengajuan_details.rekening',
+            'user',
+            'area'
+        ])->findOrFail($id);
         return view('admin-head.approval.pengajuan-peralatan.detail', compact('title', 'pengajuan'));
     }
 

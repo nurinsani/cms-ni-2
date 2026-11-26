@@ -7,9 +7,8 @@
         </div>
         <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
-                <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
-                <li class="breadcrumb-item"><a href="{{ route('admin-head.approval-hapus-buku.index') }}">Approval Hapus
-                        Buku</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('admin-head.dashboard') }}">Home</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('admin-head.approval-hapus-buku.index') }}">Approval Hapus Buku</a></li>
                 <li class="breadcrumb-item active">{{ $title }}</li>
             </ol>
         </div>
@@ -21,9 +20,9 @@
         <!-- Kolom Kiri: Informasi Pengajuan & Form Aksi -->
         <div class="col-lg-4 col-md-12 mb-4">
             <!-- Kartu Detail Pengajuan -->
-            <div class="card mb-4">
+            <div class="card card-outline card-primary shadow-sm mb-4">
                 <div class="card-header">
-                    <h5 class="card-title font-weight-bold mb-0">Informasi Pengajuan</h5>
+                    <h3 class="card-title font-weight-bold">Informasi Pengajuan</h3>
                 </div>
                 <div class="card-body">
                     <table class="table table-sm table-borderless">
@@ -41,7 +40,7 @@
                         </tr>
                         <tr>
                             <th class="text-muted">Bulan Hapus Buku</th>
-                            <td>: {{ $pengajuan->bulan_hapus_buku }}</td>
+                            <td>: {{ strtoupper($pengajuan->bulan_hapus_buku) }}</td>
                         </tr>
                         <tr>
                             <th class="text-muted">Tgl Pengajuan</th>
@@ -83,7 +82,7 @@
                         <div class="border-top pt-2">
                             <label class="font-weight-bold text-dark mb-1">Dokumen Lampiran (MOA):</label>
                             <div>
-                                <a href="{{ $moaUrl }}" target="_blank" class="btn btn-primary btn-sm btn-block">
+                                <a href="{{ $moaUrl }}" target="_blank" class="btn btn-outline-primary btn-sm btn-block">
                                     <i class="fas fa-file-pdf mr-1"></i> Lihat / Unduh Dokumen
                                 </a>
                             </div>
@@ -94,11 +93,9 @@
 
             <!-- Tombol Aksi Persetujuan Admin Head -->
             @if ($pengajuan->status_approve === 'admin-head')
-                <div class="card mb-4">
+                <div class="card card-outline card-success shadow-sm mb-4">
                     <div class="card-header">
-                        <h5 class="card-title font-weight-bold mb-0">
-                            Keputusan Admin Head
-                        </h5>
+                        <h3 class="card-title font-weight-bold">Keputusan Admin Head</h3>
                     </div>
                     <div class="card-body">
                         <!-- Form Approve -->
@@ -129,11 +126,11 @@
 
         <!-- Kolom Kanan: Daftar Barang & Foto Kondisi ATI (Format Seperti PDF MOA) -->
         <div class="col-lg-8 col-md-12">
-            <div class="card mb-4">
+            <div class="card card-outline card-primary shadow-sm mb-4">
                 <div class="card-header">
-                    <h5 class="card-title font-weight-bold mb-0">
+                    <h3 class="card-title font-weight-bold">
                         Foto Kondisi Barang ATI & Spesifikasi
-                    </h5>
+                    </h3>
                 </div>
                 <div class="card-body">
                     <!-- Tampilan Galeri Foto Kondisi Barang dengan Label Kode Peralatan (Konsep PDF) -->
@@ -141,7 +138,7 @@
                         @forelse ($pengajuan->details as $detail)
                             @php $inv = $detail->inventaris; @endphp
                             <div class="col-md-4 col-sm-6 mb-4">
-                                <div class="card h-100 border text-center">
+                                <div class="card h-100 border text-center shadow-none">
                                     <div class="p-2" style="background-color: #f8f9fa;">
                                         @php
                                             $fotoUrl = null;
@@ -174,7 +171,6 @@
                                         @endif
                                     </div>
                                     <div class="card-body p-2 bg-white border-top">
-                                        <!-- Label Kode Peralatan seperti di dokumen PDF -->
                                         <h6 class="font-weight-bold text-dark mb-1 font-monospace" style="font-size: 13px;">
                                             {{ $inv->kode_peralatan ?? '-' }}
                                         </h6>
@@ -208,12 +204,12 @@
                         <table class="table table-bordered table-sm table-striped">
                             <thead class="thead-light">
                                 <tr>
-                                    <th class="text-center" width="4%">No</th>
-                                    <th>Kode Peralatan</th>
-                                    <th>Jenis / Merk</th>
-                                    <th class="text-right">Harga Perolehan</th>
-                                    <th class="text-right">Akum. Penyusutan</th>
-                                    <th class="text-right">Nilai Buku</th>
+                                    <th class="text-center" width="4%">NO</th>
+                                    <th>KODE PERALATAN</th>
+                                    <th>JENIS / MERK</th>
+                                    <th class="text-right">HARGA PEROLEHAN</th>
+                                    <th class="text-right">AKUM. PENYUSUTAN</th>
+                                    <th class="text-right">NILAI BUKU</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -224,7 +220,7 @@
 
                                         $akumDariPenyusutan = $inv
                                             ? $inv->penyusutans()->sum('penyusutan_per_bulan')
-                                            : 0;
+                                             : 0;
                                         $penyusutanAwal = floatval($inv->total_penyusutan_awal ?? 0);
                                         $auditAkum =
                                             $inv && $inv->status_branch === 'AUDIT'
@@ -247,8 +243,7 @@
                                 <tr class="font-weight-bold bg-light">
                                     <td colspan="3" class="text-right">Total:</td>
                                     <td class="text-right">Rp. {{ number_format($totalHargaPerolehan, 0, ',', '.') }}</td>
-                                    <td class="text-right">Rp. {{ number_format($totalAkumulasiPenyusutan, 0, ',', '.') }}
-                                    </td>
+                                    <td class="text-right">Rp. {{ number_format($totalAkumulasiPenyusutan, 0, ',', '.') }}</td>
                                     <td class="text-right">Rp. {{ number_format($totalNilaiBuku, 0, ',', '.') }}</td>
                                 </tr>
                             </tbody>
@@ -263,10 +258,10 @@
                         <table class="table table-bordered table-sm">
                             <thead class="thead-light">
                                 <tr>
-                                    <th width="15%">Kode Rekening</th>
-                                    <th>Keterangan</th>
-                                    <th class="text-right" width="18%">Debet</th>
-                                    <th class="text-right" width="18%">Kredit</th>
+                                    <th width="15%">KODE REKENING</th>
+                                    <th>KETERANGAN</th>
+                                    <th class="text-right" width="18%">DEBET</th>
+                                    <th class="text-right" width="18%">KREDIT</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -340,7 +335,7 @@
                                 @endforelse
                                 @if ($pengajuan->details->count() > 0)
                                     <tr class="font-weight-bold bg-light">
-                                        <td colspan="2" class="text-right"></td>
+                                        <td colspan="2" class="text-right">Total:</td>
                                         <td class="text-right">Rp. {{ number_format($totalDebetJurnal, 0, ',', '.') }}
                                         </td>
                                         <td class="text-right">Rp. {{ number_format($totalKreditJurnal, 0, ',', '.') }}
@@ -352,7 +347,7 @@
                     </div>
 
                     <div class="text-right mt-3">
-                        <a href="{{ route('admin-head.approval-hapus-buku.index') }}" class="btn btn-primary">
+                        <a href="{{ route('admin-head.approval-hapus-buku.index') }}" class="btn btn-outline-secondary">
                             <i class="fas fa-arrow-left mr-1"></i> Kembali ke Daftar
                         </a>
                     </div>
