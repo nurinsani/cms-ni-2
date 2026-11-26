@@ -20,9 +20,9 @@
         <!-- Kolom Kiri: Informasi Pengajuan & Form Aksi -->
         <div class="col-lg-4 col-md-12 mb-4">
             <!-- Kartu Detail Pengajuan -->
-            <div class="card mb-4">
+            <div class="card card-outline card-primary shadow-sm mb-4">
                 <div class="card-header">
-                    <h5 class="card-title font-weight-bold mb-0">Informasi Pengajuan</h5>
+                    <h3 class="card-title font-weight-bold">Informasi Pengajuan</h3>
                 </div>
                 <div class="card-body">
                     <table class="table table-sm table-borderless">
@@ -36,7 +36,7 @@
                         </tr>
                         <tr>
                             <th class="text-muted">Bulan Hapus Buku</th>
-                            <td>: {{ $pengajuan->bulan_hapus_buku }}</td>
+                            <td>: {{ strtoupper($pengajuan->bulan_hapus_buku) }}</td>
                         </tr>
                         <tr>
                             <th class="text-muted">Tgl Pengajuan</th>
@@ -83,7 +83,7 @@
                             <label class="font-weight-bold text-dark mb-1">Dokumen Lampiran (MOA):</label>
                             <div>
                                 <a href="{{ $moaUrl }}" target="_blank"
-                                    class="btn btn-primary btn-sm btn-block">
+                                    class="btn btn-outline-primary btn-sm btn-block">
                                     <i class="fas fa-file-pdf mr-1"></i> Lihat / Unduh Dokumen
                                 </a>
                             </div>
@@ -94,9 +94,9 @@
 
             <!-- Kartu Aksi Approval Admin Head -->
             @if ($pengajuan->status_approve === 'admin-head')
-                <div class="card border-primary mb-4">
-                    <div class="card-header bg-primary text-white">
-                        <h5 class="card-title font-weight-bold mb-0">Tindakan Persetujuan</h5>
+                <div class="card card-outline card-success shadow-sm mb-4">
+                    <div class="card-header">
+                        <h3 class="card-title font-weight-bold">Tindakan Persetujuan</h3>
                     </div>
                     <div class="card-body">
                         <!-- Form Setujui -->
@@ -118,7 +118,7 @@
                                 <label class="font-weight-bold text-danger">Alasan Penolakan:</label>
                                 <textarea name="catatan" class="form-control" rows="2" placeholder="Tuliskan alasan penolakan..." required></textarea>
                             </div>
-                            <button type="submit" class="btn btn-danger btn-block" onclick="return confirm('Apakah Anda yakin ingin menolak pengajuan ini?');">
+                            <button type="submit" class="btn btn-outline-danger btn-block" onclick="return confirm('Apakah Anda yakin ingin menolak pengajuan ini?');">
                                 <i class="fas fa-times mr-1"></i> Tolak Pengajuan
                             </button>
                         </form>
@@ -129,11 +129,11 @@
 
         <!-- Kolom Kanan: Galeri Foto Kondisi ATI Gol 2 & Rincian Finansial -->
         <div class="col-lg-8 col-md-12">
-            <div class="card mb-4">
+            <div class="card card-outline card-primary shadow-sm mb-4">
                 <div class="card-header">
-                    <h5 class="card-title font-weight-bold mb-0">
+                    <h3 class="card-title font-weight-bold">
                         Foto Kondisi Barang & Rincian (Gol 2)
-                    </h5>
+                    </h3>
                 </div>
                 <div class="card-body">
                     <!-- Tampilan Galeri Foto Kondisi Barang -->
@@ -141,7 +141,7 @@
                         @forelse ($pengajuan->details as $detail)
                             @php $inv = $detail->inventaris_gol_2; @endphp
                             <div class="col-md-4 col-sm-6 mb-4">
-                                <div class="card h-100 border text-center">
+                                <div class="card h-100 border text-center shadow-none">
                                     <div class="p-2" style="background-color: #f8f9fa;">
                                         @php
                                             $fotoUrl = null;
@@ -206,13 +206,13 @@
                         <table class="table table-bordered table-sm table-striped">
                             <thead class="thead-light">
                                 <tr>
-                                    <th class="text-center" width="4%">No</th>
+                                    <th class="text-center" width="4%">NO</th>
                                     <th>IMEI</th>
-                                    <th>Type / Keterangan</th>
-                                    <th>Pengguna</th>
-                                    <th class="text-right">Harga Perolehan</th>
-                                    <th class="text-right">Akum. Penyusutan</th>
-                                    <th class="text-right">Nilai Buku</th>
+                                    <th>TYPE / KETERANGAN</th>
+                                    <th>PENGGUNA</th>
+                                    <th class="text-right">HARGA PEROLEHAN</th>
+                                    <th class="text-right">AKUM. PENYUSUTAN</th>
+                                    <th class="text-right">NILAI BUKU</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -244,7 +244,7 @@
                     </div>
 
                     <div class="text-right mt-3">
-                        <a href="{{ route('admin-head.approval-hapus-buku-gol-2.index') }}" class="btn btn-primary">
+                        <a href="{{ route('admin-head.approval-hapus-buku-gol-2.index') }}" class="btn btn-outline-secondary">
                             <i class="fas fa-arrow-left mr-1"></i> Kembali ke Daftar
                         </a>
                     </div>

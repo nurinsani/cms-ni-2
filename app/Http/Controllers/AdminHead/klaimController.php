@@ -13,20 +13,30 @@ class klaimController extends Controller
 {
     public function index()
     {
-        $data['title'] = 'Klaim Pembelian';
-        $data['pengajuan'] = Pengajuan::join('branch', 'branch.code_area', 'pengajuans.code_area')
-        ->select(['pengajuans.*', 'branch.code_area'])
-        ->where('pengajuans.status_approve', 'klaim-admin-head')
-        ->distinct()
-        ->where('branch.code_region', auth()->user()->code_region)->get();
+        $data['title'] = 'Approval Klaim Pembelian';
+        $data['pengajuan'] = Pengajuan::with(['area', 'pengajuan_details.jenis_peralatan.param_peralatan', 'user'])
+            ->join('branch', 'branch.code_area', 'pengajuans.code_area')
+            ->select(['pengajuans.*', 'branch.code_area'])
+            ->where('pengajuans.status_approve', 'klaim-admin-head')
+            ->distinct()
+            ->where('branch.code_region', auth()->user()->code_region)
+            ->orderBy('pengajuans.tanggal_pengajuan', 'desc')
+            ->orderBy('pengajuans.id', 'desc')
+            ->get();
         return view('admin-head.approval.klaim.index', $data);
     }
 
     public function detail($id)
     {
-        $title = 'Detail';
-        $pengajuan = Pengajuan::findOrFail($id);
-        $branch = Branch::where('code_area', 'kode_area')->get();
+        $title = 'Detail Klaim Pembelian';
+        $pengajuan = Pengajuan::with([
+            'pengajuan_details.jenis_peralatan.param_peralatan',
+            'pengajuan_details.ap',
+            'pengajuan_details.area',
+            'pengajuan_details.rekening',
+            'user',
+            'area'
+        ])->findOrFail($id);
         return view('admin-head.approval.klaim.detail', compact('title', 'pengajuan'));
     }
 

@@ -11,15 +11,18 @@ class ApprovalMutasiGol2Controller extends Controller
 {
     public function index()
     {
-        $data['title'] = 'Mutasi';
-        $data['pengajuan_mutasi'] = PengajuanMutasiGol2::where('status_approve', 'admin-head')->get();
+        $data['title'] = 'Approval Mutasi Inventaris Gol 2';
+        $data['pengajuan_mutasi'] = PengajuanMutasiGol2::with(['dari_ap', 'branch', 'inventaris_gol_2'])
+            ->where('status_approve', 'admin-head')
+            ->orderBy('id', 'desc')
+            ->get();
         return view('admin-head.approval.pengajuan-mutasi-gol-2.index', $data);
     }
 
     public function show($id)
     {
-        $title = 'Detail Mutasi';
-        $pengajuan = PengajuanMutasiGol2::with('inventaris_gol_2')->findOrFail($id);
+        $title = 'Detail Mutasi Inventaris Gol 2';
+        $pengajuan = PengajuanMutasiGol2::with(['inventaris_gol_2.penyusutans', 'dari_ap', 'branch'])->findOrFail($id);
         return view('admin-head.approval.pengajuan-mutasi-gol-2.show', compact('pengajuan', 'title'));
     }
 
