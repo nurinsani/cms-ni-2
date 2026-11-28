@@ -16,14 +16,17 @@ class ApprovalMutasiGol2Controller extends Controller
     public function index()
     {
         $data['title'] = 'Mutasi';
-        $data['pengajuan_mutasi'] = PengajuanMutasiGol2::where('status_approve', 'akunting-it')->get();
+        $data['pengajuan_mutasi'] = PengajuanMutasiGol2::with(['dari_ap', 'branch', 'inventaris_gol_2.penyusutans'])
+            ->where('status_approve', 'akunting-it')
+            ->latest()
+            ->get();
         return view('akunting.approval.pengajuan-mutasi-gol-2.index', $data);
     }
 
     public function show($id)
     {
         $title = 'Detail Mutasi';
-        $pengajuan = PengajuanMutasiGol2::with('inventaris_gol_2')->findOrFail($id);
+        $pengajuan = PengajuanMutasiGol2::with(['dari_ap', 'branch', 'inventaris_gol_2.penyusutans'])->findOrFail($id);
         return view('akunting.approval.pengajuan-mutasi-gol-2.show', compact('pengajuan', 'title'));
     }
 

@@ -245,6 +245,26 @@ class PembebananGol2Service
 
     public function processAllCurrentMonth()
     {
+        // Validasi 1: Pastikan penyusutan aset Gol 2 (Langkah 1) bulan ini sudah dijalankan
+        $adaPenyusutan = PenyusutanGol2::whereMonth('tanggal_penyusutan', date('m'))
+            ->whereYear('tanggal_penyusutan', date('Y'))
+            ->exists();
+
+        if (!$adaPenyusutan) {
+            throw new \Exception('Proses penyusutan aset Gol 2 (Langkah 1) belum dijalankan untuk bulan ini.');
+        }
+
+        // Validasi 2: Pastikan jurnal pembebanan belum pernah diproses bulan ini
+        $adaPembebanan = TransaksiPembebananKpGol2::whereMonth('tanggal_transaksi', date('m'))
+            ->whereYear('tanggal_transaksi', date('Y'))
+            ->exists() || TransaksiPembebananApGol2::whereMonth('tanggal_transaksi', date('m'))
+            ->whereYear('tanggal_transaksi', date('Y'))
+            ->exists();
+
+        if ($adaPembebanan) {
+            throw new \Exception('Jurnal pembebanan Gol 2 untuk periode bulan ini sudah pernah diproses.');
+        }
+
         DB::beginTransaction();
         try {
             $pembebanan = PenyusutanGol2::whereMonth('tanggal_penyusutan', date('m'))
@@ -252,6 +272,10 @@ class PembebananGol2Service
                 ->whereNotIn('status_branch', ['AP', 'ALL'])
                 ->whereNotIn('kode_branch', ['1010'])
                 ->get();
+
+            if ($pembebanan->isEmpty()) {
+                throw new \Exception('Tidak ada data penyusutan Gol 2 yang memerlukan pembebanan untuk periode ini.');
+            }
 
             foreach ($pembebanan as $row) {
                 $this->createTransactionsForRow($row);

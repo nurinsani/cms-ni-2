@@ -1,12 +1,12 @@
 @extends('layouts.main')
 
 @section('head-content')
-    <div class="row mb-2">
+    <div class="row mb-2 align-items-center">
         <div class="col-sm-6">
-            <h1 class="m-0">{{ $title }}</h1>
+            <h1 class="m-0 font-weight-bold">{{ $title }}</h1>
         </div>
         <div class="col-sm-6">
-            <ol class="breadcrumb float-sm-right">
+            <ol class="breadcrumb float-sm-right bg-transparent p-0 m-0">
                 <li class="breadcrumb-item"><a href="{{ route('akunting.dashboard') }}">Home</a></li>
                 <li class="breadcrumb-item"><a href="{{ route('akunting.approval-hapus-buku-gol-2.index') }}">Approval Hapus Buku Gol 2</a></li>
                 <li class="breadcrumb-item active">{{ $title }}</li>
@@ -20,9 +20,9 @@
         <!-- Kolom Kiri: Informasi Pengajuan & Form Aksi -->
         <div class="col-lg-4 col-md-12 mb-4">
             <!-- Kartu Detail Pengajuan -->
-            <div class="card mb-4">
+            <div class="card card-outline card-primary shadow-sm mb-4">
                 <div class="card-header">
-                    <h5 class="card-title font-weight-bold mb-0">Informasi Pengajuan</h5>
+                    <h3 class="card-title font-weight-bold">Informasi Pengajuan</h3>
                 </div>
                 <div class="card-body">
                     <table class="table table-sm table-borderless">
@@ -36,7 +36,7 @@
                         </tr>
                         <tr>
                             <th class="text-muted">Bulan Hapus Buku</th>
-                            <td>: {{ $pengajuan->bulan_hapus_buku }}</td>
+                            <td>: {{ strtoupper($pengajuan->bulan_hapus_buku) }}</td>
                         </tr>
                         <tr>
                             <th class="text-muted">Tgl Pengajuan</th>
@@ -91,7 +91,7 @@
                             <label class="font-weight-bold text-dark mb-1">Dokumen Lampiran (MOA):</label>
                             <div>
                                 <a href="{{ $moaUrl }}" target="_blank"
-                                    class="btn btn-primary btn-sm btn-block">
+                                    class="btn btn-outline-primary btn-sm btn-block">
                                     <i class="fas fa-file-pdf mr-1"></i> Lihat / Unduh Dokumen
                                 </a>
                             </div>
@@ -100,107 +100,48 @@
                 </div>
             </div>
 
-            <!-- Tombol Aksi Persetujuan Akunting -->
+            <!-- Kartu Aksi Final Approval Akunting -->
             @if ($pengajuan->status_approve === 'akunting')
-                <div class="card mb-4 border-success">
-                    <div class="card-header bg-success text-white">
-                        <h5 class="card-title font-weight-bold mb-0">
-                            Keputusan Akunting
-                        </h5>
+                <div class="card card-outline card-success shadow-sm mb-4">
+                    <div class="card-header">
+                        <h3 class="card-title font-weight-bold">Tindakan Akunting (Final)</h3>
                     </div>
                     <div class="card-body">
-                        <!-- Form Approve Akunting -->
+                        <!-- Form Setujui -->
                         <form action="{{ route('akunting.approval-hapus-buku-gol-2.approve', $pengajuan->id) }}" method="POST" class="mb-3">
                             @csrf
                             <div class="form-group">
                                 <label class="font-weight-bold">Catatan Akunting (Opsional):</label>
-                                <textarea name="catatan" class="form-control" rows="2" placeholder="Catatan persetujuan akunting..."></textarea>
+                                <textarea name="catatan" class="form-control" rows="2" placeholder="Catatan persetujuan..."></textarea>
                             </div>
-                            <button type="submit" class="btn btn-success btn-block" onclick="return confirm('Apakah Anda yakin menyetujui hapus buku Gol 2 ini? Jurnal transaksi penyesuaian akan otomatis dicatat ke database.');">
-                                <i class="fas fa-check-double mr-1"></i> Setujui Hapus Buku & Buat Jurnal
+                            <button type="submit" class="btn btn-success btn-block" onclick="return confirm('Apakah Anda yakin ingin menyetujui penghapusan buku Gol 2 ini? Status inventaris akan berubah menjadi Hapus Buku secara permanen.');">
+                                <i class="fas fa-check-double mr-1"></i> Final Approve & Eksekusi Jurnal
                             </button>
                         </form>
 
-                        <hr>
-
-                        <!-- Form Tolak Akunting -->
+                        <!-- Form Tolak -->
                         <form action="{{ route('akunting.approval-hapus-buku-gol-2.tolak', $pengajuan->id) }}" method="POST">
                             @csrf
                             <div class="form-group">
                                 <label class="font-weight-bold text-danger">Alasan Penolakan:</label>
-                                <textarea name="catatan" class="form-control" rows="2" placeholder="Alasan penolakan..." required></textarea>
+                                <textarea name="catatan" class="form-control" rows="2" placeholder="Tuliskan alasan penolakan..." required></textarea>
                             </div>
-                            <button type="submit" class="btn btn-outline-danger btn-block" onclick="return confirm('Apakah Anda yakin ingin menolak pengajuan ini?');">
-                                <i class="fas fa-times-circle mr-1"></i> Tolak Pengajuan
+                            <button type="submit" class="btn btn-outline-danger btn-block" onclick="return confirm('Apakah Anda yakin ingin menolak pengajuan hapus buku Gol 2 ini?');">
+                                <i class="fas fa-times mr-1"></i> Tolak Pengajuan
                             </button>
                         </form>
                     </div>
                 </div>
             @endif
-
-            <!-- Preview Jurnal Akuntansi yang akan Terbentuk -->
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h6 class="card-title font-weight-bold mb-0 text-dark">
-                        <i class="fas fa-book mr-1 text-primary"></i> Preview Jurnal Akuntansi (Gol 2)
-                    </h6>
-                </div>
-                <div class="card-body p-2 small">
-                    <table class="table table-sm table-striped mb-0">
-                        <thead class="thead-light">
-                            <tr>
-                                <th>Rekening</th>
-                                <th class="text-right">Debet</th>
-                                <th class="text-right">Kredit</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @if ($totalNilaiBuku == 0)
-                                <tr>
-                                    <td><code>1674000</code> ATI-API-Gol II</td>
-                                    <td class="text-right">Rp. {{ number_format($totalHargaPerolehan, 0, ',', '.') }}</td>
-                                    <td class="text-right">0</td>
-                                </tr>
-                                <tr>
-                                    <td><code>1654000</code> ATI-Inventaris-Gol II</td>
-                                    <td class="text-right">0</td>
-                                    <td class="text-right">Rp. {{ number_format($totalHargaPerolehan, 0, ',', '.') }}</td>
-                                </tr>
-                            @else
-                                <tr>
-                                    <td><code>58114</code> BNO-Rugi Kehilangan-AT</td>
-                                    <td class="text-right">Rp. {{ number_format($totalNilaiBuku, 0, ',', '.') }}</td>
-                                    <td class="text-right">0</td>
-                                </tr>
-                                <tr>
-                                    <td><code>1674000</code> ATI-API-Gol II</td>
-                                    <td class="text-right">0</td>
-                                    <td class="text-right">Rp. {{ number_format($totalNilaiBuku, 0, ',', '.') }}</td>
-                                </tr>
-                                <tr>
-                                    <td><code>1674000</code> ATI-API-Gol II</td>
-                                    <td class="text-right">Rp. {{ number_format($totalHargaPerolehan, 0, ',', '.') }}</td>
-                                    <td class="text-right">0</td>
-                                </tr>
-                                <tr>
-                                    <td><code>1654000</code> ATI-Inventaris-Gol II</td>
-                                    <td class="text-right">0</td>
-                                    <td class="text-right">Rp. {{ number_format($totalHargaPerolehan, 0, ',', '.') }}</td>
-                                </tr>
-                            @endif
-                        </tbody>
-                    </table>
-                </div>
-            </div>
         </div>
 
         <!-- Kolom Kanan: Galeri Foto Kondisi ATI Gol 2 & Rincian Finansial -->
         <div class="col-lg-8 col-md-12">
-            <div class="card mb-4">
+            <div class="card card-outline card-primary shadow-sm mb-4">
                 <div class="card-header">
-                    <h5 class="card-title font-weight-bold mb-0">
-                        Foto Kondisi Barang & Spesifikasi (Gol 2)
-                    </h5>
+                    <h3 class="card-title font-weight-bold">
+                        Foto Kondisi Barang & Rincian (Gol 2)
+                    </h3>
                 </div>
                 <div class="card-body">
                     <!-- Tampilan Galeri Foto Kondisi Barang -->
@@ -208,7 +149,7 @@
                         @forelse ($pengajuan->details as $detail)
                             @php $inv = $detail->inventaris_gol_2; @endphp
                             <div class="col-md-4 col-sm-6 mb-4">
-                                <div class="card h-100 border text-center">
+                                <div class="card h-100 border text-center shadow-none">
                                     <div class="p-2" style="background-color: #f8f9fa;">
                                         @php
                                             $fotoUrl = null;
@@ -223,16 +164,15 @@
                                             }
                                         @endphp
                                         @if ($fotoUrl)
-                                            <a href="{{ $fotoUrl }}"
-                                                target="_blank">
+                                            <a href="{{ $fotoUrl }}" target="_blank">
                                                 <img src="{{ $fotoUrl }}"
                                                     alt="{{ $inv->type ?? 'Foto Barang' }}"
                                                     class="img-fluid rounded"
-                                                    style="height: 220px; width: 100%; object-fit: cover;">
+                                                    style="height: 200px; width: 100%; object-fit: cover;">
                                             </a>
                                         @else
                                             <div class="d-flex align-items-center justify-content-center bg-light text-muted"
-                                                style="height: 220px;">
+                                                style="height: 200px;">
                                                 <div class="small">Tidak Ada Foto</div>
                                             </div>
                                         @endif
@@ -253,7 +193,7 @@
                                             Kondisi: <strong>{{ $detail->kondisi ?? '-' }}</strong>
                                         </div>
                                         <div class="small font-weight-bold mt-1 border-top pt-1">
-                                            Harga: Rp. {{ number_format(intval($inv->harga_perolehan ?? 0), 0, ',', '.') }}
+                                            Harga: Rp {{ number_format(intval($inv->harga_perolehan ?? 0), 0, ',', '.') }}
                                         </div>
                                     </div>
                                 </div>
@@ -273,13 +213,13 @@
                         <table class="table table-bordered table-sm table-striped">
                             <thead class="thead-light">
                                 <tr>
-                                    <th class="text-center" width="4%">No</th>
+                                    <th class="text-center" width="4%">NO</th>
                                     <th>IMEI</th>
-                                    <th>Type / Keterangan</th>
-                                    <th>Pengguna</th>
-                                    <th class="text-right">Harga Perolehan</th>
-                                    <th class="text-right">Akum. Penyusutan</th>
-                                    <th class="text-right">Nilai Buku</th>
+                                    <th>TYPE / KETERANGAN</th>
+                                    <th>PENGGUNA</th>
+                                    <th class="text-right">HARGA PEROLEHAN</th>
+                                    <th class="text-right">AKUM. PENYUSUTAN</th>
+                                    <th class="text-right">NILAI BUKU</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -295,23 +235,23 @@
                                         <td class="font-weight-bold font-monospace">{{ $inv->imei ?? '-' }}</td>
                                         <td>{{ $inv->type ?? '-' }} ({{ $inv->keterangan ?? '-' }})</td>
                                         <td>{{ $inv->pengguna ?? '-' }}</td>
-                                        <td class="text-right">Rp. {{ number_format($harga, 0, ',', '.') }}</td>
-                                        <td class="text-right">Rp. {{ number_format($akum, 0, ',', '.') }}</td>
-                                        <td class="text-right font-weight-bold">Rp. {{ number_format($nb, 0, ',', '.') }}</td>
+                                        <td class="text-right">Rp {{ number_format($harga, 0, ',', '.') }}</td>
+                                        <td class="text-right">Rp {{ number_format($akum, 0, ',', '.') }}</td>
+                                        <td class="text-right font-weight-bold">Rp {{ number_format($nb, 0, ',', '.') }}</td>
                                     </tr>
                                 @endforeach
                                 <tr class="font-weight-bold bg-light">
                                     <td colspan="4" class="text-right">Total:</td>
-                                    <td class="text-right">Rp. {{ number_format($totalHargaPerolehan, 0, ',', '.') }}</td>
-                                    <td class="text-right">Rp. {{ number_format($totalAkumulasiPenyusutan, 0, ',', '.') }}</td>
-                                    <td class="text-right">Rp. {{ number_format($totalNilaiBuku, 0, ',', '.') }}</td>
+                                    <td class="text-right">Rp {{ number_format($totalHargaPerolehan, 0, ',', '.') }}</td>
+                                    <td class="text-right">Rp {{ number_format($totalAkumulasiPenyusutan, 0, ',', '.') }}</td>
+                                    <td class="text-right">Rp {{ number_format($totalNilaiBuku, 0, ',', '.') }}</td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
 
                     <div class="text-right mt-3">
-                        <a href="{{ route('akunting.approval-hapus-buku-gol-2.index') }}" class="btn btn-primary">
+                        <a href="{{ route('akunting.approval-hapus-buku-gol-2.index') }}" class="btn btn-outline-secondary">
                             <i class="fas fa-arrow-left mr-1"></i> Kembali ke Daftar
                         </a>
                     </div>

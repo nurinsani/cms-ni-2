@@ -106,7 +106,7 @@ class Inventaris extends Model
 
             $i = 0;
 
-            $inventaris = Inventaris::all();
+            $inventaris = Inventaris::where('status', 'aktif')->get();
             // $inventaris = Inventaris::where('kode_branch', 2040)->get();
             // $rencana_penyusutan = RencanaPenyusutan::where('status_penyusutan', 1)->get();
 

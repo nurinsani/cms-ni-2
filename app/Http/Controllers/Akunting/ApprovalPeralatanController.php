@@ -13,17 +13,19 @@ class ApprovalPeralatanController extends Controller
     public function index()
     {
         $data['title'] = 'Approval Peralatan';
-        // $data['pengajuan'] = Pengajuan::where('status_approve', 'akunting-it')->whereHas('pengajuan_details', function($query){
-        //     $query->where('group_approval', 'umum');
-        //     })->get();
-        $data['pengajuan'] = Pengajuan::where('status_approve', 'akunting-it')->get();
+        $data['pengajuan'] = Pengajuan::with(['area', 'pengajuan_details.jenis_peralatan.param_peralatan', 'pengajuan_details.ap', 'pengajuan_details.area', 'user'])
+            ->where('status_approve', 'akunting-it')
+            ->orderBy('tanggal_pengajuan', 'desc')
+            ->orderBy('id', 'desc')
+            ->get();
         return view('akunting.approval.pengajuan-peralatan.index', $data);
     }
 
     public function detail($id)
     {
         $data['title'] = 'Detail Peralatan';
-        $data['pengajuan'] = Pengajuan::findOrFail($id);
+        $data['pengajuan'] = Pengajuan::with(['area', 'pengajuan_details.jenis_peralatan.param_peralatan', 'pengajuan_details.ap', 'pengajuan_details.area', 'user'])
+            ->findOrFail($id);
         return view('akunting.approval.pengajuan-peralatan.detail', $data);
     }
 

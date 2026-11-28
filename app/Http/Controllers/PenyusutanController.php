@@ -9,33 +9,101 @@ use App\Models\TransaksiPembebananAp;
 use App\Models\TransaksiPembebananKp;
 use App\Models\TransaksiPenyusutanAp;
 use App\Models\TransaksiPenyusutanKp;
+use App\Services\PembebananService;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-
-// tes lagi
 
 class PenyusutanController extends Controller
 {
+    protected $pembebananService;
+
+    public function __construct(PembebananService $pembebananService)
+    {
+        $this->pembebananService = $pembebananService;
+    }
 
     public function index()
     {
-        $title = 'Proses Penyusutan';
-        $transaksiKp = TransaksiPembebananKp::whereMonth('tanggal_transaksi', date('m'))
-            ->whereYear('tanggal_transaksi', date('Y'))->first();
+        $title = 'Proses Penyusutan & Pembebanan';
+        $currentMonth = date('m');
+        $currentYear = date('Y');
+        $periode = Carbon::now()->translatedFormat('F Y');
 
-        $transaksiAp = TransaksiPembebananAp::whereMonth('tanggal_transaksi', date('m'))
-            ->whereYear('tanggal_transaksi', date('Y'))->first();
+        // Status Langkah 1: Penyusutan Aset
+        $penyusutanCount = Penyusutan::whereMonth('tanggal_penyusutan', $currentMonth)
+            ->whereYear('tanggal_penyusutan', $currentYear)
+            ->count();
+        $penyusutanTotal = Penyusutan::whereMonth('tanggal_penyusutan', $currentMonth)
+            ->whereYear('tanggal_penyusutan', $currentYear)
+            ->sum('penyusutan_per_bulan');
+        $isPenyusutanDone = $penyusutanCount > 0;
 
-        $penyusutanKp = TransaksiPenyusutanKp::whereMonth('tanggal_transaksi', date('m'))
-            ->whereYear('tanggal_transaksi', date('Y'))->first();
+        // Status Langkah 2: Jurnal Penyusutan
+        $penyusutanKp = TransaksiPenyusutanKp::whereMonth('tanggal_transaksi', $currentMonth)
+            ->whereYear('tanggal_transaksi', $currentYear)
+            ->first();
+        $penyusutanAp = TransaksiPenyusutanAp::whereMonth('tanggal_transaksi', $currentMonth)
+            ->whereYear('tanggal_transaksi', $currentYear)
+            ->first();
 
-        $penyusutanAp = TransaksiPenyusutanAp::whereMonth('tanggal_transaksi', date('m'))
-            ->whereYear('tanggal_transaksi', date('Y'))->first();
+        $countJurnalPenyusutanKp = TransaksiPenyusutanKp::whereMonth('tanggal_transaksi', $currentMonth)
+            ->whereYear('tanggal_transaksi', $currentYear)
+            ->count();
+        $countJurnalPenyusutanAp = TransaksiPenyusutanAp::whereMonth('tanggal_transaksi', $currentMonth)
+            ->whereYear('tanggal_transaksi', $currentYear)
+            ->count();
+        $isJurnalPenyusutanDone = ($countJurnalPenyusutanKp > 0 || $countJurnalPenyusutanAp > 0);
+
+        $isPenyusutanUploaded = TransaksiPenyusutanKp::whereMonth('tanggal_transaksi', $currentMonth)
+            ->whereYear('tanggal_transaksi', $currentYear)
+            ->where('status', 'uploaded')
+            ->exists() || TransaksiPenyusutanAp::whereMonth('tanggal_transaksi', $currentMonth)
+            ->whereYear('tanggal_transaksi', $currentYear)
+            ->where('status', 'uploaded')
+            ->exists();
+
+        // Status Langkah 3: Jurnal Pembebanan
+        $transaksiKp = TransaksiPembebananKp::whereMonth('tanggal_transaksi', $currentMonth)
+            ->whereYear('tanggal_transaksi', $currentYear)
+            ->first();
+        $transaksiAp = TransaksiPembebananAp::whereMonth('tanggal_transaksi', $currentMonth)
+            ->whereYear('tanggal_transaksi', $currentYear)
+            ->first();
+
+        $countJurnalPembebananKp = TransaksiPembebananKp::whereMonth('tanggal_transaksi', $currentMonth)
+            ->whereYear('tanggal_transaksi', $currentYear)
+            ->count();
+        $countJurnalPembebananAp = TransaksiPembebananAp::whereMonth('tanggal_transaksi', $currentMonth)
+            ->whereYear('tanggal_transaksi', $currentYear)
+            ->count();
+        $isJurnalPembebananDone = ($countJurnalPembebananKp > 0 || $countJurnalPembebananAp > 0);
+
+        $isPembebananKpUploaded = TransaksiPembebananKp::whereMonth('tanggal_transaksi', $currentMonth)
+            ->whereYear('tanggal_transaksi', $currentYear)
+            ->where('status', 'uploaded')
+            ->exists();
+        $isPembebananApUploaded = TransaksiPembebananAp::whereMonth('tanggal_transaksi', $currentMonth)
+            ->whereYear('tanggal_transaksi', $currentYear)
+            ->where('status', 'uploaded')
+            ->exists();
 
         return view('transaksi.penyusutan.index', compact(
             'title',
+            'periode',
+            'penyusutanCount',
+            'penyusutanTotal',
+            'isPenyusutanDone',
+            'countJurnalPenyusutanKp',
+            'countJurnalPenyusutanAp',
+            'isJurnalPenyusutanDone',
+            'isPenyusutanUploaded',
+            'countJurnalPembebananKp',
+            'countJurnalPembebananAp',
+            'isJurnalPembebananDone',
+            'isPembebananKpUploaded',
+            'isPembebananApUploaded',
             'transaksiKp',
             'transaksiAp',
             'penyusutanKp',
@@ -45,539 +113,258 @@ class PenyusutanController extends Controller
 
     public function jalankanPenyusutan(Request $request)
     {
-        // Cek apakah penyusutan sudah dilakukan di bulan ini
-        $penyusutanSudahAda = Penyusutan::whereMonth('tanggal_penyusutan', date('m'))
-        ->whereYear('tanggal_penyusutan', date('Y'))
-        ->exists(); // Menggunakan exists() untuk pengecekan cepat
+        // Mutex lock untuk mencegah klik ganda atau race condition
+        $lockAcquired = DB::select("SELECT GET_LOCK('proses_penyusutan_lock', 2) as locked")[0]->locked ?? 0;
+        if (!$lockAcquired) {
+            return redirect()->back()->with('error', 'Proses penyusutan sedang berjalan. Silakan tunggu beberapa saat.');
+        }
 
-        if ($penyusutanSudahAda) {
+        try {
+            // Cek apakah penyusutan sudah dilakukan di bulan ini
+            $penyusutanSudahAda = Penyusutan::whereMonth('tanggal_penyusutan', date('m'))
+                ->whereYear('tanggal_penyusutan', date('Y'))
+                ->exists();
 
-        return redirect()->back()->with('error', 'Proses penyusutan untuk bulan ini sudah dilakukan.');
-
-        } else {
-            try {
-                DB::beginTransaction();
-    
-                $i = 0;
-    
-                $inventaris = Inventaris::all();
-    
-                $penyusutan = Penyusutan::whereMonth('tanggal_penyusutan', date('m'))
-                    ->whereYear('tanggal_penyusutan', date('Y'))
-                    ->first();
-    
-                if (!$penyusutan) {
-                    foreach ($inventaris as $value) {
-                        $tanggal_sekarang = date('d', time());
-                        $harga_perolehan = intval($value->harga_perolehan);
-                        $penyusutan = intval($value->umur);
-                        $kode_branch = $value->kode_branch;
-                        $kredit = Branch::firstWhere('kode_branch', $kode_branch);
-                    
-                        if (!$kredit) {
-                            continue;
-                        }
-                    
-                        $debet = Branch::where('code_area', $kredit->code_area)->get();
-                    
-                        if ($debet->isEmpty()) {
-                            continue;
-                        }
-                    
-                        $hasil_penyusutan = $harga_perolehan > 0 && $penyusutan > 0 ? $harga_perolehan / $penyusutan : 0;
-                    
-                        $branch = Branch::where('kode_branch', $kode_branch)->first();
-                    
-                        if ($tanggal_sekarang == 15) {
-                        // if ($tanggal_sekarang == date('d')) {
-                            if ($value->penyusutan_ke + count($value->susut) !== 48) {
-                                // Tambahkan logika untuk penyusutan dua kali jika tanggal perolehan antara 16-31 dan penyusutan awal 0
-                                if (count($value->susut) == 0 && intval(date('d', strtotime($value->tanggal_perolehan))) >= 15) {
-                                    if ($value->status_branch !== 'AUDIT') {
-                                        // Lakukan penyusutan dua kali
-                                        for ($j = 0; $j < 2; $j++) {
-                                            Penyusutan::create([
-                                                'inventaris_id' => $value->id,
-                                                'user_id' => $value->user_id,
-                                                'kode_branch' => $branch->kode_branch,
-                                                'gl' => $branch->GL,
-                                                'kode_peralatan' => $value->kode_peralatan,
-                                                'nama_peralatan' => $value->jenis,
-                                                'keterangan' => $value->keterangan,
-                                                'tanggal_penyusutan' => date('Y-m-d'),
-                                                'penyusutan_per_bulan' => $hasil_penyusutan,
-                                                'status_branch' => $value->status_branch
-                                            ]);
-                                        }
-                                    }
-                                } else {
-                                    // Penyusutan normal
-                                    if ($value->status_branch !== 'AUDIT') {
-                                        Penyusutan::create([
-                                            'inventaris_id' => $value->id,
-                                            'user_id' => $value->user_id,
-                                            'kode_branch' => $branch->kode_branch,
-                                            'gl' => $branch->GL,
-                                            'kode_peralatan' => $value->kode_peralatan,
-                                            'nama_peralatan' => $value->jenis,
-                                            'keterangan' => $value->keterangan,
-                                            'tanggal_penyusutan' => date('Y-m-d'),
-                                            'penyusutan_per_bulan' => $hasil_penyusutan,
-                                            'status_branch' => $value->status_branch
-                                        ]);
-                                    }
-                                }
-                            }
-                        }
-                    
-                        $i++;
-                    }
-                    
-                    DB::commit();
-                    Log::info('schadule inventaris dijalankan ' . $i . ' data ditambahkan');
-                }
-            } catch (\Throwable $th) {
-                DB::rollBack();
-    
-                dd($th);
-                Log::error($th->getMessage());
+            if ($penyusutanSudahAda) {
+                return redirect()->back()->with('error', 'Proses penyusutan untuk bulan ini sudah pernah dilakukan.');
             }
 
-            return redirect()->back()->with('success', 'Proses penyusutan berhasil dijalankan.');
+            DB::beginTransaction();
+
+            $i = 0;
+            $inventaris = Inventaris::where('status', 'aktif')->with('susut')->get();
+            $branches = Branch::all()->keyBy('kode_branch');
+            $branchesByArea = Branch::all()->groupBy('code_area');
+
+            foreach ($inventaris as $value) {
+                $harga_perolehan = intval($value->harga_perolehan);
+                $penyusutanUmur = intval($value->umur);
+                $kode_branch = $value->kode_branch;
+
+                $branch = $branches->get($kode_branch);
+                if (!$branch) {
+                    continue;
+                }
+
+                $areaBranches = $branchesByArea->get($branch->code_area);
+                if (!$areaBranches || $areaBranches->isEmpty()) {
+                    continue;
+                }
+
+                $hasil_penyusutan = $harga_perolehan > 0 && $penyusutanUmur > 0 ? $harga_perolehan / $penyusutanUmur : 0;
+                $totalSusut = $value->penyusutan_ke + count($value->susut);
+
+                if ($totalSusut < 48) {
+                    // Logika untuk penyusutan dua kali jika tanggal perolehan antara 16-31 dan penyusutan awal 0
+                    if (count($value->susut) == 0 && intval(date('d', strtotime($value->tanggal_perolehan))) >= 15) {
+                        if ($value->status_branch !== 'AUDIT') {
+                            for ($j = 0; $j < 2; $j++) {
+                                Penyusutan::create([
+                                    'inventaris_id' => $value->id,
+                                    'user_id' => $value->user_id,
+                                    'kode_branch' => $branch->kode_branch,
+                                    'gl' => $branch->GL,
+                                    'kode_peralatan' => $value->kode_peralatan,
+                                    'nama_peralatan' => $value->jenis,
+                                    'keterangan' => $value->keterangan,
+                                    'tanggal_penyusutan' => date('Y-m-d'),
+                                    'penyusutan_per_bulan' => $hasil_penyusutan,
+                                    'status_branch' => $value->status_branch
+                                ]);
+                                $i++;
+                            }
+                        }
+                    } else {
+                        if ($value->status_branch !== 'AUDIT') {
+                            Penyusutan::create([
+                                'inventaris_id' => $value->id,
+                                'user_id' => $value->user_id,
+                                'kode_branch' => $branch->kode_branch,
+                                'gl' => $branch->GL,
+                                'kode_peralatan' => $value->kode_peralatan,
+                                'nama_peralatan' => $value->jenis,
+                                'keterangan' => $value->keterangan,
+                                'tanggal_penyusutan' => date('Y-m-d'),
+                                'penyusutan_per_bulan' => $hasil_penyusutan,
+                                'status_branch' => $value->status_branch
+                            ]);
+                            $i++;
+                        }
+                    }
+                }
+            }
+
+            DB::commit();
+            Log::info("Proses penyusutan manual dijalankan: {$i} data berhasil ditambahkan.");
+
+            return redirect()->back()->with('success', "Proses penyusutan berhasil dijalankan ({$i} data disusutkan).");
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            Log::error('Error pada jalankanPenyusutan: ' . $th->getMessage());
+            return redirect()->back()->with('error', 'Gagal memproses penyusutan: ' . $th->getMessage());
+        } finally {
+            DB::statement("SELECT RELEASE_LOCK('proses_penyusutan_lock')");
         }
     }
 
     public function jalankanJurnalPenyusutan(Request $request)
     {
-        try {
-            DB::beginTransaction();
-    
-            $i = 0;
-    
-            // Mengecek apakah sudah ada data penyusutan untuk bulan dan tahun ini (tidak digunakan di bawah)
-            $penyusutan = Penyusutan::whereMonth('tanggal_penyusutan', date('m'))
-                ->whereYear('tanggal_penyusutan', date('Y'))
-                ->first();
-    
-                // ambil semua branch
-                $branches = Branch::all();
-    
-                foreach ($branches as $branch) {
-                    // Ambil data penyusutan untuk branch ini di bulan dan tahun ini, dan status_branch 'AP' atau 'ALL'
-                    $penyusutan = Penyusutan::where('kode_branch', $branch->kode_branch)
-                        ->whereMonth('tanggal_penyusutan', date('m'))
-                        ->whereYear('tanggal_penyusutan', date('Y'))
-                        // ->whereIn('status_branch', ['AP', 'ALL'])
-                        ->get();
-    
-                    if (count($penyusutan) > 0) {
-                        // Hitung total penyusutan bulan ini untuk cabang ini
-                        $penyusutan_per_bulan = Penyusutan::where('kode_branch', $branch->kode_branch)
-                            ->whereMonth('tanggal_penyusutan', date('m'))
-                            ->whereYear('tanggal_penyusutan', date('Y'))
-                            ->sum('penyusutan_per_bulan');
-    
-                        if ($branch->kode_branch == '1010') {
-                             // Cek apakah sudah ada transaksi debet dan kredit sebelumnya
-                            $transaksiKpDebet = TransaksiPenyusutanKp::where('kode_branch', $branch->kode_branch)
-                                ->whereMonth('tanggal_transaksi', date('m'))
-                                ->whereYear('tanggal_transaksi', date('Y'))
-                                ->where('debet', '>', 0)
-                                ->first();
-    
-                            $transaksiKpKredit = TransaksiPenyusutanKp::where('kode_branch', $branch->kode_branch)
-                                ->whereMonth('tanggal_transaksi', date('m'))
-                                ->whereYear('tanggal_transaksi', date('Y'))
-                                ->where('kredit', '>', 0)
-                                ->first();
-    
-                            $kode_transaksi = date('m') . random_int(100000, 999999);
-                            if ($transaksiKpDebet && $transaksiKpKredit) {
-                                // jika transaksi udah ada, lakukan update nominal
-                                TransaksiPenyusutanKp::where('id', $transaksiKpDebet->id)->update([
-                                    'debet' => $penyusutan_per_bulan,
-                                ]);
-    
-                                TransaksiPenyusutanKp::where('id', $transaksiKpKredit->id)->update([
-                                    'kredit' => $penyusutan_per_bulan,
-                                ]);
-                            } else {
-                                TransaksiPenyusutanKp::create([
-                                    'kode_branch' => $branch->kode_branch,
-                                    'kode_transaksi' => 'BU' . '/' . $branch->kode_branch . '/' . $kode_transaksi,
-                                    'kode_rekening' => '1010-52915',
-                                    'tanggal_transaksi' => date('Y-m-d'),
-                                    'jenis_transaksi' => 'Bukti SYSTEM',
-                                    'keterangan' => 'Jurnal Penyusutan Inventaris' . ' ' . date('M Y'),
-                                    'debet' => $penyusutan_per_bulan,
-                                    'kredit' => 0,
-                                ]);
-    
-                                TransaksiPenyusutanKp::create([
-                                    'kode_branch' => $branch->kode_branch,
-                                    'kode_transaksi' => 'BU' . '/' . $branch->kode_branch . '/' . $kode_transaksi,
-                                    'kode_rekening' => '1010-1672000',
-                                    'tanggal_transaksi' => date('Y-m-d'),
-                                    'jenis_transaksi' => 'Bukti SYSTEM',
-                                    'keterangan' => 'Jurnal Penyusutan Inventaris' . ' ' . date('M Y'),
-                                    'debet' => 0,
-                                    'kredit' => $penyusutan_per_bulan,
-                                ]);
+        $lockAcquired = DB::select("SELECT GET_LOCK('proses_jurnal_penyusutan_lock', 2) as locked")[0]->locked ?? 0;
+        if (!$lockAcquired) {
+            return redirect()->back()->with('error', 'Proses pembuatan jurnal penyusutan sedang berjalan. Silakan tunggu.');
+        }
 
-                            }
-                        } else {
-                            // jurnal penyusutan untuk AP
-                            $transaksiApKredit = TransaksiPenyusutanAp::where('kode_branch', $branch->kode_branch)
-                                ->whereMonth('tanggal_transaksi', date('m'))
-                                ->whereYear('tanggal_transaksi', date('Y'))
-                                ->where('kredit', '>', 0)
-                                ->first();
-    
-                            $transaksiApDebet = TransaksiPenyusutanAp::where('kode_branch', $branch->kode_branch)
-                                ->whereMonth('tanggal_transaksi', date('m'))
-                                ->whereYear('tanggal_transaksi', date('Y'))
-                                ->where('debet', '>', 0)
-                                ->first();
-    
-                            $kode_transaksi = date('m') . random_int(100000, 999999);
-                            if ($transaksiApKredit && $transaksiApDebet) {
-                                TransaksiPenyusutanAp::where('id', $transaksiApDebet->id)->update([
-                                    'debet' => $penyusutan_per_bulan,
-                                ]);
-                                TransaksiPenyusutanAp::where('id', $transaksiApKredit->id)->update([
-                                    'kredit' => $penyusutan_per_bulan,
-                                ]);
-                            } else {
-                                TransaksiPenyusutanAp::create([
-                                    'kode_branch' => $branch->kode_branch,
-                                    'kode_transaksi' => 'BU' . '/' . $branch->kode_branch . '/' . $kode_transaksi,
-                                    'kode_rekening' => '52915',
-                                    'tanggal_transaksi' => date('Y-m-d'),
-                                    'jenis_transaksi' => 'Bukti SYSTEM',
-                                    'keterangan' => 'Jurnal Penyusutan Inventaris' . ' ' . date('M Y'),
-                                    'debet' => $penyusutan_per_bulan,
-                                    'kredit' => 0,
-                                ]);
-    
-                                TransaksiPenyusutanAp::create([
-                                    'kode_branch' => $branch->kode_branch,
-                                    'kode_transaksi' => 'BU' . '/' . $branch->kode_branch . '/' . $kode_transaksi,
-                                    'kode_rekening' => '1672000',
-                                    'tanggal_transaksi' => date('Y-m-d'),
-                                    'jenis_transaksi' => 'Bukti SYSTEM',
-                                    'keterangan' => 'Jurnal Penyusutan Inventaris' . ' ' . date('M Y'),
-                                    'debet' => 0,
-                                    'kredit' => $penyusutan_per_bulan,
-                                ]);
-                            }
-                        }
-                    } else {
-                        continue;
-                    }
+        try {
+            // Validasi: Pastikan Langkah 1 (Penyusutan Aset) sudah dijalankan
+            $adaPenyusutan = Penyusutan::whereMonth('tanggal_penyusutan', date('m'))
+                ->whereYear('tanggal_penyusutan', date('Y'))
+                ->exists();
+
+            if (!$adaPenyusutan) {
+                return redirect()->back()->with('error', 'Proses penyusutan aset (Langkah 1) belum dijalankan untuk bulan ini.');
+            }
+
+            // Validasi: Cek apakah jurnal sudah di-upload ke sistem NI
+            $sudahUpload = TransaksiPenyusutanKp::whereMonth('tanggal_transaksi', date('m'))
+                ->whereYear('tanggal_transaksi', date('Y'))
+                ->where('status', 'uploaded')
+                ->exists() || TransaksiPenyusutanAp::whereMonth('tanggal_transaksi', date('m'))
+                ->whereYear('tanggal_transaksi', date('Y'))
+                ->where('status', 'uploaded')
+                ->exists();
+
+            if ($sudahUpload) {
+                return redirect()->back()->with('error', 'Jurnal penyusutan bulan ini sudah di-upload ke sistem NI dan tidak dapat digenerate ulang.');
+            }
+
+            DB::beginTransaction();
+
+            $branches = Branch::all();
+            $countProcessed = 0;
+
+            foreach ($branches as $branch) {
+                $penyusutan_per_bulan = Penyusutan::where('kode_branch', $branch->kode_branch)
+                    ->whereMonth('tanggal_penyusutan', date('m'))
+                    ->whereYear('tanggal_penyusutan', date('Y'))
+                    ->sum('penyusutan_per_bulan');
+
+                if ($penyusutan_per_bulan <= 0) {
+                    continue;
                 }
-                
-                DB::commit();
-                Log::info('schadule inventaris dijalankan ' . $i . ' data ditambahkan');
+
+                if ($branch->kode_branch == '1010') {
+                    $transaksiKpDebet = TransaksiPenyusutanKp::where('kode_branch', $branch->kode_branch)
+                        ->whereMonth('tanggal_transaksi', date('m'))
+                        ->whereYear('tanggal_transaksi', date('Y'))
+                        ->where('debet', '>', 0)
+                        ->first();
+
+                    $transaksiKpKredit = TransaksiPenyusutanKp::where('kode_branch', $branch->kode_branch)
+                        ->whereMonth('tanggal_transaksi', date('m'))
+                        ->whereYear('tanggal_transaksi', date('Y'))
+                        ->where('kredit', '>', 0)
+                        ->first();
+
+                    $kode_transaksi = date('m') . random_int(100000, 999999);
+                    if ($transaksiKpDebet && $transaksiKpKredit) {
+                        $transaksiKpDebet->update(['debet' => $penyusutan_per_bulan]);
+                        $transaksiKpKredit->update(['kredit' => $penyusutan_per_bulan]);
+                    } else {
+                        TransaksiPenyusutanKp::create([
+                            'kode_branch' => $branch->kode_branch,
+                            'kode_transaksi' => 'BU/' . $branch->kode_branch . '/' . $kode_transaksi,
+                            'kode_rekening' => '1010-52915',
+                            'tanggal_transaksi' => date('Y-m-d'),
+                            'jenis_transaksi' => 'Bukti SYSTEM',
+                            'keterangan' => 'Jurnal Penyusutan Inventaris ' . date('M Y'),
+                            'debet' => $penyusutan_per_bulan,
+                            'kredit' => 0,
+                        ]);
+
+                        TransaksiPenyusutanKp::create([
+                            'kode_branch' => $branch->kode_branch,
+                            'kode_transaksi' => 'BU/' . $branch->kode_branch . '/' . $kode_transaksi,
+                            'kode_rekening' => '1010-1672000',
+                            'tanggal_transaksi' => date('Y-m-d'),
+                            'jenis_transaksi' => 'Bukti SYSTEM',
+                            'keterangan' => 'Jurnal Penyusutan Inventaris ' . date('M Y'),
+                            'debet' => 0,
+                            'kredit' => $penyusutan_per_bulan,
+                        ]);
+                    }
+                    $countProcessed++;
+                } else {
+                    $transaksiApKredit = TransaksiPenyusutanAp::where('kode_branch', $branch->kode_branch)
+                        ->whereMonth('tanggal_transaksi', date('m'))
+                        ->whereYear('tanggal_transaksi', date('Y'))
+                        ->where('kredit', '>', 0)
+                        ->first();
+
+                    $transaksiApDebet = TransaksiPenyusutanAp::where('kode_branch', $branch->kode_branch)
+                        ->whereMonth('tanggal_transaksi', date('m'))
+                        ->whereYear('tanggal_transaksi', date('Y'))
+                        ->where('debet', '>', 0)
+                        ->first();
+
+                    $kode_transaksi = date('m') . random_int(100000, 999999);
+                    if ($transaksiApKredit && $transaksiApDebet) {
+                        $transaksiApDebet->update(['debet' => $penyusutan_per_bulan]);
+                        $transaksiApKredit->update(['kredit' => $penyusutan_per_bulan]);
+                    } else {
+                        TransaksiPenyusutanAp::create([
+                            'kode_branch' => $branch->kode_branch,
+                            'kode_transaksi' => 'BU/' . $branch->kode_branch . '/' . $kode_transaksi,
+                            'kode_rekening' => '52915',
+                            'tanggal_transaksi' => date('Y-m-d'),
+                            'jenis_transaksi' => 'Bukti SYSTEM',
+                            'keterangan' => 'Jurnal Penyusutan Inventaris ' . date('M Y'),
+                            'debet' => $penyusutan_per_bulan,
+                            'kredit' => 0,
+                        ]);
+
+                        TransaksiPenyusutanAp::create([
+                            'kode_branch' => $branch->kode_branch,
+                            'kode_transaksi' => 'BU/' . $branch->kode_branch . '/' . $kode_transaksi,
+                            'kode_rekening' => '1672000',
+                            'tanggal_transaksi' => date('Y-m-d'),
+                            'jenis_transaksi' => 'Bukti SYSTEM',
+                            'keterangan' => 'Jurnal Penyusutan Inventaris ' . date('M Y'),
+                            'debet' => 0,
+                            'kredit' => $penyusutan_per_bulan,
+                        ]);
+                    }
+                    $countProcessed++;
+                }
+            }
+
+            DB::commit();
+            Log::info("Jurnal penyusutan berhasil dibuat/diperbarui untuk {$countProcessed} cabang.");
+
+            return redirect()->back()->with('success', 'Jurnal penyusutan berhasil dibuat/diperbarui.');
         } catch (\Throwable $th) {
             DB::rollBack();
-    
-            // dd($th);
-            Log::error($th->getMessage());
+            Log::error('Error pada jalankanJurnalPenyusutan: ' . $th->getMessage());
+            return redirect()->back()->with('error', 'Gagal memproses jurnal penyusutan: ' . $th->getMessage());
+        } finally {
+            DB::statement("SELECT RELEASE_LOCK('proses_jurnal_penyusutan_lock')");
         }
-    
-        return redirect()->back()->with('success', 'Proses penyusutan berhasil dijalankan.');
     }
 
     public function jalankanJurnalPembebanan(Request $request)
     {
-        try {
-            DB::beginTransaction();
-
-            $i = 0;
-    
-            // mengambil data penyusutan untuk bulan dan tahun berjalan
-            // kecuali yang memiliki status_branch 'AP' atau 'ALL'
-            $pembebanan = Penyusutan::whereMonth('tanggal_penyusutan', date('m'))
-                    ->whereYear('tanggal_penyusutan', date('Y'))
-                    ->whereNotIn('status_branch', ['AP', 'ALL'])
-                    ->whereNotIn('kode_branch', ['1010'])
-                    ->get();
-
-                // jika ada data penyusutan
-                if (count($pembebanan) > 0) {
-                    foreach ($pembebanan as $row) {
-                        $status_branch = $row->status_branch;
-
-                        $isArea     = Branch::where('code_area', $status_branch)
-                            ->where('status_aktif', 'aktif')
-                            ->count();
-
-                        $isRegion   = Branch::where('code_region', $status_branch)
-                            ->where('status_aktif', 'aktif')
-                            ->where(function ($query) {
-                                $query->whereNull('status_pembebanan') // Jika null, tetap eksekusi
-                                      ->orWhere('status_pembebanan', '!=', 'no'); // Jika bukan 'no', tetap eksekusi
-                            })
-                            ->count();
-
-                        $credit = (int) round($row->penyusutan_per_bulan); // nilai penyusutan yg dibulatkan
-
-                        $credit = (int) round($credit);
-
-                        $ids = [];
-                        $gl = [];
-
-                        // jika termasuk region (pembebanan berdasarkan region)
-                        if ($isRegion > 0) {
-                            // logic khusus untuk status_branch 9999 (region khusus)
-                            if ($status_branch == '9999') {
-                                $otherBranches = Branch::whereIn('code_region', ['3333', '2222'])
-                                    // ->where('kode_branch', '<>', $row->kode_branch)
-                                    ->where('status_aktif', 'aktif')
-                                    ->get();
-
-                                // Hitung debet dengan membagi credit dengan jumlah branch + 1
-                                // (termasuk branch asal)
-                                $debet = round(($credit / (count($otherBranches) + 1)));
-                            } else {
-                                $debet = round(($credit / ($isRegion)));
-
-                                $otherBranches = Branch::where('code_region', $status_branch)
-                                    ->where('kode_branch', '<>', $row->kode_branch)
-                                    ->where('status_aktif', 'aktif')
-                                    // ->where(function ($query) {
-                                    //     $query->whereNull('status_pembebanan') // Jika null, tetap eksekusi
-                                    //           ->orWhere('status_pembebanan', '!=', 'no'); // Jika bukan 'no', tetap eksekusi
-                                    // })
-                                    ->get();
-                            }
-
-                            $credit = $credit - $debet;
-
-                            foreach ($otherBranches as $other) {
-                                $ids[] = $other->kode_branch;
-                                $gl[] = $other->GL;
-                            }
-
-                            $kode_transaksi_kp = date('m') . random_int(100000, 999999);
-
-                            for ($j = 0; $j < count($ids); $j++) {
-                                TransaksiPembebananKp::create([
-                                    'kode_branch' => 1010,
-                                    'kode_transaksi' => 'BU' . '/' . 1010 . '/' . $kode_transaksi_kp,
-                                    'kode_rekening' => '1010-' . $gl[$j],
-                                    'tanggal_transaksi' => date('Y-m-d'),
-                                    'jenis_transaksi' => 'Bukti SYSTEM',
-                                    'keterangan' => 'Jurnal Pembebanan Inventaris' . ' ' . $row->keterangan . ' ' . date('M Y'),
-                                    'debet' => $debet,
-                                    'kredit' => 0,
-                                ]);
-
-                                $kode_transaksi_ap = date('m') . random_int(100000, 999999);
-                                TransaksiPembebananAp::create([
-                                    'kode_branch' => $ids[$j],
-                                    'kode_transaksi' => 'BU' . '/' . $ids[$j] . '/' . $kode_transaksi_ap,
-                                    'kode_rekening' => '58312',
-                                    'tanggal_transaksi' => date('Y-m-d'),
-                                    'jenis_transaksi' => 'Bukti SYSTEM',
-                                    'keterangan' => 'Jurnal Pembebanan Inventaris' . ' ' . $row->keterangan . ' ' . date('M Y'),
-                                    'debet' => $debet,
-                                    'kredit' => 0,
-                                ]);
-
-                                TransaksiPembebananAp::create([
-                                    'kode_branch' => $ids[$j],
-                                    'kode_transaksi' => 'BU' . '/' . $ids[$j] . '/' . $kode_transaksi_ap,
-                                    'kode_rekening' => '2500000',
-                                    'tanggal_transaksi' => date('Y-m-d'),
-                                    'jenis_transaksi' => 'Bukti SYSTEM',
-                                    'keterangan' => 'Jurnal Pembebanan Inventaris' . ' ' . $row->keterangan . ' ' . date('M Y'),
-                                    'debet' => 0,
-                                    'kredit' => $debet,
-                                ]);
-                            }
-
-                            TransaksiPembebananAp::create([
-                                'kode_branch' => $row->kode_branch,
-                                'kode_transaksi' => 'BU' . '/' . $row->kode_branch . '/' . $kode_transaksi_ap,
-                                'kode_rekening' => '57202',
-                                'tanggal_transaksi' => date('Y-m-d'),
-                                'jenis_transaksi' => 'Bukti SYSTEM',
-                                'keterangan' => 'Jurnal Pembebanan Inventaris' . ' ' . $row->keterangan . ' ' . date('M Y'),
-                                'debet' => 0,
-                                'kredit' => $credit,
-                            ]);
-
-                            TransaksiPembebananAp::create([
-                                'kode_branch' => $row->kode_branch,
-                                'kode_transaksi' => 'BU' . '/' . $row->kode_branch . '/' . $kode_transaksi_ap,
-                                'kode_rekening' => '2500000',
-                                'tanggal_transaksi' => date('Y-m-d'),
-                                'jenis_transaksi' => 'Bukti SYSTEM',
-                                'keterangan' => 'Jurnal Pembebanan Inventaris' . ' ' . $row->keterangan . ' ' . date('M Y'),
-                                'debet' => $credit,
-                                'kredit' => 0,
-                            ]);
-
-                            TransaksiPembebananKp::create([
-                                'kode_branch' => 1010,
-                                'kode_transaksi' => 'BU' . '/' . 1010 . '/' . $kode_transaksi_kp,
-                                'kode_rekening' => '1010-' . $row->gl,
-                                'tanggal_transaksi' => date('Y-m-d'),
-                                'jenis_transaksi' => 'Bukti SYSTEM',
-                                'keterangan' => 'Jurnal Pembebanan Inventaris' . ' ' . $row->keterangan . ' ' . date('M Y'),
-                                'debet' => 0,
-                                'kredit' => $credit,
-                            ]);
-                        } else {
-                            // Area normal
-                            if ($isArea != 0) {
-                                $debet = round(($credit / $isArea));
-                                $credit = $credit;
-
-                            } else {
-                                $debet = 0;
-                                $credit = $credit;
-                            }
-
-                            // $debet = round(($credit / ($isArea)), 2);
-
-                            if ($status_branch == '9999') {
-                                $otherBranches = Branch::whereIn('code_region', ['3333', '2222'])
-                                    ->where('kode_branch', '<>', $row->kode_branch)
-                                    ->where('status_aktif', 'aktif')
-                                    ->get();
-
-                                // $debet = round(($credit / count($otherBranches)));
-                                $debet = round(($credit / (count($otherBranches) + 1)));
-                            } elseif ($status_branch == '8888') {
-                                $otherBranches = Branch::whereIn('code_area', ['2206', '2207', '2208'])
-                                    ->where('kode_branch', '<>', $row->kode_branch)
-                                    ->where('status_aktif', 'aktif')
-                                    ->get();
-
-                                $debet = round(($credit / (count($otherBranches) + 1)));
-                                
-                            } elseif ($status_branch == '9901') { // QAL jateng 1 khusus
-                                $otherBranches = Branch::whereIn('kode_branch', ['2003', '2002', '2001', '2025'])
-                                    ->where('kode_branch', '<>', $row->kode_branch)
-                                    ->where('status_aktif', 'aktif')
-                                    ->get();
-
-                                $debet = round(($credit / (count($otherBranches) + 1)));
-
-                            } elseif ($status_branch == '9902') { // QAL jateng 2 khusus
-                                $otherBranches = Branch::whereIn('kode_branch', ['2003', '2002', '2001', '2025'])
-                                    ->where('kode_branch', '<>', $row->kode_branch)
-                                    ->where('status_aktif', 'aktif')
-                                    ->get();
-
-                                $debet = round(($credit / (count($otherBranches) + 1)));
-
-                            } else {
-                                if ($isArea != 0) {
-                                    $debet = round(($credit / $isArea));
-                                } else {
-                                    $debet = 0;
-                                }
-
-                                $otherBranches = Branch::where('code_area', $status_branch)
-                                    ->where('kode_branch', '<>', $row->kode_branch)
-                                    ->where('status_aktif', 'aktif')
-                                    ->get();
-                            }
-
-                            $credit = $credit - $debet;
-
-                            foreach ($otherBranches as $other) {
-                                $ids[] = $other->kode_branch;
-                                $gl[] = $other->GL;
-                            }
-
-                            $kode_transaksi_kp = date('m') . random_int(100000, 999999);
-
-                            // kode yang akan diulang
-                            for ($j = 0; $j < count($ids); $j++) {
-                                TransaksiPembebananKp::create([
-                                    'kode_branch' => 1010,
-                                    'kode_transaksi' => 'BU' . '/' . 1010 . '/' . $kode_transaksi_kp,
-                                    'kode_rekening' => '1010-' .  $gl[$j],
-                                    'tanggal_transaksi' => date('Y-m-d'),
-                                    'jenis_transaksi' => 'Bukti SYSTEM',
-                                    'keterangan' => 'Jurnal Pembebanan Inventaris' . ' ' . $row->keterangan . ' ' . date('M Y'),
-                                    'debet' => $debet,
-                                    'kredit' => 0,
-                                ]);
-
-                                $kode_transaksi_ap = date('m') . random_int(100000, 999999);
-                                TransaksiPembebananAp::create([
-                                    'kode_branch' => $ids[$j],
-                                    'kode_transaksi' => 'BU' . '/' . $ids[$j] . '/' . $kode_transaksi_ap,
-                                    'kode_rekening' => '58312',
-                                    'tanggal_transaksi' => date('Y-m-d'),
-                                    'jenis_transaksi' => 'Bukti SYSTEM',
-                                    'keterangan' => 'Jurnal Pembebanan Inventaris' . ' ' . $row->keterangan . ' ' . date('M Y'),
-                                    'debet' => $debet,
-                                    'kredit' => 0,
-                                ]);
-
-                                TransaksiPembebananAp::create([
-                                    'kode_branch' => $ids[$j],
-                                    'kode_transaksi' => 'BU' . '/' . $ids[$j] . '/' . $kode_transaksi_ap,
-                                    'kode_rekening' => '2500000',
-                                    'tanggal_transaksi' => date('Y-m-d'),
-                                    'jenis_transaksi' => 'Bukti SYSTEM',
-                                    'keterangan' => 'Jurnal Pembebanan Inventaris' . ' ' . $row->keterangan . ' ' . date('M Y'),
-                                    'debet' => 0,
-                                    'kredit' => $debet,
-                                ]);
-                            }
-
-                            TransaksiPembebananAp::create([
-                                'kode_branch' => $row->kode_branch,
-                                'kode_transaksi' => 'BU' . '/' . $row->kode_branch . '/' . $kode_transaksi_ap,
-                                'kode_rekening' => '57202',
-                                'tanggal_transaksi' => date('Y-m-d'),
-                                'jenis_transaksi' => 'Bukti SYSTEM',
-                                'keterangan' => 'Jurnal Pembebanan Inventaris' . ' ' . $row->keterangan . ' ' . date('M Y'),
-                                'debet' => 0,
-                                'kredit' => $credit
-                            ]);
-
-                            TransaksiPembebananAp::create([
-                                'kode_branch' => $row->kode_branch,
-                                'kode_transaksi' => 'BU' . '/' . $row->kode_branch . '/' . $kode_transaksi_ap,
-                                'kode_rekening' => '2500000',
-                                'tanggal_transaksi' => date('Y-m-d'),
-                                'jenis_transaksi' => 'Bukti SYSTEM',
-                                'keterangan' => 'Jurnal Pembebanan Inventaris' . ' ' . $row->keterangan . ' ' . date('M Y'),
-                                'debet' => $credit,
-                                'kredit' => 0,
-                            ]);
-
-                            TransaksiPembebananKp::create([
-                                'kode_branch' => 1010,
-                                'kode_transaksi' => 'BU' . '/' . 1010 . '/' . $kode_transaksi_kp,
-                                'kode_rekening' => '1010-' . $row->gl,
-                                'tanggal_transaksi' => date('Y-m-d'),
-                                'jenis_transaksi' => 'Bukti SYSTEM',
-                                'keterangan' => 'Jurnal Pembebanan Inventaris' . ' ' . $row->keterangan . ' ' . date('M Y'),
-                                'debet' => 0,
-                                'kredit' => $credit,
-                            ]);
-                        }
-                    }
-                }
-                
-                DB::commit();
-                Log::info('schadule inventaris dijalankan ' . $i . ' data ditambahkan');
-        } catch (\Throwable $th) {
-            DB::rollBack();
-    
-            dd($th);
-            Log::error($th->getMessage());
+        $lockAcquired = DB::select("SELECT GET_LOCK('proses_pembebanan_lock', 2) as locked")[0]->locked ?? 0;
+        if (!$lockAcquired) {
+            return redirect()->back()->with('error', 'Proses pembebanan sedang berjalan. Silakan tunggu.');
         }
-    
-        return redirect()->back()->with('success', 'Proses pembebanan berhasil dijalankan.');
+
+        try {
+            $this->pembebananService->processAllCurrentMonth();
+            return redirect()->back()->with('success', 'Proses pembebanan berhasil dijalankan.');
+        } catch (\Throwable $th) {
+            Log::error('Error pada jalankanJurnalPembebanan: ' . $th->getMessage());
+            return redirect()->back()->with('error', $th->getMessage());
+        } finally {
+            DB::statement("SELECT RELEASE_LOCK('proses_pembebanan_lock')");
+        }
     }
 }
