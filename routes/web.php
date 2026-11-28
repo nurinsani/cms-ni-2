@@ -498,8 +498,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/stok-opname/{id}', [StokOpnameController::class, 'destroy'])->name('stok-opname.destroy');
 
     // Proses Pembebanan
-    Route::get('/pembebanan/proses', [PembebananController::class, 'prosesPembebanan'])->name('pembebanan.proses');
-    Route::get('/pembebanan/proses-gol-2', [PembebananController::class, 'prosesPembebananGol2'])->name('pembebanan-gol-2.proses');
+    Route::match(['get', 'post'], '/pembebanan/proses', [PembebananController::class, 'prosesPembebanan'])->name('pembebanan.proses');
+    Route::match(['get', 'post'], '/pembebanan/proses-gol-2', [PembebananController::class, 'prosesPembebananGol2'])->name('pembebanan-gol-2.proses');
 
     // Upload via API Pembebanan
     Route::post('/pembebanan/upload-api-kp', [PembebananUploadController::class, 'pembebananUploadApiKp'])->name('pembebanan.upload-api-kp');

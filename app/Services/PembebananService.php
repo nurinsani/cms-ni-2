@@ -259,6 +259,26 @@ class PembebananService
 
     public function processAllCurrentMonth()
     {
+        // Validasi 1: Pastikan penyusutan aset (Langkah 1) bulan ini sudah dijalankan
+        $adaPenyusutan = Penyusutan::whereMonth('tanggal_penyusutan', date('m'))
+            ->whereYear('tanggal_penyusutan', date('Y'))
+            ->exists();
+
+        if (!$adaPenyusutan) {
+            throw new \Exception('Proses penyusutan aset (Langkah 1) belum dijalankan untuk bulan ini.');
+        }
+
+        // Validasi 2: Pastikan jurnal pembebanan belum pernah diproses bulan ini (mencegah duplikasi transaksi)
+        $adaPembebanan = TransaksiPembebananKp::whereMonth('tanggal_transaksi', date('m'))
+            ->whereYear('tanggal_transaksi', date('Y'))
+            ->exists() || TransaksiPembebananAp::whereMonth('tanggal_transaksi', date('m'))
+            ->whereYear('tanggal_transaksi', date('Y'))
+            ->exists();
+
+        if ($adaPembebanan) {
+            throw new \Exception('Jurnal pembebanan untuk periode bulan ini sudah pernah diproses.');
+        }
+
         DB::beginTransaction();
         try {
             $pembebanan = Penyusutan::whereMonth('tanggal_penyusutan', date('m'))
@@ -266,6 +286,10 @@ class PembebananService
                 ->whereNotIn('status_branch', ['AP', 'ALL'])
                 ->whereNotIn('kode_branch', ['1010'])
                 ->get();
+
+            if ($pembebanan->isEmpty()) {
+                throw new \Exception('Tidak ada data penyusutan yang memerlukan pembebanan untuk periode ini.');
+            }
 
             foreach ($pembebanan as $row) {
                 $this->createTransactionsForRow($row);

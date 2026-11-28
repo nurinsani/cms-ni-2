@@ -11,14 +11,42 @@ use App\Http\Controllers\Controller;
 use App\Models\Admin\Peralatan;
 use App\Models\Inventaris;
 use App\Models\InventarisGol2;
+use App\Models\PengajuanMutasi;
+use App\Models\PengajuanMutasiGol2;
+use App\Models\PengajuanHapusBuku;
+use App\Models\PengajuanHapusBukuGol2;
 
 class AkuntingController extends Controller
 {
     public function dashboard()
     {
-        $data['title'] = 'Akunting Dashboard';
-        $data['approval_um'] = Pengajuan::where('status_approve', 'akunting-it');
+        $data['title'] = 'Dashboard Akunting';
+
+        // 1. Approval Tasks untuk Akunting
+        $data['approval_peralatan_count']  = Pengajuan::where('status_approve', 'akunting-it')->count();
+        $data['approval_lpj_count']        = Pengajuan::where('status_approve', 'lpj-akunting-it')->count();
+        $data['approval_klaim_count']      = Pengajuan::where('status_approve', 'klaim-akunting-it')->count();
+        $data['approval_mutasi_count']     = PengajuanMutasi::where('status_approve', 'akunting-it')->count()
+            + PengajuanMutasiGol2::where('status_approve', 'akunting-it')->count();
+        $data['approval_hapus_buku_count'] = PengajuanHapusBuku::where('status_approve', 'akunting')->count()
+            + PengajuanHapusBukuGol2::where('status_approve', 'akunting')->count();
+
+        // Backward-compatibility
+        $data['approval_um']  = Pengajuan::where('status_approve', 'akunting-it');
         $data['approval_lpj'] = Pengajuan::where('status_approve', 'lpj-akunting-it');
+
+        // 2. Ringkasan Aset Inventaris (Nominative)
+        $data['total_inventaris_count']      = Inventaris::count();
+        $data['total_inventaris_gol2_count'] = InventarisGol2::count();
+
+        // 3. Antrean Pengajuan Terbaru Menunggu Approval Akunting (Maks. 5 pengajuan)
+        $data['pending_approvals'] = Pengajuan::with(['area', 'pengajuan_details.jenis_peralatan.param_peralatan', 'user'])
+            ->whereIn('status_approve', ['akunting-it', 'lpj-akunting-it', 'klaim-akunting-it'])
+            ->orderBy('tanggal_pengajuan', 'desc')
+            ->orderBy('id', 'desc')
+            ->take(5)
+            ->get();
+
         return view('akunting.dashboard', $data);
     }
 

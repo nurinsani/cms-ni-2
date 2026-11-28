@@ -8,8 +8,8 @@
     </a>
 </li>
 
-<li class="nav-item">
-    <a href="#" class="nav-link">
+<li class="nav-item has-treeview {{ request()->is('akunting/approval*') || request()->is('akunting/klaim*') ? 'menu-open' : '' }}">
+    <a href="#" class="nav-link {{ request()->is('akunting/approval*') || request()->is('akunting/klaim*') ? 'active' : '' }}">
         <i class="nav-icon fas fa-check-double"></i>
         <p>
             Approval
@@ -17,13 +17,12 @@
         </p>
     </a>
     <ul class="nav nav-treeview">
-
         <li class="nav-item">
             <a href="{{ url('akunting/approval-peralatan') }}"
                 class="nav-link {{ request()->is('akunting/approval-peralatan*') ? 'active' : '' }}">
                 <i class="nav-icon far fa-circle nav-icon"></i>
                 <p>
-                    Pengajuan FPD
+                    Peralatan
                 </p>
             </a>
         </li>
@@ -33,37 +32,27 @@
                 class="nav-link {{ request()->is('akunting/approval-lpj*') ? 'active' : '' }}">
                 <i class="nav-icon far fa-circle nav-icon"></i>
                 <p>
-                    Pengajuan LPJ
+                    LPJ
                 </p>
             </a>
         </li>
 
         <li class="nav-item">
             <a href="{{ url('akunting/klaim-pembelian') }}"
-                class="nav-link {{ request()->is('akunting/klaim-pembelian*') ? 'active' : '' }}">
+                class="nav-link {{ request()->is('akunting/klaim*') ? 'active' : '' }}">
                 <i class="nav-icon far fa-circle nav-icon"></i>
                 <p>
-                    Pengajuan Klaim
+                    Klaim
                 </p>
             </a>
         </li>
 
-        {{-- <li class="nav-item">
-            <a href="{{ url('akunting/approval-bdd') }}"
-                class="nav-link {{ request()->is('akunting/approval-bdd*') ? 'active' : '' }}">
-                <i class="nav-icon far fa-circle nav-icon"></i>
-                <p>
-                    BDD
-                </p>
-            </a>
-        </li> --}}
-
         <li class="nav-item">
             <a href="{{ url('akunting/approval-mutasi') }}"
-                class="nav-link {{ request()->is('akunting/approval-mutasi*') ? 'active' : '' }}">
+                class="nav-link {{ request()->is('akunting/approval-mutasi') || (request()->is('akunting/approval-mutasi/*') && !request()->is('akunting/approval-mutasi-gol-2*')) ? 'active' : '' }}">
                 <i class="nav-icon far fa-circle nav-icon"></i>
                 <p>
-                    Pengajuan Mutasi
+                    Mutasi
                 </p>
             </a>
         </li>
@@ -73,7 +62,7 @@
                 class="nav-link {{ request()->is('akunting/approval-mutasi-gol-2*') ? 'active' : '' }}">
                 <i class="nav-icon far fa-circle nav-icon"></i>
                 <p>
-                    Pengajuan Mutasi Gol 2
+                    Mutasi Gol 2
                 </p>
             </a>
         </li>
@@ -97,12 +86,11 @@
                 </p>
             </a>
         </li>
-
     </ul>
 </li>
 
-<li class="nav-item">
-    <a href="#" class="nav-link">
+<li class="nav-item has-treeview {{ request()->is('akunting/peralatan*') || request()->is('akunting/inventaris*') ? 'menu-open' : '' }}">
+    <a href="#" class="nav-link {{ request()->is('akunting/peralatan*') || request()->is('akunting/inventaris*') ? 'active' : '' }}">
         <i class="nav-icon fas fa-clipboard-list"></i>
         <p>
             Nominative
@@ -142,9 +130,9 @@
     </ul>
 </li>
 
-{{-- menu LPJ --}}
-<li class="nav-item">
-    <a href="#" class="nav-link">
+{{-- menu Transaksi --}}
+<li class="nav-item has-treeview {{ request()->is('penyusutan*') || request()->is('jurnal*') ? 'menu-open' : '' }}">
+    <a href="#" class="nav-link {{ request()->is('penyusutan*') || request()->is('jurnal*') ? 'active' : '' }}">
         <i class="nav-icon fas fa-file-alt"></i>
         <p>
             Transaksi
@@ -213,7 +201,7 @@
                 class="nav-link {{ request()->is('jurnal-penyusutan-kp-gol-2') ? 'active' : '' }}">
                 <i class="nav-icon far fa-circle nav-icon"></i>
                 <p>
-                    Jurnal Pnysutan KP Gol 2
+                    Jurnal Penyusutan KP Gol 2
                 </p>
             </a>
         </li>
@@ -223,7 +211,7 @@
                 class="nav-link {{ request()->is('jurnal-penyusutan-ap-gol-2') ? 'active' : '' }}">
                 <i class="nav-icon far fa-circle nav-icon"></i>
                 <p>
-                    Jurnal Pnysutan AP Gol 2
+                    Jurnal Penyusutan AP Gol 2
                 </p>
             </a>
         </li>
@@ -253,7 +241,7 @@
                 class="nav-link {{ request()->is('jurnal-pembebanan-kp-gol-2') ? 'active' : '' }}">
                 <i class="nav-icon far fa-circle nav-icon"></i>
                 <p>
-                    Jurnal Pmbbnn KP Gol 2
+                    Jurnal Pembebanan KP Gol 2
                 </p>
             </a>
         </li>
@@ -263,13 +251,13 @@
                 class="nav-link {{ request()->is('jurnal-pembebanan-ap-gol-2') ? 'active' : '' }}">
                 <i class="nav-icon far fa-circle nav-icon"></i>
                 <p>
-                    Jurnal Pmbbnn AP Gol 2
+                    Jurnal Pembebanan AP Gol 2
                 </p>
             </a>
         </li>
     </ul>
 </li>
-{{-- end menu LPJ --}}
+{{-- end menu Transaksi --}}
 
 <li
     class="nav-item has-treeview {{ request()->is('akunting/param-peralatan*') || request()->is('akunting/jenis-peralatan*') || request()->is('akunting/param-jabatan*') ? 'menu-open' : '' }}">
@@ -308,15 +296,6 @@
         </li>
     </ul>
 </li>
-
-{{-- <li class="nav-item">
-    <a href="{{ url('/akunting/stock-opname') }}" class="nav-link {{ request()->is('/akunting/stock-opname') ? 'active' : '' }}">
-        <i class="nav-icon fas fa-edit"></i>
-        <p>
-            Stock Opname
-        </p>
-    </a>
-</li> --}}
 
 <li
     class="nav-item has-treeview {{ request()->is('akunting/log-penghapusan-barang*') || request()->is('log-penghapusan-barang*') ? 'menu-open' : '' }}">

@@ -17,16 +17,19 @@ class klaimController extends Controller
     public function index()
     {
         $data['title'] = 'Klaim Pembelian';
-        $data['pengajuan'] = Pengajuan::where('status_approve', 'klaim-akunting-it')
-        ->get();
+        $data['pengajuan'] = Pengajuan::with(['area', 'pengajuan_details.jenis_peralatan.param_peralatan', 'pengajuan_details.ap', 'pengajuan_details.area', 'user'])
+            ->where('status_approve', 'klaim-akunting-it')
+            ->orderBy('tanggal_pengajuan', 'desc')
+            ->orderBy('id', 'desc')
+            ->get();
         return view('akunting.approval.klaim.index', $data);
     }
 
     public function detail($id)
     {
-        $title = 'Detail';
-        $pengajuan = Pengajuan::findOrFail($id);
-        $branch = Branch::where('code_area', 'kode_area')->get();
+        $title = 'Detail Klaim';
+        $pengajuan = Pengajuan::with(['area', 'pengajuan_details.jenis_peralatan.param_peralatan', 'pengajuan_details.ap', 'pengajuan_details.area', 'user'])
+            ->findOrFail($id);
         return view('akunting.approval.klaim.detail', compact('title', 'pengajuan'));
     }
 

@@ -20,14 +20,17 @@ class ApprovalMutasiController extends Controller
     public function index()
     {
         $data['title'] = 'Mutasi';
-        $data['mutasi'] = PengajuanMutasi::where('status_approve', 'akunting-it')->get();
+        $data['mutasi'] = PengajuanMutasi::with(['dari_ap', 'branch', 'inventaris.penyusutans'])
+            ->where('status_approve', 'akunting-it')
+            ->latest()
+            ->get();
         return view('akunting.approval.pengajuan-mutasi.index', $data);
     }
 
     public function show($id)
     {
         $title = 'Detail Mutasi';
-        $pengajuan = PengajuanMutasi::with('inventaris')->findOrFail($id);
+        $pengajuan = PengajuanMutasi::with(['dari_ap', 'branch', 'inventaris.penyusutans'])->findOrFail($id);
         return view('akunting.approval.pengajuan-mutasi.show', compact('pengajuan', 'title'));
     }
 
@@ -449,6 +452,25 @@ class ApprovalMutasiController extends Controller
             Log::error($th->getMessage());
 
             return redirect()->back()->with('error', 'Data gagal di-approve');
+        }
+    }
+
+    public function tolak(Request $request, $id)
+    {
+        try {
+            DB::beginTransaction();
+            $mutasi = PengajuanMutasi::findOrFail($id);
+            $mutasi->status_approve = 'admin';
+            $mutasi->atasan_2 = auth()->user()->id;
+            $mutasi->save();
+
+            DB::commit();
+
+            return redirect()->back()->with('success', 'Data berhasil ditolak');
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            Log::error($th->getMessage());
+            return redirect()->back()->with('error', 'Data gagal ditolak');
         }
     }
 

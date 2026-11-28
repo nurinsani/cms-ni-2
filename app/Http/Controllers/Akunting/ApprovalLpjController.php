@@ -15,14 +15,19 @@ class ApprovalLpjController extends Controller
     public function index()
     {
         $data['title'] = 'Approval LPJ';
-        $data['lpj'] = Pengajuan::where('status_approve', 'lpj-akunting-it')->get();
+        $data['lpj'] = Pengajuan::with(['area', 'pengajuan_details.jenis_peralatan.param_peralatan', 'pengajuan_details.ap', 'pengajuan_details.area', 'user'])
+            ->where('status_approve', 'lpj-akunting-it')
+            ->orderBy('tanggal_pengajuan', 'desc')
+            ->orderBy('id', 'desc')
+            ->get();
         return view('akunting.approval.pengajuan-lpj.index', $data);
     }
 
     public function detail($id)
     {
         $data['title'] = 'Detail LPJ';
-        $data['lpj'] = Pengajuan::findOrFail($id);
+        $data['lpj'] = Pengajuan::with(['area', 'pengajuan_details.jenis_peralatan.param_peralatan', 'pengajuan_details.ap', 'pengajuan_details.area', 'user'])
+            ->findOrFail($id);
         return view('akunting.approval.pengajuan-lpj.detail', $data);
     }   
 

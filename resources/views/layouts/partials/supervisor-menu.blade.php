@@ -1,6 +1,6 @@
-<li class="nav-item menu-open">
+<li class="nav-item">
     <a href="{{ route('admin-head.dashboard') }}"
-        class="nav-link {{ request()->is('supervisor/dashboard*') ? 'active' : '' }}">
+        class="nav-link {{ request()->is('admin-head/dashboard*') ? 'active' : '' }}">
         <i class="nav-icon fas fa-tachometer-alt"></i>
         <p>
             Dashboard
@@ -8,8 +8,8 @@
     </a>
 </li>
 
-<li class="nav-item">
-    <a href="#" class="nav-link">
+<li class="nav-item has-treeview {{ request()->is('admin-head/pengajuan*') ? 'menu-open' : '' }}">
+    <a href="#" class="nav-link {{ request()->is('admin-head/pengajuan*') ? 'active' : '' }}">
         <i class="fas fa-file-signature nav-icon"></i>
         <p>
             Pengajuan
@@ -17,35 +17,31 @@
         </p>
     </a>
     <ul class="nav nav-treeview">
-
         <li class="nav-item">
             <a href="{{ url('admin-head/pengajuan') }}"
-                class="nav-link {{ request()->is('admin/pengajuan') ? 'active' : '' }}">
+                class="nav-link {{ request()->is('admin-head/pengajuan') || (request()->is('admin-head/pengajuan/*') && !request()->is('admin-head/pengajuan/klaim*')) ? 'active' : '' }}">
                 <i class="nav-icon far fa-circle nav-icon"></i>
                 <p>
                     Uang Muka
                 </p>
-                {{-- <span class="badge badge-info right">{{ $pengajuan_peralatan->count() }}</span> --}}
             </a>
         </li>
 
         <li class="nav-item">
             <a href="{{ url('admin-head/pengajuan/klaim') }}"
-                class="nav-link {{ request()->is('admin-head/pengajuan/klaim') ? 'active' : '' }}">
+                class="nav-link {{ request()->is('admin-head/pengajuan/klaim*') ? 'active' : '' }}">
                 <i class="nav-icon far fa-circle nav-icon"></i>
                 <p>
                     Klaim
                 </p>
-                {{-- <span class="badge badge-info right">{{ $pengajuan_peralatan->count() }}</span> --}}
             </a>
         </li>
-
     </ul>
 </li>
 
 {{-- menu LPJ --}}
-<li class="nav-item">
-    <a href="#" class="nav-link">
+<li class="nav-item has-treeview {{ request()->is('admin-head/lpj*') ? 'menu-open' : '' }}">
+    <a href="#" class="nav-link {{ request()->is('admin-head/lpj*') ? 'active' : '' }}">
         <i class="nav-icon fas fa-file-alt"></i>
         <p>
             LPJ
@@ -62,23 +58,20 @@
                 </p>
             </a>
         </li>
-
-        {{-- <li class="nav-item">
-            <a href="{{ route('admin.lpj-bdd.index') }}"
-                class="nav-link {{ request()->is('admin/pengajuan-lpj-bdd*') ? 'active' : '' }}">
-                <i class="nav-icon far fa-circle nav-icon"></i>
-                <p>
-                    BDD
-                </p>
-            </a>
-        </li> --}}
     </ul>
 </li>
 {{-- end menu LPJ --}}
 
-<li class="nav-item">
-    <a href="#" class="nav-link">
-        <i class="nav-icon far fa-check-circle"></i>
+@php
+    $isAdminHeadApprovalActive = request()->is('admin-head/pengajuan-peralatan*') ||
+        request()->is('admin-head/approval-lpj*') ||
+        request()->is('admin-head/klaim-pembelian*') ||
+        request()->is('admin-head/approval-mutasi*') ||
+        request()->is('admin-head/approval-hapus-buku*');
+@endphp
+<li class="nav-item has-treeview {{ $isAdminHeadApprovalActive ? 'menu-open' : '' }}">
+    <a href="#" class="nav-link {{ $isAdminHeadApprovalActive ? 'active' : '' }}">
+        <i class="nav-icon fas fa-check-double"></i>
         <p>
             Approval
             <i class="fas fa-angle-left right"></i>
@@ -115,19 +108,9 @@
             </a>
         </li>
 
-        {{-- <li class="nav-item">
-            <a href="{{ url('admin-head/pengajuan-bdd') }}"
-                class="nav-link {{ request()->is('supervisor/pengajuan-bdd*') ? 'active' : '' }}">
-                <i class="nav-icon far fa-circle nav-icon"></i>
-                <p>
-                    BDD
-                </p>
-            </a>
-        </li> --}}
-
         <li class="nav-item">
             <a href="{{ url('admin-head/approval-mutasi') }}"
-                class="nav-link {{ request()->is('supervisor/pengajuan-mutasi*') ? 'active' : '' }}">
+                class="nav-link {{ request()->is('admin-head/approval-mutasi') || (request()->is('admin-head/approval-mutasi/*') && !request()->is('admin-head/approval-mutasi-gol-2*')) ? 'active' : '' }}">
                 <i class="nav-icon far fa-circle nav-icon"></i>
                 <p>
                     Mutasi
@@ -137,7 +120,7 @@
 
         <li class="nav-item">
             <a href="{{ url('admin-head/approval-mutasi-gol-2') }}"
-                class="nav-link {{ request()->is('supervisor/pengajuan-mutasi*') ? 'active' : '' }}">
+                class="nav-link {{ request()->is('admin-head/approval-mutasi-gol-2*') ? 'active' : '' }}">
                 <i class="nav-icon far fa-circle nav-icon"></i>
                 <p>
                     Mutasi Gol 2
@@ -164,21 +147,11 @@
                 </p>
             </a>
         </li>
-
-        {{-- <li class="nav-item">
-            <a href="#" class="nav-link {{ request()->is('supervisor/pengajuan-penjualan*') ? 'active' : '' }}">
-                <i class="nav-icon far fa-circle nav-icon"></i>
-                <p>
-                    Penjualan
-                </p>
-            </a>
-        </li> --}}
-
     </ul>
 </li>
 
-<li class="nav-item">
-    <a href="#" class="nav-link">
+<li class="nav-item has-treeview {{ request()->is('admin-head/peralatan*') || request()->is('admin-head/inventaris*') ? 'menu-open' : '' }}">
+    <a href="#" class="nav-link {{ request()->is('admin-head/peralatan*') || request()->is('admin-head/inventaris*') ? 'active' : '' }}">
         <i class="fas fa-list-alt nav-icon"></i>
         <p>
             Nominative
@@ -198,7 +171,7 @@
 
         <li class="nav-item">
             <a href="{{ url('admin-head/inventaris') }}"
-                class="nav-link {{ request()->is('admin-head/inventaris') ? 'active' : '' }}">
+                class="nav-link {{ request()->is('admin-head/inventaris') || (request()->is('admin-head/inventaris/*') && !request()->is('admin-head/inventaris-gol-2*')) ? 'active' : '' }}">
                 <i class="nav-icon far fa-circle nav-icon"></i>
                 <p>
                     Inventaris
@@ -208,7 +181,7 @@
 
         <li class="nav-item">
             <a href="{{ url('admin-head/inventaris-gol-2') }}"
-                class="nav-link {{ request()->is('admin-head/inventaris-gol-2') ? 'active' : '' }}">
+                class="nav-link {{ request()->is('admin-head/inventaris-gol-2*') ? 'active' : '' }}">
                 <i class="nav-icon far fa-circle nav-icon"></i>
                 <p>
                     Inventaris Gol II
@@ -218,10 +191,9 @@
     </ul>
 </li>
 
-{{-- menu LPJ --}}
-<li class="nav-item">
-    <a href="#" class="nav-link">
-        <i class="nav-icon fas fa-file-alt"></i>
+<li class="nav-item has-treeview {{ request()->is('admin-head/jurnal*') ? 'menu-open' : '' }}">
+    <a href="#" class="nav-link {{ request()->is('admin-head/jurnal*') ? 'active' : '' }}">
+        <i class="nav-icon fas fa-file-invoice"></i>
         <p>
             Transaksi
             <i class="fas fa-angle-left right"></i>
@@ -283,32 +255,19 @@
                 class="nav-link {{ request()->is('admin-head/jurnal-pembebanan-ap*') ? 'active' : '' }}">
                 <i class="nav-icon far fa-circle nav-icon"></i>
                 <p>
-                    Jurnal Pembebanan Ap
+                    Jurnal Pembebanan AP
                 </p>
             </a>
         </li>
-
     </ul>
 </li>
-{{-- end menu LPJ --}}
-
-
 
 <li class="nav-item">
     <a href="{{ url('/update-password') }}"
-        class="nav-link {{ request()->is('/update-password') ? 'active' : '' }}">
+        class="nav-link {{ request()->is('update-password*') ? 'active' : '' }}">
         <i class="nav-icon fas fa-lock"></i>
         <p>
             Ganti Password
         </p>
     </a>
 </li>
-
-{{-- <li class="nav-item">
-  <a href="#" class="nav-link {{ (request()->is('supervisor/stock-opname*')) ? 'active' : '' }}">
-    <i class="nav-icon fas fa-database"></i>
-    <p>
-      Stock Opname
-    </p>
-  </a>
-</li> --}}

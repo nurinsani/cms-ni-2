@@ -1,12 +1,12 @@
 @extends('layouts.main')
 
 @section('head-content')
-    <div class="row mb-2">
+    <div class="row mb-2 align-items-center">
         <div class="col-sm-6">
-            <h1 class="m-0">{{ $title }}</h1>
+            <h1 class="m-0 font-weight-bold">{{ $title }}</h1>
         </div>
         <div class="col-sm-6">
-            <ol class="breadcrumb float-sm-right">
+            <ol class="breadcrumb float-sm-right bg-transparent p-0 m-0">
                 <li class="breadcrumb-item"><a href="{{ route('akunting.dashboard') }}">Home</a></li>
                 <li class="breadcrumb-item active">{{ $title }}</li>
             </ol>
@@ -15,58 +15,57 @@
 @endsection
 
 @section('content')
-    <div class="card">
-        <div class="card-header">
-            <h5 class="card-title font-weight-bold">
-                Data Persetujuan Hapus Buku Inventaris Gol 2
-            </h5>
+    <div class="card card-outline card-primary shadow-sm">
+        <div class="card-header d-flex justify-content-between align-items-center flex-wrap">
+            <h3 class="card-title font-weight-bold mb-0">Daftar Approval Hapus Buku Inventaris Gol 2</h3>
+            <span class="badge badge-light border ml-auto">{{ $pengajuan_hapus_buku->count() }} Antrean</span>
         </div>
         <div class="card-body">
             <div class="table-responsive">
-                <table id="example1" class="table table-bordered table-hover text-nowrap">
-                    <thead>
+                <table id="example1" class="table table-bordered table-striped table-hover text-nowrap mb-0">
+                    <thead class="bg-light">
                         <tr>
-                            <th width="5%" class="text-center">No</th>
-                            <th>Kode Pengajuan</th>
-                            <th>KP/Cabang/AP</th>
-                            <th>Bulan Hapus Buku</th>
-                            <th>Admin Pengaju</th>
-                            <th>Disetujui Admin Head</th>
-                            <th class="text-center">Jml Barang</th>
-                            <th width="20%" class="text-center">Aksi</th>
+                            <th width="45" class="text-center">NO</th>
+                            <th>KODE PENGAJUAN</th>
+                            <th>KP/CABANG/AP</th>
+                            <th>BULAN HAPUS BUKU</th>
+                            <th>ADMIN PENGAJU</th>
+                            <th>STATUS ADMIN HEAD</th>
+                            <th class="text-center">JUMLAH BARANG</th>
+                            <th width="220" class="text-center no-export">AKSI</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse ($pengajuan_hapus_buku as $item)
                             <tr>
-                                <td class="text-center">{{ $loop->iteration }}</td>
-                                <td class="font-weight-bold">{{ $item->kode_pengajuan }}</td>
-                                <td>{{ $item->branch->unit ?? $item->kode_branch }}</td>
-                                <td>{{ $item->bulan_hapus_buku }}</td>
-                                <td>{{ $item->user->name ?? '-' }}</td>
-                                <td>
+                                <td class="text-center align-middle">{{ $loop->iteration }}</td>
+                                <td class="font-weight-bold align-middle">{{ $item->kode_pengajuan }}</td>
+                                <td class="align-middle">{{ $item->branch->unit ?? $item->kode_branch }}</td>
+                                <td class="align-middle">{{ strtoupper($item->bulan_hapus_buku) }}</td>
+                                <td class="align-middle">{{ $item->user->name ?? '-' }}</td>
+                                <td class="align-middle">
                                     <span class="text-success small font-weight-bold">
                                         <i class="fas fa-check-circle mr-1"></i>
                                         {{ $item->admin_head->name ?? 'Admin Head' }}
                                     </span>
                                 </td>
-                                <td class="text-center font-weight-bold">{{ $item->details->count() }}</td>
-                                <td class="text-center">
+                                <td class="text-center align-middle font-weight-bold">{{ $item->details->count() }}</td>
+                                <td class="text-center align-middle text-nowrap">
                                     <a href="{{ route('akunting.approval-hapus-buku-gol-2.show', $item->id) }}"
-                                        class="btn btn-info btn-xs mr-1">
-                                        <i class="fas fa-eye"></i> Detail & Perhitungan
+                                        class="btn btn-outline-info btn-sm mr-1">
+                                        <i class="fas fa-eye mr-1"></i> Detail
                                     </a>
 
                                     <!-- Tombol Modal Approve -->
-                                    <button type="button" class="btn btn-success btn-xs mr-1" data-toggle="modal"
+                                    <button type="button" class="btn btn-outline-success btn-sm mr-1" data-toggle="modal"
                                         data-target="#modalApproveAkunting{{ $item->id }}">
-                                        <i class="fas fa-check-double"></i> Approve
+                                        <i class="fas fa-check-double mr-1"></i> Approve
                                     </button>
 
                                     <!-- Tombol Modal Tolak -->
-                                    <button type="button" class="btn btn-danger btn-xs" data-toggle="modal"
+                                    <button type="button" class="btn btn-outline-danger btn-sm" data-toggle="modal"
                                         data-target="#modalTolakAkunting{{ $item->id }}">
-                                        <i class="fas fa-times"></i> Tolak
+                                        <i class="fas fa-times mr-1"></i> Tolak
                                     </button>
 
                                     <!-- Modal Approve Akunting -->
@@ -79,8 +78,7 @@
                                                     method="POST">
                                                     @csrf
                                                     <div class="modal-header bg-success text-white">
-                                                        <h5 class="modal-title font-weight-bold">Final Approval Hapus Buku Gol 2 (Akunting)
-                                                        </h5>
+                                                        <h5 class="modal-title font-weight-bold">Final Approval Hapus Buku Gol 2 (Akunting)</h5>
                                                         <button type="button" class="close text-white" data-dismiss="modal"
                                                             aria-label="Close">
                                                             <span aria-hidden="true">&times;</span>
@@ -91,15 +89,15 @@
                                                             buku Gol 2 <strong>{{ $item->kode_pengajuan }}</strong>?</p>
                                                         <div class="alert alert-warning small mt-3 mb-0">
                                                             <i class="fas fa-info-circle mr-1"></i> Setelah disetujui,
-                                                            inventaris Gol 2 terkait akan ditandai sebagai <strong>Hapus
-                                                                Buku</strong> secara permanen dan jurnal transaksi penyesuaian akan dibuat.
+                                                            inventaris terkait akan ditandai sebagai <strong>Hapus
+                                                                Buku</strong> secara permanen.
                                                         </div>
                                                     </div>
                                                     <div class="modal-footer">
                                                         <button type="button" class="btn btn-secondary"
                                                             data-dismiss="modal">Batal</button>
-                                                        <button type="submit" class="btn btn-success">Setujui & Buat
-                                                            Jurnal</button>
+                                                        <button type="submit" class="btn btn-success">Setujui &
+                                                            Proses</button>
                                                     </div>
                                                 </form>
                                             </div>
@@ -117,7 +115,7 @@
                                                     @csrf
                                                     <div class="modal-header bg-danger text-white">
                                                         <h5 class="modal-title font-weight-bold">Tolak Pengajuan Hapus Buku Gol 2
-                                                        </h5>
+                                                            (Akunting)</h5>
                                                         <button type="button" class="close text-white" data-dismiss="modal"
                                                             aria-label="Close">
                                                             <span aria-hidden="true">&times;</span>
@@ -145,7 +143,9 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="9" class="text-center text-muted py-4">Tidak ada pengajuan hapus buku Gol 2 yang menunggu persetujuan Akunting</td>
+                                <td colspan="8" class="text-center text-muted py-4">
+                                    Tidak ada pengajuan hapus buku Gol 2 yang menunggu approval Akunting.
+                                </td>
                             </tr>
                         @endforelse
                     </tbody>
